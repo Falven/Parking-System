@@ -4,6 +4,7 @@
     <persistence-unit name="PSPersistence">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>Model.Garage</class>
+        <class>Model.Gate</class>
         <class>Model.EntryGate</class>
         <class>Model.ExitGate</class>
         <class>Model.Ticket</class>

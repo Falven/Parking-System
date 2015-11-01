@@ -17,7 +17,7 @@
     <RowConstraints maxHeight="105.0" minHeight="62.0" percentHeight="25.0" prefHeight="62.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Button mnemonicParsing="false" text="Get Ticket" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Button mnemonicParsing="false" onAction="#handleGetTicket" text="Get Ticket" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
       <VBox alignment="TOP_CENTER" GridPane.rowIndex="1">
          <children>
             <Label text="Garage Space" textFill="WHITE">

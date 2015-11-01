@@ -6,23 +6,15 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class ExitGate {
-    @Id
-    @NotNull
-    @GeneratedValue()
-    protected int id;
-
-    @NotNull
-    @OneToMany()
-    private List<Ticket> tickets;
-
+public class ExitGate extends Gate {
     @NotNull
     @OneToMany()
     private List<Payment> payments;
 
-    @ManyToOne()
-    private Garage garage;
+    public ExitGate() {
+    }
 
-    public void ExitGate() {
+    public ExitGate(Garage owner) {
+        setGarage(owner);
     }
 }

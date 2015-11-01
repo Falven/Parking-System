@@ -19,4 +19,24 @@ public class Ticket {
 
     public Ticket() {
     }
+
+    public Ticket(EntryGate owner) {
+        setEntryGate(owner);
+    }
+
+    public EntryGate getEntryGate() {
+        return entryGate;
+    }
+
+    public void setEntryGate(EntryGate entryGate) {
+        this.entryGate = entryGate;
+    }
+
+    public ExitGate getExitGate() {
+        return exitGate;
+    }
+
+    public void setExitGate(ExitGate exitGate) {
+        this.exitGate = exitGate;
+    }
 }

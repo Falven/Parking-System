@@ -1,24 +1,13 @@
 package Model;
 
-import com.sun.istack.internal.NotNull;
-
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
 
 @Entity
-public class EntryGate {
-    @Id
-    @NotNull
-    @GeneratedValue()
-    protected int id;
-
-    @NotNull
-    @OneToMany()
-    private List<Ticket> tickets;
-
-    @ManyToOne()
-    private Garage garage;
-
+public class EntryGate extends Gate {
     public EntryGate() {
+    }
+
+    public EntryGate(Garage owner) {
+        setGarage(owner);
     }
 }

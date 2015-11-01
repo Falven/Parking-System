@@ -21,7 +21,6 @@ public class Garage {
     private List<ExitGate> exitGates;
 
     public Garage() {
-
     }
 
     public Garage(String name) {
