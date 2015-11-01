@@ -2,20 +2,11 @@ package Controller;
 
 import Model.Garage;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.transaction.UserTransaction;
-import java.io.IOException;
+import javax.persistence.*;
 
 public class Main extends Application {
 
@@ -40,13 +31,14 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 //        database = new ParkingSystemDB();
-        factory = Persistence.createEntityManagerFactory("Eclipselink_JPA");
-        EntityManager em = factory.createEntityManager();
-        manager.getTransaction().begin();
+        factory = Persistence.createEntityManagerFactory("PSPersistence");
+        manager = factory.createEntityManager();
+        EntityTransaction et = manager.getTransaction();
+        et.begin();
 
         Garage g = new Garage("Garage1");
-        em.persist(g);
+        manager.persist(g);
 
-        manager.getTransaction().commit();
+        et.commit();
     }
 }
