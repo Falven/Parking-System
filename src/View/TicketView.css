@@ -1,0 +1,5 @@
+#root {
+    -fx-background-image: url("paper_texture.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center;
+}
