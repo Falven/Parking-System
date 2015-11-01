@@ -10,14 +10,6 @@ import javax.persistence.*;
 
 public class Main extends Application {
 
-    private ParkingSystemDB database;
-
-    private Stage entryStage;
-    private Stage exitStage;
-
-    private Scene entryScene;
-    private Scene exitScene;
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -30,7 +22,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-//        database = new ParkingSystemDB();
         factory = Persistence.createEntityManagerFactory("PSPersistence");
         manager = factory.createEntityManager();
         EntityTransaction et = manager.getTransaction();
