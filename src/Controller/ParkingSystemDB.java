@@ -1,15 +1,10 @@
 package Controller;
 
 import Model.Garage;
-import Model.Ticket;
 
 import javax.annotation.Resource;
 import javax.persistence.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Objects;
+import java.util.Collection;
 
 public class ParkingSystemDB {
 
@@ -17,13 +12,13 @@ public class ParkingSystemDB {
     EntityManagerFactory factory;
 
     @Resource
-    EntityManager manager;
+    EntityManager em;
 
     private static ParkingSystemDB instance;
 
     private ParkingSystemDB() {
         factory = Persistence.createEntityManagerFactory("PSPersistence");
-        manager = factory.createEntityManager();
+        em = factory.createEntityManager();
     }
 
     public static ParkingSystemDB getInstance() {
@@ -33,14 +28,24 @@ public class ParkingSystemDB {
         return instance;
     }
 
-    public void persist(Object obj) {
-        EntityTransaction et = manager.getTransaction();
-        et.begin();
-        manager.persist(obj);
-        et.commit();
+    public void add(Object obj) {
+        em.getTransaction().begin();
+        em.persist(obj);
+        em.getTransaction().commit();
     }
 
-    public Garage retrieve(String name) {
-        return manager.find(Garage.class, name);
+    public void remove(Object obj) {
+        em.getTransaction().begin();
+        em.remove(obj);
+        em.getTransaction().commit();
+    }
+
+    public Garage findGarage(String name) {
+        return em.find(Garage.class, name);
+    }
+
+    public Collection<Garage> findAllGarages() {
+        Query query = em.createQuery("SELECT g FROM Garage g");
+        return (Collection<Garage>) query.getResultList();
     }
 }

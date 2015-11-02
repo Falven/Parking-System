@@ -27,7 +27,7 @@ public class EntryController {
         this.garage = owner;
         this.database = ParkingSystemDB.getInstance();
         this.gate = new EntryGate(garage);
-        this.database.persist(gate);
+        this.database.add(gate);
 
         // Load UI
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
@@ -36,22 +36,14 @@ public class EntryController {
         stage = new Stage();
         stage.setTitle("Entry Gate #" + gate.getId());
         stage.setScene(scene);
-        stage.show();
-
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
-        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+        stage.setX(screenBounds.getWidth() - stage.getWidth());
+        stage.setY(screenBounds.getHeight() - stage.getHeight());
+        stage.show();
     }
 
     @FXML
     protected void handleGetTicket(ActionEvent event) {
-
-        Ticket ticket = new Ticket(gate);
-        database.persist(ticket);
-
-        Ticket ticket1 = new Ticket(gate);
-        database.persist(ticket1);
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/TicketView.fxml"));
             TicketController ticketController = new TicketController();

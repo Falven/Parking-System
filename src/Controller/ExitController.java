@@ -24,7 +24,7 @@ public class ExitController {
         this.garage = owner;
         this.database = ParkingSystemDB.getInstance();
         this.gate = new ExitGate(garage);
-        this.database.persist(gate);
+        this.database.add(gate);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);
@@ -32,10 +32,9 @@ public class ExitController {
         stage = new Stage();
         stage.setTitle("Exit Gate #" + gate.getId());
         stage.setScene(scene);
-        stage.show();
-
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX(screenBounds.getWidth() - stage.getWidth());
         stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+        stage.show();
     }
 }
