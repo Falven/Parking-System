@@ -5,9 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Screen;
@@ -16,7 +14,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Collection;
 
-public class AdminController {
+public class AdminController extends Controller {
 
     @FXML
     private TextField garageField;
@@ -29,26 +27,23 @@ public class AdminController {
     private ParkingSystemDB database;
 
     public AdminController(Stage stage) throws IOException {
-        database = ParkingSystemDB.getInstance();
-        garageControllers = FXCollections.observableArrayList();
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
-        loader.setController(this);
-        Scene scene = new Scene(loader.load(), 200.0, 325.0);
-        stage.setTitle("Administrative Controls");
-        stage.setScene(scene);
-        stage.show();
+        super(stage, "/view/AdminView.fxml", 200.0, 325.0);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX(0.0);
         stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+        stage.setTitle("Administrative Controls");
+        showView();
     }
 
     @FXML
     protected void initialize() throws IOException {
+        garageControllers = FXCollections.observableArrayList();
+        database = ParkingSystemDB.getInstance();
+
         garageList.setItems(garageControllers);
         Collection<Garage> garages = database.findAllGarages();
         for (Garage garage : garages) {
-            garageControllers.add(new GarageController(garage));
+            garageControllers.add(new GarageController(stage, garage));
         }
     }
 
@@ -56,7 +51,7 @@ public class AdminController {
     protected void handleAddGarage(ActionEvent event) throws IOException {
         Garage garage = new Garage(garageField.getText());
         database.add(garage);
-        garageControllers.add(new GarageController(garage));
+        garageControllers.add(new GarageController(stage, garage));
     }
 
     @FXML

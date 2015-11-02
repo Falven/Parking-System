@@ -35,6 +35,22 @@ public class Garage {
         this.name = name;
     }
 
+    public List<EntryGate> getEntryGates() {
+        return entryGates;
+    }
+
+    public void setEntryGates(List<EntryGate> entryGates) {
+        this.entryGates = entryGates;
+    }
+
+    public List<ExitGate> getExitGates() {
+        return exitGates;
+    }
+
+    public void setExitGates(List<ExitGate> exitGates) {
+        this.exitGates = exitGates;
+    }
+
     public String toString() {
         return name;
     }
