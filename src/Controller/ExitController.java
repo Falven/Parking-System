@@ -23,7 +23,7 @@ public class ExitController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);
-        this.scene = new Scene(loader.load(), 200.0, 300.0);
+        this.scene = new Scene(loader.load(), 350.0, 400.0);
         this.stage = new Stage();
         this.stage.setTitle("Exit Gate #" + gate.getId());
         this.stage.setScene(this.scene);

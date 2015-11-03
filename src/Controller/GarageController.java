@@ -3,6 +3,7 @@ package Controller;
 import Model.EntryGate;
 import Model.ExitGate;
 import Model.Garage;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,13 +45,13 @@ public class GarageController {
     @FXML
     private ListView<ExitController> exitGatesList;
 
-    private ObservableList<EntryController> entryControllers;
+    private SimpleListProperty<EntryController> entryControllerListProperty;
 
-    private ObservableList<ExitController> exitControllers;
+    private SimpleListProperty<ExitController> exitControllerListProperty;
 
     public GarageController(Garage garage, Window owner) throws IOException {
-        this.entryControllers = FXCollections.observableArrayList();
-        this.exitControllers = FXCollections.observableArrayList();
+        this.entryControllerListProperty = new SimpleListProperty(FXCollections.<EntryController>observableArrayList());
+        this.exitControllerListProperty = new SimpleListProperty(FXCollections.<ExitController>observableArrayList());
         this.garage = garage;
         this.em = Main.getEmf().createEntityManager();
 
@@ -67,14 +68,22 @@ public class GarageController {
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
 
-        this.entryGatesList.setItems(entryControllers);
-        this.exitGatesList.setItems(exitControllers);
+        this.entryGatesList.setItems(entryControllerListProperty.get());
+        this.exitGatesList.setItems(exitControllerListProperty.get());
+        this.entryGatesCountLabel.textProperty().bind(this.entryControllerListProperty.sizeProperty().asString());
+        this.exitGatesCountLabel.textProperty().bind(this.exitControllerListProperty.sizeProperty().asString());
         try {
             em.getTransaction().begin();
             List<EntryGate> entryGates = garage.getEntryGates();
             if(null != entryGates) {
                 for(EntryGate gate : entryGates) {
-                    entryControllers.add(new EntryController(gate, window));
+                    entryControllerListProperty.get().add(new EntryController(gate, window));
+                }
+            }
+            List<ExitGate> exitGates = garage.getExitGates();
+            if(null != exitGates) {
+                for(ExitGate gate : exitGates) {
+                    exitControllerListProperty.get().add(new ExitController(gate, window));
                 }
             }
             em.getTransaction().commit();
@@ -103,7 +112,7 @@ public class GarageController {
             em.getTransaction().begin();
             EntryGate gate = new EntryGate(garage);
             em.persist(gate);
-            entryControllers.add(new EntryController(gate, window));
+            entryControllerListProperty.get().add(new EntryController(gate, window));
             garage.getEntryGates().add(gate);
             em.getTransaction().commit();
         } finally {
@@ -115,6 +124,18 @@ public class GarageController {
 
     @FXML
     protected void handleAddExitGate(ActionEvent event) throws IOException {
+        try {
+            em.getTransaction().begin();
+            ExitGate gate = new ExitGate(garage);
+            em.persist(gate);
+            exitControllerListProperty.get().add(new ExitController(gate, window));
+            garage.getExitGates().add(gate);
+            em.getTransaction().commit();
+        } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
     }
 
     @FXML
@@ -124,7 +145,7 @@ public class GarageController {
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
             EntryGate toBeRemoved = em.merge(controller.getGate());
             em.remove(toBeRemoved);
-            entryControllers.remove(controller);
+            entryControllerListProperty.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
         } finally {
@@ -136,6 +157,19 @@ public class GarageController {
 
     @FXML
     protected void handleRemoveExitGate(ActionEvent event) {
+        try {
+            em.getTransaction().begin();
+            ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
+            ExitGate toBeRemoved = em.merge(controller.getGate());
+            em.remove(toBeRemoved);
+            exitControllerListProperty.get().remove(controller);
+            controller.closeView();
+            em.getTransaction().commit();
+        } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
     }
 
     @FXML
@@ -146,6 +180,8 @@ public class GarageController {
 
     @FXML
     protected void handleShowExitGate(ActionEvent event) {
+        ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
+        controller.showView();
     }
 
     public String toString() {
