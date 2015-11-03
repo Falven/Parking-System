@@ -11,7 +11,7 @@ public class Garage {
     @Column(nullable = false)
     protected String name;
 
-    @OneToMany(mappedBy="garage")
+    @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     private List<EntryGate> entryGates;
 
     @OneToMany(mappedBy="garage")

@@ -16,7 +16,6 @@ import javafx.stage.Window;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.io.IOException;
 import java.util.Collection;
@@ -99,7 +98,8 @@ public class AdminController {
         try {
             em.getTransaction().begin();
             GarageController controller = garageList.getSelectionModel().getSelectedItem();
-            em.remove(controller.getGarage());
+            Garage toBeRemoved = em.merge(controller.getGarage());
+            em.remove(toBeRemoved);
             garageControllers.remove(controller);
             controller.closeView();
             em.getTransaction().commit();

@@ -142,7 +142,7 @@
                   </TableView>
                   <VBox alignment="CENTER">
                      <children>
-                        <Label text="Per-date statistics.">
+                        <Label text="Daily statistics.">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -182,7 +182,7 @@
                <children>
                   <VBox alignment="CENTER">
                      <children>
-                        <Label text="Per-month statistics">
+                        <Label text="Weekly statistics">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -230,7 +230,7 @@
                <children>
                   <VBox alignment="CENTER">
                      <children>
-                        <Label text="Per-year statistics">
+                        <Label text="Monthly statistics">
                            <font>
                               <Font size="18.0" />
                            </font>

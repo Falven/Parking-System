@@ -33,10 +33,10 @@ public class GarageController {
     private Window window;
 
     @FXML
-    private Label entryGatesLabel;
+    private Label entryGatesCountLabel;
 
     @FXML
-    private Label exitGatesLabel;
+    private Label exitGatesCountLabel;
 
     @FXML
     private ListView<EntryController> entryGatesList;
