@@ -36,7 +36,6 @@ public class EntryController {
         this.stage.setY(screenBounds.getHeight() - this.stage.getHeight());
         this.stage.initModality(Modality.NONE);
         this.stage.initOwner(owner);
-        this.stage.show();
         this.window = this.scene.getWindow();
     }
 

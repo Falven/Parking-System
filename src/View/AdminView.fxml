@@ -53,17 +53,20 @@
       </GridPane>
       <HBox alignment="CENTER" GridPane.rowIndex="2">
          <children>
-            <Button mnemonicParsing="false" onAction="#handleViewGarage" text="View">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" />
-               </HBox.margin>
-            </Button>
             <Button mnemonicParsing="false" onAction="#handleRemoveGarage" text="Remove">
                <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" />
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#handleViewGarage" text="Show">
+               <HBox.margin>
+                  <Insets left="5.0" />
                </HBox.margin>
             </Button>
          </children>
+         <GridPane.margin>
+            <Insets bottom="5.0" />
+         </GridPane.margin>
       </HBox>
    </children>
    <columnConstraints>

@@ -1,7 +1,5 @@
 package Model;
 
-import com.sun.istack.internal.NotNull;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -9,21 +7,21 @@ import java.util.List;
 public class Garage {
 
     @Id
-    @NotNull
+    @Basic(optional = false)
+    @Column(nullable = false)
     protected String name;
 
-    @NotNull
-    @OneToMany(cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy="garage")
     private List<EntryGate> entryGates;
 
-    @NotNull
-    @OneToMany(cascade=CascadeType.REMOVE)
+    @OneToMany(mappedBy="garage")
     private List<ExitGate> exitGates;
 
     public Garage() {
     }
 
     public Garage(String name) {
+        this();
         this.name = name;
     }
 
@@ -39,16 +37,8 @@ public class Garage {
         return entryGates;
     }
 
-    public void setEntryGates(List<EntryGate> entryGates) {
-        this.entryGates = entryGates;
-    }
-
     public List<ExitGate> getExitGates() {
         return exitGates;
-    }
-
-    public void setExitGates(List<ExitGate> exitGates) {
-        this.exitGates = exitGates;
     }
 
     public String toString() {

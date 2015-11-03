@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 public class Payment {
     @Id
-    @NotNull
     @GeneratedValue()
     protected int id;
 

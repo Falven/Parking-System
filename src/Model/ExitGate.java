@@ -8,16 +8,13 @@ import java.util.List;
 @Entity
 public class ExitGate {
     @Id
-    @NotNull
     @GeneratedValue()
     private int id;
 
-    @NotNull
-    @OneToMany(cascade=CascadeType.REMOVE)
+    @OneToMany(cascade=CascadeType.ALL)
     private List<Ticket> tickets;
 
-    @NotNull
-    @OneToMany(cascade=CascadeType.REMOVE)
+    @OneToMany(cascade=CascadeType.ALL)
     private List<Payment> payments;
 
     @ManyToOne()

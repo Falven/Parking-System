@@ -12,7 +12,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -21,7 +20,6 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 public class GarageController {
@@ -67,7 +65,6 @@ public class GarageController {
         this.stage.setTitle(garage.getName() + " Garage.");
         this.stage.initModality(Modality.WINDOW_MODAL);
         this.stage.initOwner(owner);
-        this.stage.show();
         this.window = this.scene.getWindow();
 
         this.entryGatesList.setItems(entryControllers);
@@ -78,12 +75,6 @@ public class GarageController {
             if(null != entryGates) {
                 for(EntryGate gate : entryGates) {
                     entryControllers.add(new EntryController(gate, window));
-                }
-            }
-            List<ExitGate> exitGates = garage.getExitGates();
-            if(null != exitGates) {
-                for (ExitGate gate : exitGates) {
-                    exitControllers.add(new ExitController(gate, window));
                 }
             }
             em.getTransaction().commit();
@@ -131,7 +122,8 @@ public class GarageController {
         try {
             em.getTransaction().begin();
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
-            em.remove(controller.getGate());
+            EntryGate toBeRemoved = em.merge(controller.getGate());
+            em.remove(toBeRemoved);
             entryControllers.remove(controller);
             controller.closeView();
             em.getTransaction().commit();

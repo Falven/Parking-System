@@ -7,7 +7,6 @@ import javax.persistence.*;
 @Entity
 public class Ticket {
     @Id
-    @NotNull
     @GeneratedValue()
     protected int id;
 

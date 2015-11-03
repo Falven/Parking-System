@@ -55,7 +55,8 @@ public class AdminController {
 
         this.garageList.setItems(garageControllers);
 
-        Collection<Garage> garages = em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
+        TypedQuery query = em.createQuery("SELECT g FROM Garage g", Garage.class);
+        Collection<Garage> garages = query.getResultList();
         for (Garage garage : garages) {
             garageControllers.add(new GarageController(garage, window));
         }
@@ -87,17 +88,20 @@ public class AdminController {
 
     @FXML
     protected void handleViewGarage(ActionEvent event) throws IOException {
-        garageList.getSelectionModel().getSelectedItem().showView();
+        GarageController controller = garageList.getSelectionModel().getSelectedItem();
+        if(null != controller) {
+            controller.showView();
+        }
     }
 
     @FXML
     protected void handleRemoveGarage(ActionEvent event) {
         try {
             em.getTransaction().begin();
-            GarageController garageController = garageList.getSelectionModel().getSelectedItem();
-            em.remove(garageController.getGarage());
-            garageControllers.remove(garageController);
-            garageController.closeView();
+            GarageController controller = garageList.getSelectionModel().getSelectedItem();
+            em.remove(controller.getGarage());
+            garageControllers.remove(controller);
+            controller.closeView();
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {

@@ -1,19 +1,16 @@
 package Model;
 
-import com.sun.istack.internal.NotNull;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class EntryGate {
+
     @Id
-    @NotNull
     @GeneratedValue()
     private int id;
 
-    @NotNull
-    @OneToMany(cascade= CascadeType.REMOVE)
+    @OneToMany(mappedBy="entryGate")
     private List<Ticket> tickets;
 
     @ManyToOne()
@@ -23,6 +20,7 @@ public class EntryGate {
     }
 
     public EntryGate(Garage owner) {
+        this();
         setGarage(owner);
     }
 
