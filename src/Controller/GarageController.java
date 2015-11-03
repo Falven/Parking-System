@@ -143,8 +143,12 @@ public class GarageController {
         try {
             em.getTransaction().begin();
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
-            EntryGate toBeRemoved = em.merge(controller.getGate());
-            em.remove(toBeRemoved);
+            EntryGate gate = controller.getGate();
+            if(em.contains(gate)) {
+                em.remove(gate);
+            } else {
+                em.remove(em.merge(gate));
+            }
             entryControllerListProperty.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
@@ -160,8 +164,12 @@ public class GarageController {
         try {
             em.getTransaction().begin();
             ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
-            ExitGate toBeRemoved = em.merge(controller.getGate());
-            em.remove(toBeRemoved);
+            ExitGate gate = controller.getGate();
+            if(em.contains(gate)) {
+                em.remove(gate);
+            } else {
+                em.remove(em.merge(gate));
+            }
             exitControllerListProperty.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();

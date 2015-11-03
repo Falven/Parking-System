@@ -98,8 +98,12 @@ public class AdminController {
         try {
             em.getTransaction().begin();
             GarageController controller = garageList.getSelectionModel().getSelectedItem();
-            Garage toBeRemoved = em.merge(controller.getGarage());
-            em.remove(toBeRemoved);
+            Garage toBeRemoved = controller.getGarage();
+            if(em.contains(toBeRemoved)) {
+                em.remove(toBeRemoved);
+            } else {
+                em.remove(em.merge(toBeRemoved));
+            }
             garageControllers.remove(controller);
             controller.closeView();
             em.getTransaction().commit();
