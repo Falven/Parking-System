@@ -17,7 +17,7 @@ public class Garage {
     @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     private List<EntryGate> entryGates;
 
-    @OneToMany(mappedBy="garage")
+    @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     private List<ExitGate> exitGates;
 
     public Garage() {

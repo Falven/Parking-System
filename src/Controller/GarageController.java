@@ -57,7 +57,7 @@ public class GarageController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GarageView.fxml"));
         loader.setController(this);
-        this.scene = new Scene(loader.load(), 400.0, 400.0);
+        this.scene = new Scene(loader.load(), 650.0, 500.0);
         this.stage = new Stage();
         this.stage.setScene(this.scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();

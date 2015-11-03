@@ -10,7 +10,7 @@ public class EntryGate {
     @GeneratedValue()
     private int id;
 
-    @OneToMany(mappedBy="entryGate")
+    @OneToMany(mappedBy="entryGate", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
     @ManyToOne()

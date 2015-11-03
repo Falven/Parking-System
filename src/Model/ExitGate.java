@@ -12,10 +12,10 @@ public class ExitGate {
     @GeneratedValue()
     private int id;
 
-    @OneToMany(mappedBy="exitGate")
+    @OneToMany(mappedBy="exitGate", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
 
-    @OneToMany(mappedBy="exitGate")
+    @OneToMany(mappedBy="exitGate", cascade = CascadeType.ALL)
     private List<Payment> payments;
 
     @ManyToOne()
