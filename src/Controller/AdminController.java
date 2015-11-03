@@ -14,10 +14,17 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.io.IOException;
 import java.util.Collection;
 
 public class AdminController {
+
+    @Resource
+    EntityManager em;
 
     private Scene scene;
     private Stage stage;
@@ -31,11 +38,10 @@ public class AdminController {
 
     private ObservableList<GarageController> garageControllers;
 
-    private ParkingSystemDB database;
-
     public AdminController(Stage stage) throws IOException {
         this.garageControllers = FXCollections.observableArrayList();
-        this.database = ParkingSystemDB.getInstance();
+        this.em = Main.getEmf().createEntityManager();
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 275.0, 375.0);
@@ -48,7 +54,8 @@ public class AdminController {
         this.window = this.scene.getWindow();
 
         this.garageList.setItems(garageControllers);
-        Collection<Garage> garages = database.findAllGarages();
+
+        Collection<Garage> garages = em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
         for (Garage garage : garages) {
             garageControllers.add(new GarageController(garage, window));
         }
@@ -64,23 +71,38 @@ public class AdminController {
             alert.setContentText("The provided garage name is invalid.");
             alert.showAndWait();
         } else {
-            Garage garage = new Garage(garageName);
-            database.add(garage);
-            garageControllers.add(new GarageController(garage, window));
+            try {
+                em.getTransaction().begin();
+                Garage garage = new Garage(garageName);
+                em.persist(garage);
+                garageControllers.add(new GarageController(garage, window));
+                em.getTransaction().commit();
+            } finally {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+            }
         }
     }
 
     @FXML
     protected void handleViewGarage(ActionEvent event) throws IOException {
-        GarageController garageController = garageList.getSelectionModel().getSelectedItem();
-        garageController.showView();
+        garageList.getSelectionModel().getSelectedItem().showView();
     }
 
     @FXML
     protected void handleRemoveGarage(ActionEvent event) {
-        GarageController garageController = garageList.getSelectionModel().getSelectedItem();
-        garageController.closeView();
-        garageControllers.remove(garageController);
-        database.remove(garageController.getGarage());
+        try {
+            em.getTransaction().begin();
+            GarageController garageController = garageList.getSelectionModel().getSelectedItem();
+            em.remove(garageController.getGarage());
+            garageControllers.remove(garageController);
+            garageController.closeView();
+            em.getTransaction().commit();
+        } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
     }
 }
