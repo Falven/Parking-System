@@ -13,11 +13,11 @@ public class Garage {
     protected String name;
 
     @NotNull
-    @OneToMany()
+    @OneToMany(cascade=CascadeType.REMOVE)
     private List<EntryGate> entryGates;
 
     @NotNull
-    @OneToMany()
+    @OneToMany(cascade=CascadeType.REMOVE)
     private List<ExitGate> exitGates;
 
     public Garage() {

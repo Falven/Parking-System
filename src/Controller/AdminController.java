@@ -5,16 +5,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.util.Collection;
 
-public class AdminController extends Controller {
+public class AdminController {
+
+    private Scene scene;
+    private Stage stage;
+    private Window window;
 
     @FXML
     private TextField garageField;
@@ -27,31 +34,39 @@ public class AdminController extends Controller {
     private ParkingSystemDB database;
 
     public AdminController(Stage stage) throws IOException {
-        super(stage, "/view/AdminView.fxml", 200.0, 325.0);
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX(0.0);
-        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
-        stage.setTitle("Administrative Controls");
-        showView();
-    }
-
-    @FXML
-    protected void initialize() throws IOException {
-        garageControllers = FXCollections.observableArrayList();
-        database = ParkingSystemDB.getInstance();
-
+        this.garageControllers = FXCollections.observableArrayList();
+        this.database = ParkingSystemDB.getInstance();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
+        loader.setController(this);
+        this.scene = new Scene(loader.load(), 275.0, 375.0);
+        this.stage = stage;
+        this.stage.setScene(scene);
+        this.stage.setX(0.0);
+        this.stage.setY((Screen.getPrimary().getVisualBounds().getHeight() - this.stage.getHeight()) / 2);
+        this.stage.setTitle("Admin Controls");
+        this.stage.show();
+        this.window = this.scene.getWindow();
         garageList.setItems(garageControllers);
         Collection<Garage> garages = database.findAllGarages();
         for (Garage garage : garages) {
-            garageControllers.add(new GarageController(stage, garage));
+            garageControllers.add(new GarageController(garage, window));
         }
     }
 
     @FXML
     protected void handleAddGarage(ActionEvent event) throws IOException {
-        Garage garage = new Garage(garageField.getText());
-        database.add(garage);
-        garageControllers.add(new GarageController(stage, garage));
+        String garageName = garageField.getText();
+        if(null == garageName || garageName.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Garage name error.");
+            alert.setHeaderText("Error creating garage.");
+            alert.setContentText("The provided garage name is invalid.");
+            alert.showAndWait();
+        } else {
+            Garage garage = new Garage(garageName);
+            database.add(garage);
+            garageControllers.add(new GarageController(garage, window));
+        }
     }
 
     @FXML

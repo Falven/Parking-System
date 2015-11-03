@@ -8,136 +8,112 @@
 
 <TabPane tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <tabs>
-      <Tab closable="false" text="Current">
+      <Tab closable="false" text="Gates">
          <content>
-            <GridPane hgap="5.0" prefHeight="323.0" prefWidth="408.0" vgap="5.0">
+            <GridPane hgap="5.0">
                <children>
                   <VBox alignment="CENTER_LEFT">
-                     <children>
-                        <Label text="Occupancy">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label text="The number of cars currently in this garage." wrapText="true" />
-                        <Label text="Label">
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </Label>
-                     </children>
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </VBox>
-                  <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                  <GridPane GridPane.columnIndex="1">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints vgrow="NEVER" />
+                      <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="NEVER" />
+                    </rowConstraints>
                      <children>
-                        <Label text="Max Occupancy">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label text="The maximum number of cars this garage can hold." wrapText="true" />
-                        <TextField>
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </TextField>
+                        <ListView prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="5.0" />
+                           </GridPane.margin></ListView>
+                        <HBox alignment="CENTER" GridPane.rowIndex="2">
+                           <children>
+                              <Button mnemonicParsing="false" text="Add">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Remove">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Show">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <VBox>
+                           <children>
+                              <Label text="Exit gates:">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label text="0 total." />
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                        </VBox>
                      </children>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" GridPane.rowIndex="1">
+                  </GridPane>
+                  <GridPane>
                      <children>
-                        <Label text="Tickets">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label text="The number of tickets sold in this garage." wrapText="true" />
-                        <Label text="Label">
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
+                        <ListView prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </ListView>
+                        <HBox alignment="CENTER" GridPane.rowIndex="2">
+                           <children>
+                              <Button mnemonicParsing="false" text="Add">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Remove">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" text="Show">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <VBox>
+                           <children>
+                              <Label text="Entry gates:">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label text="0 total." />
+                           </children>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </GridPane.margin>
+                        </VBox>
                      </children>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <Label text="Payments">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label text="The total amount in payments made." wrapText="true" />
-                        <Label text="Label">
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                     </children>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" GridPane.rowIndex="2">
-                     <children>
-                        <Label text="Foregone Tickets">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label text="Tickets not sold because the garage reached max occupancy." wrapText="true" />
-                        <Label text="Label">
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                     </children>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Label text="Foregone Payments">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label text="Payments lost because the garage reached max occupancy." wrapText="true" />
-                        <Label text="Label">
-                           <VBox.margin>
-                              <Insets top="5.0" />
-                           </VBox.margin>
-                        </Label>
-                     </children>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </VBox>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints vgrow="NEVER" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="NEVER" />
+                     </rowConstraints>
+                  </GridPane>
                </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" />
@@ -145,13 +121,11 @@
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
                </rowConstraints>
             </GridPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Daily">
+      <Tab closable="false" text="Daily stats.">
          <content>
             <GridPane>
                <children>
@@ -202,7 +176,7 @@
             </GridPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Weekly">
+      <Tab closable="false" text="Weekly stats.">
          <content>
             <GridPane>
                <children>
@@ -250,7 +224,7 @@
             </GridPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Monthly">
+      <Tab closable="false" text="Monthly stats.">
          <content>
             <GridPane>
                <children>

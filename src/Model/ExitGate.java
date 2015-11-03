@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 public class ExitGate extends Gate {
     @NotNull
-    @OneToMany()
+    @OneToMany(cascade=CascadeType.REMOVE)
     private List<Payment> payments;
 
     public ExitGate() {

@@ -24,7 +24,7 @@ public class ExitController {
         this.garage = owner;
         this.database = ParkingSystemDB.getInstance();
         this.gate = new ExitGate(garage);
-        this.database.add(gate);
+//        this.database.add(gate);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);

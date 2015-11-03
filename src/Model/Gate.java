@@ -14,7 +14,7 @@ public class Gate {
     private int id;
 
     @NotNull
-    @OneToMany()
+    @OneToMany(cascade=CascadeType.REMOVE)
     private List<Ticket> tickets;
 
     @ManyToOne()

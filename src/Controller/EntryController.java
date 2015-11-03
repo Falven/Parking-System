@@ -27,7 +27,7 @@ public class EntryController {
         this.garage = owner;
         this.database = ParkingSystemDB.getInstance();
         this.gate = new EntryGate(garage);
-        this.database.add(gate);
+//        this.database.add(gate);
 
         // Load UI
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));

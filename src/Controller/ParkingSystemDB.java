@@ -1,10 +1,13 @@
 package Controller;
 
+import Model.EntryGate;
+import Model.ExitGate;
 import Model.Garage;
 
 import javax.annotation.Resource;
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 public class ParkingSystemDB {
 
@@ -28,15 +31,15 @@ public class ParkingSystemDB {
         return instance;
     }
 
-    public void add(Object obj) {
+    public void add(Garage garage) {
         em.getTransaction().begin();
-        em.persist(obj);
+        em.persist(garage);
         em.getTransaction().commit();
     }
 
-    public void remove(Object obj) {
+    public void remove(Garage garage) {
         em.getTransaction().begin();
-        em.remove(obj);
+        em.remove(garage);
         em.getTransaction().commit();
     }
 
