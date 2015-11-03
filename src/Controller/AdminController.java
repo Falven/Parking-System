@@ -40,13 +40,14 @@ public class AdminController {
         loader.setController(this);
         this.scene = new Scene(loader.load(), 275.0, 375.0);
         this.stage = stage;
-        this.stage.setScene(scene);
+        this.stage.setScene(this.scene);
         this.stage.setX(0.0);
         this.stage.setY((Screen.getPrimary().getVisualBounds().getHeight() - this.stage.getHeight()) / 2);
         this.stage.setTitle("Admin Controls");
         this.stage.show();
         this.window = this.scene.getWindow();
-        garageList.setItems(garageControllers);
+
+        this.garageList.setItems(garageControllers);
         Collection<Garage> garages = database.findAllGarages();
         for (Garage garage : garages) {
             garageControllers.add(new GarageController(garage, window));

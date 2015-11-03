@@ -1,13 +1,13 @@
 package Controller;
 
 import Model.ExitGate;
-import Model.Garage;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -15,26 +15,40 @@ public class ExitController {
 
     private Stage stage;
     private Scene scene;
-
-    private Garage garage;
     private ExitGate gate;
-    private ParkingSystemDB database;
+    private Window window;
 
-    public ExitController(Garage owner) throws IOException {
-        this.garage = owner;
-        this.database = ParkingSystemDB.getInstance();
-        this.gate = new ExitGate(garage);
-//        this.database.add(gate);
+    public ExitController(ExitGate gate, Window owner) throws IOException {
+        this.gate = gate;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);
-        scene = new Scene(loader.load(), 300.0, 500.0);
-        stage = new Stage();
-        stage.setTitle("Exit Gate #" + gate.getId());
-        stage.setScene(scene);
+        this.scene = new Scene(loader.load(), 200.0, 300.0);
+        this.stage = new Stage();
+        this.stage.setTitle("Exit Gate #" + gate.getId());
+        this.stage.setScene(this.scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX(screenBounds.getWidth() - stage.getWidth());
-        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+        this.stage.setX(screenBounds.getWidth() - this.stage.getWidth());
+        this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
+        this.stage.initModality(Modality.NONE);
+        this.stage.initOwner(owner);
+        this.stage.show();
+        this.window = this.scene.getWindow();
+    }
+
+    public void showView() {
         stage.show();
+    }
+
+    public void closeView() {
+        stage.close();
+    }
+
+    public ExitGate getGate() {
+        return gate;
+    }
+
+    public String toString() {
+        return gate.toString();
     }
 }

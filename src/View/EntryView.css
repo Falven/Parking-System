@@ -1,5 +1,5 @@
 #root {
     -fx-background-image: url("background.jpg");
     -fx-background-repeat: stretch;
-    -fx-background-position: center top;
+    -fx-background-position: center bottom;
 }

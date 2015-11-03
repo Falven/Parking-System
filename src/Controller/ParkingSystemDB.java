@@ -31,15 +31,15 @@ public class ParkingSystemDB {
         return instance;
     }
 
-    public void add(Garage garage) {
+    public void add(Object obj) {
         em.getTransaction().begin();
-        em.persist(garage);
+        em.persist(obj);
         em.getTransaction().commit();
     }
 
-    public void remove(Garage garage) {
+    public void remove(Object obj) {
         em.getTransaction().begin();
-        em.remove(garage);
+        em.remove(obj);
         em.getTransaction().commit();
     }
 

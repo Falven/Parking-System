@@ -1,16 +1,16 @@
 package Controller;
 
 import Model.EntryGate;
-import Model.Garage;
-import Model.Ticket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -18,28 +18,26 @@ public class EntryController {
 
     private Stage stage;
     private Scene scene;
-
-    private Garage garage;
     private EntryGate gate;
-    private ParkingSystemDB database;
+    private Window window;
 
-    public EntryController(Garage owner) throws IOException {
-        this.garage = owner;
-        this.database = ParkingSystemDB.getInstance();
-        this.gate = new EntryGate(garage);
-//        this.database.add(gate);
+    public EntryController(EntryGate gate, Window owner) throws IOException {
+        this.gate = gate;
 
         // Load UI
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
         loader.setController(this);
-        scene = new Scene(loader.load(), 300.0, 500.0);
-        stage = new Stage();
-        stage.setTitle("Entry Gate #" + gate.getId());
-        stage.setScene(scene);
+        this.scene = new Scene(loader.load(), 200.0, 300.0);
+        this.stage = new Stage();
+        this.stage.setTitle("Entry Gate #" + gate.getId());
+        this.stage.setScene(this.scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX(screenBounds.getWidth() - stage.getWidth());
-        stage.setY(screenBounds.getHeight() - stage.getHeight());
-        stage.show();
+        this.stage.setX(screenBounds.getWidth() - this.stage.getWidth());
+        this.stage.setY(screenBounds.getHeight() - this.stage.getHeight());
+        this.stage.initModality(Modality.NONE);
+        this.stage.initOwner(owner);
+        this.stage.show();
+        this.window = this.scene.getWindow();
     }
 
     @FXML
@@ -57,5 +55,21 @@ public class EntryController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void showView() {
+        stage.show();
+    }
+
+    public void closeView() {
+        stage.close();
+    }
+
+    public EntryGate getGate() {
+        return gate;
+    }
+
+    public String toString() {
+        return gate.toString();
     }
 }
