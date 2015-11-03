@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 public class Ticket {
+
     @Id
     @GeneratedValue()
     protected int id;
@@ -20,7 +21,12 @@ public class Ticket {
     }
 
     public Ticket(EntryGate owner) {
+        this();
         setEntryGate(owner);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public EntryGate getEntryGate() {

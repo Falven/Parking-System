@@ -7,14 +7,15 @@ import java.util.List;
 
 @Entity
 public class ExitGate {
+
     @Id
     @GeneratedValue()
     private int id;
 
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="exitGate")
     private List<Ticket> tickets;
 
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="exitGate")
     private List<Payment> payments;
 
     @ManyToOne()
@@ -24,6 +25,7 @@ public class ExitGate {
     }
 
     public ExitGate(Garage owner) {
+        this();
         setGarage(owner);
     }
 
@@ -41,6 +43,10 @@ public class ExitGate {
 
     public List<Ticket> getTickets() {
         return tickets;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
     }
 
     public String toString() {

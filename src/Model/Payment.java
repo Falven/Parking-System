@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 public class Payment {
+
     @Id
     @GeneratedValue()
     protected int id;
