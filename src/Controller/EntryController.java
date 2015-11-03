@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.EntryGate;
+import Model.Ticket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,9 +13,14 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import java.io.IOException;
 
 public class EntryController {
+
+    @Resource
+    EntityManager em;
 
     private Stage stage;
     private Scene scene;
@@ -23,8 +29,8 @@ public class EntryController {
 
     public EntryController(EntryGate gate, Window owner) throws IOException {
         this.gate = gate;
+        this.em = Main.getEmf().createEntityManager();
 
-        // Load UI
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 200.0, 300.0);
@@ -40,19 +46,19 @@ public class EntryController {
     }
 
     @FXML
-    protected void handleGetTicket(ActionEvent event) {
+    protected void handleGetTicket(ActionEvent event) throws IOException {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/TicketView.fxml"));
-            TicketController ticketController = new TicketController();
-            loader.setController(ticketController);
-            Parent root = loader.load();
-            Scene ticketScene = new Scene(root, 200.0, 300.0);
-            Stage ticketStage = new Stage();
-            ticketStage.setTitle("Your Parking Ticket.");
-            ticketStage.setScene(ticketScene);
-            ticketStage.show();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            em.getTransaction().begin();
+            Ticket ticket = new Ticket(gate);
+            em.persist(ticket);
+            gate.getTickets().add(ticket);
+            TicketController controller = new TicketController(ticket, window);
+            controller.showView();
+            em.getTransaction().commit();
+        } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
         }
     }
 
