@@ -60,7 +60,7 @@ public class AdminController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
         loader.setController(this);
-        this.scene = new Scene(loader.load(), 275.0, 375.0);
+        this.scene = new Scene(loader.load(), 305.0, 400.0);
         this.stage = stage;
         this.stage.setScene(this.scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();

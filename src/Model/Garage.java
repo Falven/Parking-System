@@ -95,6 +95,14 @@ public class Garage {
         }
     }
 
+    public void incrementEntryGateCount() {
+        this.setEntryGateCount(this.getEntryGateCount() + 1);
+    }
+
+    public void decrementEntryGateCount() {
+        this.setEntryGateCount(this.getEntryGateCount() - 1);
+    }
+
     @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     @Access(AccessType.PROPERTY)
     public List<ExitGate> getExitGates() {
@@ -121,6 +129,14 @@ public class Garage {
             this.exitGateCount = exitGateCount;
             this.pcs.firePropertyChange("exitGateCount", oldExitGateCount, this.exitGateCount);
         }
+    }
+
+    public void incrementExitGateCount() {
+        this.setExitGateCount(this.getExitGateCount() + 1);
+    }
+
+    public void decrementExitGateCount() {
+        this.setExitGateCount(this.getExitGateCount() - 1);
     }
 
     @Override

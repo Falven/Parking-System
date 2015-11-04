@@ -237,6 +237,14 @@ public class GarageController {
         this.entryGateCount.set(value);
     }
 
+    public void incrementEntryGateCount() {
+        this.entryGateCount.set(this.entryGateCount.get() + 1);
+    }
+
+    public void decrementEntryGateCount() {
+        this.entryGateCount.set(this.entryGateCount.get() - 1);
+    }
+
     public List<ExitGate> getExitGates() {
         return this.exitGates.get();
     }
@@ -253,12 +261,21 @@ public class GarageController {
         this.exitGateCount.set(value);
     }
 
+    public void incrementExitGateCount() {
+        this.exitGateCount.set(this.exitGateCount.get() + 1);
+    }
+
+    public void decrementExitGateCount() {
+        this.exitGateCount.set(this.exitGateCount.get() - 1);
+    }
+
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
         try {
             em.getTransaction().begin();
             EntryGate gate = new EntryGate(bean);
             em.persist(gate);
+            bean.incrementEntryGateCount();
             entryControllerList.get().add(new EntryController(gate, window));
             bean.getEntryGates().add(gate);
             em.getTransaction().commit();
@@ -275,6 +292,7 @@ public class GarageController {
             em.getTransaction().begin();
             ExitGate gate = new ExitGate(bean);
             em.persist(gate);
+            bean.incrementExitGateCount();
             exitControllerList.get().add(new ExitController(gate, this, window));
             bean.getExitGates().add(gate);
             em.getTransaction().commit();
@@ -292,6 +310,7 @@ public class GarageController {
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
             EntryGate gate = controller.getBean();
             em.remove(em.merge(gate));
+            bean.decrementEntryGateCount();
             entryControllerList.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
@@ -309,6 +328,7 @@ public class GarageController {
             ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
             ExitGate gate = controller.getBean();
             em.remove(em.merge(gate));
+            bean.decrementExitGateCount();
             exitControllerList.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
