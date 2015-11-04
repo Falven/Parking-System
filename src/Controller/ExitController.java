@@ -75,12 +75,14 @@ public class ExitController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 350.0, 400.0);
+        this.stage.setMaxWidth(350.0);
+        this.stage.setMaxHeight(400.0);
         this.stage = new Stage();
         this.stage.setTitle("Exit Gate #" + gate.getId());
         this.stage.setScene(this.scene);
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        this.stage.setX(screenBounds.getWidth() - this.stage.getWidth());
-        this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
+        this.stage.setX(owner.getX() + owner.getWidth());
+        this.stage.setY(owner.getY());
+        this.stage.resizableProperty().setValue(Boolean.FALSE);
         this.stage.initModality(Modality.NONE);
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
