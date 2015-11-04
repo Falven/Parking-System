@@ -21,10 +21,6 @@ import javax.persistence.PersistenceContext;
 public class Main extends Application {
 
     private static SimpleObjectProperty<AdminController> adminControllerProperty;
-    private static final SimpleMapProperty<Garage, GarageController> garageControllerMap = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    private static final SimpleMapProperty<EntryGate, EntryController> entryControllerMap = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    private static final SimpleMapProperty<ExitGate, ExitController> exitControllerMap = new SimpleMapProperty<>(FXCollections.observableHashMap());
-    private static final SimpleMapProperty<Ticket, TicketController> ticketControllerMap = new SimpleMapProperty<>(FXCollections.observableHashMap());
 
     @PersistenceContext
     private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("PSPersistence");
@@ -41,42 +37,6 @@ public class Main extends Application {
 
     public static AdminController getAdminController() {
         return Main.adminControllerProperty.get();
-    }
-
-    public static SimpleObjectProperty<AdminController> adminControllerProperty() {
-        return Main.adminControllerProperty;
-    }
-
-    public static final ObservableMap<Garage, GarageController> getGarageControllerMap() {
-        return Main.garageControllerMap.get();
-    }
-
-    public static SimpleMapProperty<Garage, GarageController> garageControllerListProperty() {
-        return Main.garageControllerMap;
-    }
-
-    public static final ObservableMap<EntryGate, EntryController> getEntryControllerMap() {
-        return Main.entryControllerMap.get();
-    }
-
-    public static SimpleMapProperty<EntryGate, EntryController> entryControllerListProperty() {
-        return Main.entryControllerMap;
-    }
-
-    public static final ObservableMap<ExitGate, ExitController> getExitControllerMap() {
-        return Main.exitControllerMap.get();
-    }
-
-    public static SimpleMapProperty<ExitGate, ExitController> exitControllerListProperty() {
-        return Main.exitControllerMap;
-    }
-
-    public static final ObservableMap<Ticket, TicketController> getTicketControllerMap() {
-        return Main.ticketControllerMap.get();
-    }
-
-    public static SimpleMapProperty<Ticket, TicketController> ticketControllerListProperty() {
-        return Main.ticketControllerMap;
     }
 
     public static EntityManagerFactory getEmf() {
