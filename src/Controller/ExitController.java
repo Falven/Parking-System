@@ -3,6 +3,8 @@ package Controller;
 import Model.ExitGate;
 import Model.Payment;
 import Model.Ticket;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -87,13 +89,17 @@ public class ExitController {
         expMonthBox.getSelectionModel().selectFirst();
         expYearBox.setItems(yearList);
         expYearBox.getSelectionModel().selectFirst();
+
+        addTextLimit(ticketIdField, 12);
+        addTextLimit(ccNumField, 16);
+        addTextLimit(csvField, 3);
     }
 
     @FXML
     protected void handleSubmit(ActionEvent event) {
         try {
             Ticket ticket = em.find(Ticket.class, Integer.parseInt(ticketIdField.getText()));
-            if(!ticket.getEntryGate().getGarage().getName().equals(gate.getGarage().getName())) {
+            if(ticket.getEntryGate().getGarage().getName().equals(gate.getGarage().getName())) {
                 try {
                     long ccNum = Long.parseLong(ccNumField.getText());
                     try {
@@ -134,6 +140,18 @@ public class ExitController {
         } catch(NumberFormatException nfe) {
             Main.showError("Ticket ID error.", "Error reading your ticket.", "The provided ticket ID is invalid.");
         }
+    }
+
+    public void addTextLimit(final TextField tf, final int maxLength) {
+        tf.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+                String text = tf.getText();
+                if (text.length() > maxLength) {
+                    tf.setText(text.substring(0, maxLength));
+                }
+            }
+        });
     }
 
     public void showView() {

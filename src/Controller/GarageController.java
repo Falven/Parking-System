@@ -104,6 +104,8 @@ public class GarageController {
                 em.getTransaction().rollback();
             }
         }
+        entryGatesList.getSelectionModel().selectFirst();
+        exitGatesList.getSelectionModel().selectFirst();
     }
 
     public void showView() {

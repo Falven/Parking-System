@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Screen;
@@ -32,6 +32,9 @@ public class AdminController {
 
     @FXML
     private TextField garageField;
+
+    @FXML
+    private Button addButton;
 
     @FXML
     private ListView<GarageController> garageList;
@@ -61,6 +64,8 @@ public class AdminController {
         for (Garage garage : garages) {
             garageControllers.add(new GarageController(garage, window));
         }
+
+        garageList.getSelectionModel().selectFirst();
     }
 
     @FXML
@@ -106,5 +111,10 @@ public class AdminController {
                 em.getTransaction().rollback();
             }
         }
+    }
+
+    @FXML
+    protected void handleGarageFieldAction(ActionEvent event) {
+        addButton.fire();
     }
 }

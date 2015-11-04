@@ -28,12 +28,12 @@
                   <Insets left="5.0" top="5.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="garageField" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <TextField fx:id="garageField" onAction="#handleGarageFieldAction" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>
             </TextField>
-            <Button mnemonicParsing="false" onAction="#handleAddGarage" text="Add" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddGarage" text="Add" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
