@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.EntryGate;
+import Model.Garage;
 import Model.Ticket;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +18,7 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.List;
 
 public class EntryController {
 
@@ -58,6 +60,8 @@ public class EntryController {
             Ticket ticket = new Ticket(gate);
             em.persist(ticket);
             gate.getTickets().add(ticket);
+            Garage owner = gate.getGarage();
+            owner.setOccupancy(owner.getOccupancy() + 1);
             TicketController controller = new TicketController(ticket, window);
             controller.showView();
             em.getTransaction().commit();

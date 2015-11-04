@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.ExitGate;
+import Model.Garage;
 import Model.Payment;
 import Model.Ticket;
 import javafx.beans.value.ChangeListener;
@@ -117,6 +118,9 @@ public class ExitController {
                                     Payment payment = new Payment(gate, ccNum, csv, ticket.getAmountDue(), month, year);
                                     em.persist(payment);
                                     gate.getPayments().add(payment);
+                                    Garage owner = gate.getGarage();
+                                    owner.setOccupancy(owner.getOccupancy() - 1);
+                                    ticket.getEntryGate().getTickets().remove(ticket);
                                     em.getTransaction().commit();
                                     Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
                                 } finally {

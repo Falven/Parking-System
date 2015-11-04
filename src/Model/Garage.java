@@ -1,18 +1,21 @@
 package Model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class Garage {
 
+    @Transient
+    public static final int MAX_OCCUPANCY = 20;
+
     @Id
     @Basic(optional = false)
     @Column(nullable = false)
     protected String name;
+
+    @Column(nullable = false)
+    private int occupancy;
 
     @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     private List<EntryGate> entryGates;
@@ -21,6 +24,7 @@ public class Garage {
     private List<ExitGate> exitGates;
 
     public Garage() {
+        occupancy = 0;
     }
 
     public Garage(String name) {
@@ -28,12 +32,16 @@ public class Garage {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
+    public int getOccupancy() {
+        return occupancy;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOccupancy(int occupancy) {
+        this.occupancy = occupancy;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public List<EntryGate> getEntryGates() {
