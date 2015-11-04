@@ -1,9 +1,9 @@
 package Controller;
 
 import Model.Garage;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,13 +28,16 @@ public class AdminController {
     private Scene scene;
     private Stage stage;
     private Window window;
-    private ObservableList<GarageController> garageControllers;
+    private SimpleListProperty<GarageController> garageControllers;
 
     @FXML
     private TextField garageField;
 
     @FXML
     private Button addButton;
+
+    @FXML
+    private Label garageCountLabel;
 
     @FXML
     private TableView garageTable;
@@ -53,7 +56,7 @@ public class AdminController {
 
     public AdminController(Stage stage) throws IOException, NoSuchMethodException {
         this.em = Main.getEmf().createEntityManager();
-        this.garageControllers = FXCollections.observableArrayList();
+        this.garageControllers = new SimpleListProperty(FXCollections.observableArrayList());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
         loader.setController(this);
@@ -78,6 +81,7 @@ public class AdminController {
         }
         this.garageTable.setItems(garageControllers);
         this.garageTable.getSelectionModel().selectFirst();
+        this.garageCountLabel.textProperty().bind(this.garageControllers.sizeProperty().asString());
     }
 
     @FXML

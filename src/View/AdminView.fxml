@@ -10,19 +10,16 @@
    <children>
       <VBox GridPane.rowIndex="1">
          <children>
-            <Label text="Garages">
+            <Label text="Garages:">
                <VBox.margin>
-                  <Insets bottom="5.0" />
+                  <Insets />
                </VBox.margin>
             </Label>
-            <TableView fx:id="garageTable">
-              <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="75.0" text="name" />
-                <TableColumn fx:id="occupancyColumn" prefWidth="75.0" text="occupancy" />
-                  <TableColumn fx:id="entryGatesColumn" prefWidth="75.0" text="Entry gates" />
-                  <TableColumn fx:id="exitGatesColumn" prefWidth="75.0" text="Exit gates" />
-              </columns>
-            </TableView>
+            <Label fx:id="garageCountLabel" text="0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -58,7 +55,7 @@
             <Insets />
          </GridPane.margin>
       </GridPane>
-      <HBox alignment="CENTER" GridPane.rowIndex="2">
+      <HBox alignment="CENTER" GridPane.rowIndex="3">
          <children>
             <Button mnemonicParsing="false" onAction="#handleRemoveGarage" text="Remove">
                <HBox.margin>
@@ -75,11 +72,20 @@
             <Insets bottom="5.0" />
          </GridPane.margin>
       </HBox>
+      <TableView fx:id="garageTable" GridPane.rowIndex="2">
+        <columns>
+          <TableColumn fx:id="nameColumn" prefWidth="75.0" text="name" />
+          <TableColumn fx:id="occupancyColumn" prefWidth="75.0" text="occupancy" />
+            <TableColumn fx:id="entryGatesColumn" prefWidth="75.0" text="Entry gates" />
+            <TableColumn fx:id="exitGatesColumn" prefWidth="75.0" text="Exit gates" />
+        </columns>
+      </TableView>
    </children>
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" />
    </columnConstraints>
    <rowConstraints>
+      <RowConstraints vgrow="SOMETIMES" />
       <RowConstraints vgrow="SOMETIMES" />
       <RowConstraints vgrow="SOMETIMES" />
       <RowConstraints vgrow="SOMETIMES" />

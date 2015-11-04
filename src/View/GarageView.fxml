@@ -43,7 +43,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="entryGatesCountLabel" text="0 total." />
+                        <Label fx:id="entryGatesCountLabel" text="0" />
                      </children>
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
