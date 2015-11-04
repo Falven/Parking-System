@@ -15,7 +15,12 @@
                   <Insets bottom="5.0" />
                </VBox.margin>
             </Label>
-            <ListView fx:id="garageList" />
+            <TableView fx:id="garageTable">
+              <columns>
+                <TableColumn fx:id="nameColumn" prefWidth="75.0" text="name" />
+                <TableColumn fx:id="occupancyColumn" prefWidth="75.0" text="occupancy" />
+              </columns>
+            </TableView>
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -58,7 +63,7 @@
                   <Insets right="5.0" />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" onAction="#handleViewGarage" text="Show">
+            <Button mnemonicParsing="false" onAction="#handleManageGarage" text="Manage">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>

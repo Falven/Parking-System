@@ -1,26 +1,23 @@
 package Controller;
 
 import Model.Garage;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import java.io.IOException;
-import java.util.Collection;
 
 public class AdminController {
 
@@ -38,13 +35,22 @@ public class AdminController {
     private Button addButton;
 
     @FXML
-    private ListView<GarageController> garageList;
+    private TableView garageTable;
 
-    private SimpleListProperty<GarageController> garageControllerList;
+    @FXML
+    private TableColumn<Garage, String> nameColumn;
+
+    @FXML
+    private TableColumn<Garage, Integer> occupancyColumn;
+
+    private ObservableList<Garage> garages;
+
+    ObservableMap<Garage, GarageController> controllerMap;
 
     public AdminController(Stage stage) throws IOException {
-        this.garageControllerList = new SimpleListProperty(FXCollections.<EntryController>observableArrayList());
         this.em = Main.getEmf().createEntityManager();
+        this.garages = FXCollections.observableArrayList(em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList());
+        this.controllerMap = Main.getGarageControllerMap();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
         loader.setController(this);
@@ -52,42 +58,37 @@ public class AdminController {
         this.stage = stage;
         this.stage.setScene(this.scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        this.stage.setX(0.0);
+        this.stage.setX((screenBounds.getWidth() - this.stage.getWidth()) / 2);
         this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
         this.stage.setTitle("Admin Controls");
         this.stage.show();
         this.window = this.scene.getWindow();
 
-        this.garageList.setItems(garageControllerList);
-
-        TypedQuery query = em.createQuery("SELECT g FROM Garage g", Garage.class);
-        Collection<Garage> garages = query.getResultList();
-        for (Garage garage : garages) {
-            garageControllerList.add(new GarageController(garage, window));
-        }
-
-        garageList.getSelectionModel().selectFirst();
+        this.nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        this.occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
+        this.garageTable.setItems(garages);
+        this.garageTable.getSelectionModel().selectFirst();
     }
 
-    public final ObservableList<GarageController> getGarageControllerList() {
-        return garageControllerList.get();
-    }
-
-    public SimpleListProperty<GarageController> garageControllerListProperty() {
-        return garageControllerList;
+    @FXML
+    protected void handleGarageFieldAction(ActionEvent event) {
+        addButton.fire();
     }
 
     @FXML
     protected void handleAddGarage(ActionEvent event) throws IOException {
         String garageName = garageField.getText();
-        if(null == garageName || garageName.isEmpty()) {
+        if(null != em.find(Garage.class, garageName)) {
+            Main.showError("Add Garage error.", "Error creating garage.", "The provided garage already exists.");
+        } else if(null == garageName || garageName.isEmpty()) {
             Main.showError("Garage name error.", "Error creating garage.", "The provided garage name is invalid.");
         } else {
             try {
                 em.getTransaction().begin();
                 Garage garage = new Garage(garageName);
                 em.persist(garage);
-                garageControllerList.add(new GarageController(garage, window));
+                garages.add(garage);
+                controllerMap.put(garage, new GarageController(garage, window));
                 em.getTransaction().commit();
             } finally {
                 if (em.getTransaction().isActive()) {
@@ -98,22 +99,14 @@ public class AdminController {
     }
 
     @FXML
-    protected void handleViewGarage(ActionEvent event) throws IOException {
-        GarageController controller = garageList.getSelectionModel().getSelectedItem();
-        if(null != controller) {
-            controller.showView();
-        }
-    }
-
-    @FXML
     protected void handleRemoveGarage(ActionEvent event) {
         try {
             em.getTransaction().begin();
-            GarageController controller = garageList.getSelectionModel().getSelectedItem();
-            Garage toBeRemoved = controller.getGarage();
-            em.remove(em.merge(toBeRemoved));
-            garageControllerList.remove(controller);
-            controller.closeView();
+            Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
+            em.remove(em.merge(selected));
+            garages.remove(selected);
+            controllerMap.get(selected).closeView();
+            controllerMap.remove(selected);
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {
@@ -123,7 +116,10 @@ public class AdminController {
     }
 
     @FXML
-    protected void handleGarageFieldAction(ActionEvent event) {
-        addButton.fire();
+    protected void handleManageGarage(ActionEvent event) throws IOException {
+        GarageController controller = controllerMap.get((Garage)this.garageTable.getSelectionModel().getSelectedItem());
+        if(null != controller) {
+            controller.showView();
+        }
     }
 }

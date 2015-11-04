@@ -293,8 +293,4 @@ public class GarageController {
     @FXML
     protected void handleYearSelected(ActionEvent event) {
     }
-
-    public String toString() {
-        return garage.toString();
-    }
 }
