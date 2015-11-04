@@ -57,13 +57,13 @@ public class GarageController {
     private ListView<TicketController> ticketList;
 
     @FXML
-    private DatePicker dayDatePicker;
+    private DatePicker dayStatDatePicker;
 
     @FXML
-    private ComboBox monthComboBox;
+    private ComboBox monthStatComboBox;
 
     @FXML
-    private ComboBox yearComboBox;
+    private ComboBox yearStatComboBox;
 
     private SimpleListProperty<EntryController> entryControllerList;
 
@@ -71,10 +71,16 @@ public class GarageController {
 
     private SimpleListProperty<TicketController> ticketControllerList;
 
+    private SimpleListProperty<String> monthStatList;
+
+    private SimpleListProperty<String> yearStatList;
+
     public GarageController(Garage garage, Window owner) throws IOException {
-        this.entryControllerList = new SimpleListProperty(FXCollections.<EntryController>observableArrayList());
-        this.exitControllerList = new SimpleListProperty(FXCollections.<ExitController>observableArrayList());
-        this.ticketControllerList = new SimpleListProperty(FXCollections.<ExitController>observableArrayList());
+        this.entryControllerList = new SimpleListProperty(FXCollections.observableArrayList());
+        this.exitControllerList = new SimpleListProperty(FXCollections.observableArrayList());
+        this.ticketControllerList = new SimpleListProperty(FXCollections.observableArrayList());
+        this.monthStatList = new SimpleListProperty(FXCollections.observableArrayList());
+        this.yearStatList = new SimpleListProperty(FXCollections.observableArrayList());
         this.garage = garage;
         this.em = Main.getEmf().createEntityManager();
 
@@ -91,9 +97,9 @@ public class GarageController {
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
 
-        this.entryGatesList.setItems(entryControllerList.get());
-        this.exitGatesList.setItems(exitControllerList.get());
-        this.ticketList.setItems(ticketControllerList.get());
+        this.entryGatesList.setItems(this.entryControllerList.get());
+        this.exitGatesList.setItems(this.exitControllerList.get());
+        this.ticketList.setItems(this.ticketControllerList.get());
         this.entryGatesCountLabel.textProperty().bind(this.entryControllerList.sizeProperty().asString());
         this.exitGatesCountLabel.textProperty().bind(this.exitControllerList.sizeProperty().asString());
         this.ticketCountLabel.textProperty().bind(this.ticketControllerList.sizeProperty().asString());
@@ -125,6 +131,10 @@ public class GarageController {
         }
         entryGatesList.getSelectionModel().selectFirst();
         exitGatesList.getSelectionModel().selectFirst();
+
+        this.monthStatComboBox.setItems(this.monthStatList.get());
+        this.yearStatComboBox.setItems(this.yearStatList.get());
+        Collection<Ticket> tickets = em.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
     }
 
     public void showView() {
@@ -271,17 +281,17 @@ public class GarageController {
     }
 
     @FXML
-    protected void handleDaySelected(ActionEvent event) throws IOException {
-        LocalDate localDate = dayDatePicker.getValue();
+    protected void handleDaySelected(ActionEvent event) {
+        LocalDate localDate = dayStatDatePicker.getValue();
         java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
     }
 
     @FXML
-    protected void handleMonthSelected(ActionEvent event) throws IOException {
+    protected void handleMonthSelected(ActionEvent event) {
     }
 
     @FXML
-    protected void handleYearSelected(ActionEvent event) throws IOException {
+    protected void handleYearSelected(ActionEvent event) {
     }
 
     public String toString() {

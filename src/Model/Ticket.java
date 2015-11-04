@@ -1,97 +1,159 @@
 package Model;
 
 import javax.persistence.*;
+import java.beans.PropertyChangeSupport;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Calendar;
 
 @Entity
+@Access(AccessType.PROPERTY)
 public class Ticket {
 
-    @Id
-    @GeneratedValue()
     private int id;
-
-    @ManyToOne()
     private EntryGate entryGate;
-
-    @ManyToOne()
     private ExitGate exitGate;
-
-    @Column(nullable = false)
     private java.sql.Date assignedDate;
-
-    @Column(nullable = false)
     private java.sql.Time assignedTime;
-
-    @Column(nullable = false)
     private java.sql.Date dueDate;
-
-    @Column(nullable = false)
     private java.sql.Time dueTime;
-
-    @Column(nullable = false)
     private BigDecimal amountDue;
+
+    @Transient
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public Ticket() {
         Calendar cal = Calendar.getInstance();
-        assignedDate = new Date(cal.getTimeInMillis());
-        assignedTime = new java.sql.Time(assignedDate.getTime());
+        setAssignedDate(new Date(cal.getTimeInMillis()));
+        setAssignedTime(new java.sql.Time(assignedDate.getTime()));
 
         cal.add(Calendar.DATE, 1);
-        dueDate = new Date(cal.getTimeInMillis());
-        dueTime = new java.sql.Time(dueDate.getTime());
+        setDueDate(new Date(cal.getTimeInMillis()));
+        setDueTime(new java.sql.Time(dueDate.getTime()));
 
-        amountDue = new BigDecimal(19.99);
+        setAmountDue(new BigDecimal(19.99));
     }
 
-    public Ticket(EntryGate owner) {
+    public Ticket(EntryGate entryGate) {
         this();
-        this.entryGate = owner;
+        setEntryGate(entryGate);
     }
 
-    public Ticket(int id) {
-        this();
-        this.id = id;
-    }
-
+    @Id
+    @GeneratedValue()
+    @Access(AccessType.PROPERTY)
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        int oldId = this.id;
+        if(oldId != id) {
+            this.id = id;
+            pcs.firePropertyChange("id", oldId, this.id);
+        }
+    }
+
+    @ManyToOne()
+    @Access(AccessType.PROPERTY)
     public EntryGate getEntryGate() {
         return entryGate;
     }
 
+    public void setEntryGate(EntryGate entryGate) {
+        EntryGate oldEntryGate = this.entryGate;
+        if(oldEntryGate != entryGate) {
+            this.entryGate = entryGate;
+            pcs.firePropertyChange("entryGate", oldEntryGate, this.entryGate);
+        }
+    }
+
+    @ManyToOne()
+    @Access(AccessType.PROPERTY)
     public ExitGate getExitGate() {
         return exitGate;
     }
 
     public void setExitGate(ExitGate exitGate) {
-        this.exitGate = exitGate;
+        ExitGate oldExitGate = this.exitGate;
+        if(oldExitGate != exitGate) {
+            this.exitGate = exitGate;
+            pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
+        }
     }
 
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
     public Date getAssignedDate() {
         return assignedDate;
     }
 
+    public void setAssignedDate(Date assignedDate) {
+        Date oldAssignedDate = this.assignedDate;
+        if(oldAssignedDate != assignedDate) {
+            this.assignedDate = assignedDate;
+            pcs.firePropertyChange("assignedDate", oldAssignedDate, this.assignedDate);
+        }
+    }
+
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
     public Time getAssignedTime() {
         return assignedTime;
     }
 
+    public void setAssignedTime(Time assignedTime) {
+        Time oldAssignedTime = this.assignedTime;
+        if(oldAssignedTime != assignedTime) {
+            this.assignedTime = assignedTime;
+            pcs.firePropertyChange("assignedTime", oldAssignedTime, this.assignedTime);
+        }
+    }
+
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
     public Date getDueDate() {
         return dueDate;
     }
 
+    public void setDueDate(Date dueDate) {
+        Date oldDueDate = this.dueDate;
+        if(oldDueDate != dueDate) {
+            this.dueDate = dueDate;
+            pcs.firePropertyChange("dueDate", oldDueDate, this.dueDate);
+        }
+    }
+
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
     public Time getDueTime() {
         return dueTime;
     }
 
+    public void setDueTime(Time dueTime) {
+        Time oldDueTime = this.dueTime;
+        if(oldDueTime != dueTime) {
+            this.dueTime = dueTime;
+            pcs.firePropertyChange("dueTime", oldDueTime, this.dueTime);
+        }
+    }
+
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
     public BigDecimal getAmountDue() {
         return amountDue;
     }
 
+    public void setAmountDue(BigDecimal amountDue) {
+        BigDecimal oldAmountDue = this.amountDue;
+        if(oldAmountDue != amountDue) {
+            this.amountDue = amountDue;
+            pcs.firePropertyChange("amountDue", oldAmountDue, this.amountDue);
+        }
+    }
+
+    @Override
     public String toString() {
         return "Ticket #" + getId();
     }

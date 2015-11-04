@@ -184,12 +184,12 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label text="Select a date period of which to display statistics.">
+                        <Label text="Select a date to display statistics.">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <DatePicker fx:id="dayDatePicker" onAction="#handleDaySelected">
+                        <DatePicker fx:id="dayStatDatePicker" onAction="#handleDaySelected">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>
@@ -213,13 +213,13 @@
             </GridPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Weekly stats.">
+      <Tab closable="false" text="Monthly stats.">
          <content>
             <GridPane>
                <children>
                   <VBox alignment="CENTER">
                      <children>
-                        <Label text="Weekly statistics">
+                        <Label text="Monthly statistics">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -229,7 +229,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <ComboBox fx:id="monthComboBox" onAction="#handleMonthSelected" prefWidth="150.0">
+                        <ComboBox fx:id="monthStatComboBox" onAction="#handleMonthSelected" prefWidth="150.0">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>
@@ -261,13 +261,13 @@
             </GridPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Monthly stats.">
+      <Tab closable="false" text="Yearly stats.">
          <content>
             <GridPane>
                <children>
                   <VBox alignment="CENTER">
                      <children>
-                        <Label text="Monthly statistics">
+                        <Label text="Yearly statistics">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -277,7 +277,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <ComboBox fx:id="yearComboBox" onAction="#handleYearSelected" prefWidth="150.0">
+                        <ComboBox fx:id="yearStatComboBox" onAction="#handleYearSelected" prefWidth="150.0">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>
