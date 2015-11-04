@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Modality;
@@ -21,6 +23,7 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public class GarageController {
@@ -44,6 +47,15 @@ public class GarageController {
 
     @FXML
     private ListView<ExitController> exitGatesList;
+
+    @FXML
+    private DatePicker dayDatePicker;
+
+    @FXML
+    private ComboBox monthComboBox;
+
+    @FXML
+    private ComboBox yearComboBox;
 
     private SimpleListProperty<EntryController> entryControllerListProperty;
 
@@ -144,11 +156,7 @@ public class GarageController {
             em.getTransaction().begin();
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
             EntryGate gate = controller.getGate();
-            if(em.contains(gate)) {
-                em.remove(gate);
-            } else {
-                em.remove(em.merge(gate));
-            }
+            em.remove(em.merge(gate));
             entryControllerListProperty.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
@@ -165,11 +173,7 @@ public class GarageController {
             em.getTransaction().begin();
             ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
             ExitGate gate = controller.getGate();
-            if(em.contains(gate)) {
-                em.remove(gate);
-            } else {
-                em.remove(em.merge(gate));
-            }
+            em.remove(em.merge(gate));
             exitControllerListProperty.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
@@ -183,13 +187,31 @@ public class GarageController {
     @FXML
     protected void handleShowEntryGate(ActionEvent event) {
         EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
-        controller.showView();
+        if(null != controller) {
+            controller.showView();
+        }
     }
 
     @FXML
     protected void handleShowExitGate(ActionEvent event) {
         ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
-        controller.showView();
+        if(null != controller) {
+            controller.showView();
+        }
+    }
+
+    @FXML
+    protected void handleDaySelected(ActionEvent event) throws IOException {
+        LocalDate localDate = dayDatePicker.getValue();
+        java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+    }
+
+    @FXML
+    protected void handleMonthSelected(ActionEvent event) throws IOException {
+    }
+
+    @FXML
+    protected void handleYearSelected(ActionEvent event) throws IOException {
     }
 
     public String toString() {

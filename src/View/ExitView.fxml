@@ -24,7 +24,7 @@
       <VBox alignment="CENTER_LEFT" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
          <children>
             <Label text="Insert Ticket" textFill="WHITE" />
-            <TextField promptText="Ticket ID." />
+            <TextField fx:id="ticketIdField" promptText="Ticket ID." />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -33,7 +33,7 @@
       <VBox alignment="CENTER_LEFT" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
          <children>
             <Label text="Insert Credit Card" textFill="WHITE" />
-            <TextField promptText="CC Num." />
+            <TextField fx:id="ccNumField" promptText="CC Num." />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -42,7 +42,7 @@
       <VBox alignment="CENTER_LEFT" GridPane.rowIndex="4">
          <children>
             <Label text="Exp. Month" textFill="WHITE" />
-            <ComboBox prefWidth="150.0" />
+            <ComboBox fx:id="expMonthBox" prefWidth="150.0" />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -51,7 +51,7 @@
       <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
             <Label text="Exp. Year" textFill="WHITE" />
-            <ComboBox prefWidth="150.0" />
+            <ComboBox fx:id="expYearBox" prefWidth="150.0" />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -60,27 +60,19 @@
       <VBox alignment="CENTER_LEFT" GridPane.rowIndex="5">
          <children>
             <Label text="CSV Code" textFill="WHITE" />
-            <TextField />
+            <TextField fx:id="csvField" promptText="CSV" />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </VBox>
-      <Button mnemonicParsing="false" text="Submit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+      <Button mnemonicParsing="false" onAction="#handleSubmit" text="Submit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin></Button>
       <VBox alignment="CENTER" GridPane.columnSpan="2147483647">
          <children>
-            <Label text="Dapper" textFill="WHITE">
-               <font>
-                  <Font name="Georgia" size="30.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Label>
-            <Label text="Parking Services" textFill="WHITE">
+            <Label text="Thank you for parking with us!" textFill="WHITE">
                <font>
                   <Font name="Calibri" size="20.0" />
                </font>

@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane id="root" fx:id="root" hgap="5.0" stylesheets="@TicketView.css" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane id="root" fx:id="root" hgap="5.0" prefHeight="203.0" prefWidth="213.0" stylesheets="@TicketView.css" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" />
       <ColumnConstraints hgrow="SOMETIMES" />
@@ -21,58 +21,66 @@
    <children>
       <VBox alignment="CENTER" GridPane.columnSpan="2147483647">
          <children>
-            <Label text="Dapper">
+            <Label text="Your Parking Ticket">
                <font>
-                  <Font name="Georgia" size="30.0" />
+                  <Font name="Calibri Bold" size="14.0" />
                </font>
                <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Label>
-            <Label text="Parking Ticket">
-               <font>
-                  <Font name="Calibri" size="18.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets />
                </VBox.margin>
             </Label>
          </children>
          <GridPane.margin>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            <Insets />
          </GridPane.margin>
       </VBox>
-      <Label text="Date" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="Time" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="Duedate" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="Duetime" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="Total:" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="\$19.99" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="Ticket ID:" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
-      <Label text="123456" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </GridPane.margin></Label>
+      <VBox alignment="CENTER" GridPane.rowIndex="2">
+         <children>
+            <Label text="Date printed:" />
+            <Label fx:id="assignedDateLabel" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <Label text="Time printed:" />
+            <Label fx:id="assignedTimeLabel" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" GridPane.rowIndex="3">
+         <children>
+            <Label text="Date due:" />
+            <Label fx:id="dueDateLabel" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <children>
+            <Label text="Time due:" />
+            <Label fx:id="dueTimeLabel" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
+         <children>
+            <Label text="Total due:" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="totalLabel" />
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+         <children>
+            <Label text="Ticket ID:" />
+            <Label fx:id="idLabel" />
+         </children>
+      </VBox>
    </children>
 </GridPane>

@@ -1,16 +1,17 @@
 package Controller;
 
-import Model.EntryGate;
 import Model.Ticket;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 
 public class TicketController {
 
@@ -18,6 +19,24 @@ public class TicketController {
     private Scene scene;
     private Ticket ticket;
     private Window window;
+
+    @FXML
+    private Label idLabel;
+
+    @FXML
+    private Label assignedDateLabel;
+
+    @FXML
+    private Label assignedTimeLabel;
+
+    @FXML
+    private Label dueDateLabel;
+
+    @FXML
+    private Label dueTimeLabel;
+
+    @FXML
+    private Label totalLabel;
 
     public TicketController(Ticket ticket, Window owner) throws IOException {
         this.ticket = ticket;
@@ -28,12 +47,18 @@ public class TicketController {
         this.stage = new Stage();
         this.stage.setTitle("Parking Ticket #" + ticket.getId());
         this.stage.setScene(this.scene);
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        this.stage.setX(screenBounds.getWidth() - this.stage.getWidth());
-        this.stage.setY(screenBounds.getHeight() - this.stage.getHeight());
+        this.stage.setX(owner.getX());
+        this.stage.setY(owner.getY());
         this.stage.initModality(Modality.NONE);
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
+
+        idLabel.setText(Integer.toString(ticket.getId()));
+        assignedDateLabel.setText(ticket.getAssignedDate().toString());
+        assignedTimeLabel.setText(new SimpleDateFormat("hh:mm").format(ticket.getAssignedTime()));
+        dueDateLabel.setText(ticket.getDueDate().toString());
+        dueTimeLabel.setText(new SimpleDateFormat("hh:mm").format(ticket.getDueTime()));
+        totalLabel.setText(NumberFormat.getCurrencyInstance().format(ticket.getAmountDue()));
     }
 
     public void showView() {

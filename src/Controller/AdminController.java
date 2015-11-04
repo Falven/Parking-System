@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
@@ -46,8 +47,9 @@ public class AdminController {
         this.scene = new Scene(loader.load(), 275.0, 375.0);
         this.stage = stage;
         this.stage.setScene(this.scene);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         this.stage.setX(0.0);
-        this.stage.setY((Screen.getPrimary().getVisualBounds().getHeight() - this.stage.getHeight()) / 2);
+        this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
         this.stage.setTitle("Admin Controls");
         this.stage.show();
         this.window = this.scene.getWindow();
@@ -65,11 +67,7 @@ public class AdminController {
     protected void handleAddGarage(ActionEvent event) throws IOException {
         String garageName = garageField.getText();
         if(null == garageName || garageName.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Garage name error.");
-            alert.setHeaderText("Error creating garage.");
-            alert.setContentText("The provided garage name is invalid.");
-            alert.showAndWait();
+            Main.showError("Garage name error.", "Error creating garage.", "The provided garage name is invalid.");
         } else {
             try {
                 em.getTransaction().begin();
@@ -99,11 +97,7 @@ public class AdminController {
             em.getTransaction().begin();
             GarageController controller = garageList.getSelectionModel().getSelectedItem();
             Garage toBeRemoved = controller.getGarage();
-            if(em.contains(toBeRemoved)) {
-                em.remove(toBeRemoved);
-            } else {
-                em.remove(em.merge(toBeRemoved));
-            }
+            em.remove(em.merge(toBeRemoved));
             garageControllers.remove(controller);
             controller.closeView();
             em.getTransaction().commit();

@@ -152,7 +152,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <DatePicker>
+                        <DatePicker fx:id="dayDatePicker" onAction="#handleDaySelected">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>
@@ -192,7 +192,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <ComboBox prefWidth="150.0">
+                        <ComboBox fx:id="monthComboBox" onAction="#handleMonthSelected" prefWidth="150.0">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>
@@ -240,7 +240,7 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                         </Label>
-                        <ComboBox prefWidth="150.0">
+                        <ComboBox fx:id="yearComboBox" onAction="#handleYearSelected" prefWidth="150.0">
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin>

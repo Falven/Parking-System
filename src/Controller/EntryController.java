@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -22,6 +23,9 @@ public class EntryController {
     @Resource
     EntityManager em;
 
+    @FXML
+    private Label entryGateNumber;
+
     private Stage stage;
     private Scene scene;
     private EntryGate gate;
@@ -33,7 +37,7 @@ public class EntryController {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
         loader.setController(this);
-        this.scene = new Scene(loader.load(), 200.0, 300.0);
+        this.scene = new Scene(loader.load(), 200.0, 350.0);
         this.stage = new Stage();
         this.stage.setTitle("Entry Gate #" + gate.getId());
         this.stage.setScene(this.scene);

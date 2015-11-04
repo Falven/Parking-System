@@ -12,43 +12,22 @@
     <ColumnConstraints hgrow="SOMETIMES" />
   </columnConstraints>
   <rowConstraints>
-      <RowConstraints vgrow="SOMETIMES" />
     <RowConstraints vgrow="SOMETIMES" />
     <RowConstraints vgrow="NEVER" />
   </rowConstraints>
    <children>
-      <Button mnemonicParsing="false" onAction="#handleGetTicket" text="Get Ticket" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-      <VBox alignment="TOP_CENTER" GridPane.rowIndex="1">
+      <Button mnemonicParsing="false" onAction="#handleGetTicket" text="Get Ticket" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </GridPane.margin></Button>
+      <VBox alignment="CENTER">
          <children>
-            <Label text="Garage Space" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font></Label>
+            <Label text="Parking Space" textFill="WHITE" />
             <ImageView fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@Available.png" />
                </image>
             </ImageView>
-         </children>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="47.0" prefWidth="253.0">
-         <children>
-            <Label text="Dapper" textFill="WHITE">
-               <font>
-                  <Font name="Georgia" size="30.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Label>
-            <Label text="Parking Services" textFill="WHITE">
-               <font>
-                  <Font name="Calibri" size="20.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Label>
          </children>
       </VBox>
    </children>
