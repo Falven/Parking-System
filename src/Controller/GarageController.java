@@ -44,7 +44,9 @@ public class GarageController {
     private JavaBeanStringProperty name;
     private JavaBeanIntegerProperty occupancy;
     private JavaBeanObjectProperty<List<EntryGate>> entryGates;
+    private JavaBeanIntegerProperty entryGateCount;
     private JavaBeanObjectProperty<List<ExitGate>> exitGates;
+    private JavaBeanIntegerProperty exitGateCount;
 
     @FXML
     private Label entryGatesCountLabel;
@@ -88,7 +90,9 @@ public class GarageController {
         this.name = JavaBeanStringPropertyBuilder.create().bean(this.bean).name("name").build();
         this.occupancy = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("occupancy").build();
         this.entryGates = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("entryGates").build();
+        this.entryGateCount = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("entryGateCount").build();
         this.exitGates = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("exitGates").build();
+        this.exitGateCount = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("exitGateCount").build();
         this.entryControllerList = new SimpleListProperty(FXCollections.observableArrayList());
         this.exitControllerList = new SimpleListProperty(FXCollections.observableArrayList());
         this.ticketControllerList = new SimpleListProperty(FXCollections.observableArrayList());
@@ -157,7 +161,7 @@ public class GarageController {
         stage.close();
     }
 
-    public final ObservableList<EntryController> getEntryControllerList() {
+    public ObservableList<EntryController> getEntryControllerList() {
         return entryControllerList.get();
     }
 
@@ -165,7 +169,7 @@ public class GarageController {
         return entryControllerList;
     }
 
-    public final ObservableList<ExitController> getExitControllerList() {
+    public ObservableList<ExitController> getExitControllerList() {
         return exitControllerList.get();
     }
 
@@ -173,7 +177,7 @@ public class GarageController {
         return exitControllerList;
     }
 
-    public final ObservableList<TicketController> getTicketControllerList() {
+    public ObservableList<TicketController> getTicketControllerList() {
         return ticketControllerList.get();
     }
 
@@ -201,36 +205,52 @@ public class GarageController {
         return this.exitGates;
     }
 
-    public final String getName() {
+    public String getName() {
         return this.name.get();
     }
 
-    public final void setName(String value) {
+    public void setName(String value) {
         this.name.set(value);
     }
 
-    public final int getOccupancy() {
+    public int getOccupancy() {
         return this.occupancy.get();
     }
 
-    public final void setOccupancy(int value) {
+    public void setOccupancy(int value) {
         this.occupancy.set(value);
     }
 
-    public final List<EntryGate> getEntryGates() {
+    public List<EntryGate> getEntryGates() {
         return this.entryGates.get();
     }
 
-    public final void setEntryGates(List<EntryGate> value) {
+    public void setEntryGates(List<EntryGate> value) {
         this.entryGates.set(value);
     }
 
-    public final List<ExitGate> getExitGates() {
+    public int getEntryGateCount() {
+        return this.entryGateCount.get();
+    }
+
+    public void setEntryGateCount(int value) {
+        this.entryGateCount.set(value);
+    }
+
+    public List<ExitGate> getExitGates() {
         return this.exitGates.get();
     }
 
-    public final void setExitGates(List<ExitGate> value) {
+    public void setExitGates(List<ExitGate> value) {
         this.exitGates.set(value);
+    }
+
+    public int getExitGateCount() {
+        return this.exitGateCount.get();
+    }
+
+    public void setExitGateCount(int value) {
+        this.exitGateCount.set(value);
     }
 
     @FXML

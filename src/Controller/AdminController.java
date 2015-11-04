@@ -69,8 +69,9 @@ public class AdminController {
 
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
-        entryGatesColumn.setCellValueFactory(new PropertyValueFactory<>("entryGatesCount"));
-        exitGatesColumn.setCellValueFactory(new PropertyValueFactory<>("exitGatesCount"));
+        entryGatesColumn.setCellValueFactory(new PropertyValueFactory<>("entryGateCount"));
+        exitGatesColumn.setCellValueFactory(new PropertyValueFactory<>("exitGateCount"));
+
         List<Garage> garages = em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
         for(Garage garage : garages) {
             garageControllers.add(new GarageController(garage, window));
