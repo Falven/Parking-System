@@ -19,6 +19,8 @@
               <columns>
                 <TableColumn fx:id="nameColumn" prefWidth="75.0" text="name" />
                 <TableColumn fx:id="occupancyColumn" prefWidth="75.0" text="occupancy" />
+                  <TableColumn fx:id="entryGatesColumn" prefWidth="75.0" text="Entry gates" />
+                  <TableColumn fx:id="exitGatesColumn" prefWidth="75.0" text="Exit gates" />
               </columns>
             </TableView>
          </children>

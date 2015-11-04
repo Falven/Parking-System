@@ -9,10 +9,12 @@ import java.util.List;
 @Access(AccessType.PROPERTY)
 public class Garage {
 
-    protected String name;
+    private String name;
     private int occupancy;
     private List<EntryGate> entryGates;
+    private int entryGateCount;
     private List<ExitGate> exitGates;
+    private int exitGateCount;
 
     @Transient
     public static final int MAX_OCCUPANCY = 20;
@@ -79,6 +81,20 @@ public class Garage {
         }
     }
 
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
+    public int getEntryGateCount() {
+        return this.entryGateCount;
+    }
+
+    public void setEntryGateCount(int entryGateCount) {
+        int oldEntryGateCount = this.entryGateCount;
+        if(oldEntryGateCount != entryGateCount) {
+            this.entryGateCount = entryGateCount;
+            this.pcs.firePropertyChange("entryGateCount", oldEntryGateCount, this.entryGateCount);
+        }
+    }
+
     @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     @Access(AccessType.PROPERTY)
     public List<ExitGate> getExitGates() {
@@ -90,6 +106,20 @@ public class Garage {
         if(oldExitGates != exitGates) {
             this.exitGates = exitGates;
             this.pcs.firePropertyChange("exitGates", oldExitGates, this.exitGates);
+        }
+    }
+
+    @Column(nullable = false)
+    @Access(AccessType.PROPERTY)
+    public int getExitGateCount() {
+        return this.exitGateCount;
+    }
+
+    public void setExitGateCount(int exitGateCount) {
+        int oldExitGateCount = this.exitGateCount;
+        if(oldExitGateCount != exitGateCount) {
+            this.exitGateCount = exitGateCount;
+            this.pcs.firePropertyChange("exitGateCount", oldExitGateCount, this.exitGateCount);
         }
     }
 

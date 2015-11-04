@@ -4,7 +4,11 @@ import Model.EntryGate;
 import Model.ExitGate;
 import Model.Garage;
 import Model.Ticket;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.adapter.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -35,8 +39,12 @@ public class GarageController {
 
     private Stage stage;
     private Scene scene;
-    private Garage garage;
+    private final Garage bean;
     private Window window;
+    private JavaBeanStringProperty name;
+    private JavaBeanIntegerProperty occupancy;
+    private JavaBeanObjectProperty<List<EntryGate>> entryGates;
+    private JavaBeanObjectProperty<List<ExitGate>> exitGates;
 
     @FXML
     private Label entryGatesCountLabel;
@@ -75,13 +83,17 @@ public class GarageController {
 
     private SimpleListProperty<String> yearStatList;
 
-    public GarageController(Garage garage, Window owner) throws IOException {
+    public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException {
+        this.bean = garage;
+        this.name = JavaBeanStringPropertyBuilder.create().bean(this.bean).name("name").build();
+        this.occupancy = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("occupancy").build();
+        this.entryGates = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("entryGates").build();
+        this.exitGates = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("exitGates").build();
         this.entryControllerList = new SimpleListProperty(FXCollections.observableArrayList());
         this.exitControllerList = new SimpleListProperty(FXCollections.observableArrayList());
         this.ticketControllerList = new SimpleListProperty(FXCollections.observableArrayList());
         this.monthStatList = new SimpleListProperty(FXCollections.observableArrayList());
         this.yearStatList = new SimpleListProperty(FXCollections.observableArrayList());
-        this.garage = garage;
         this.em = Main.getEmf().createEntityManager();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GarageView.fxml"));
@@ -108,7 +120,7 @@ public class GarageController {
             List<EntryGate> entryGates = garage.getEntryGates();
             if(null != entryGates) {
                 for(EntryGate gate : entryGates) {
-                    entryControllerList.get().add(new EntryController(gate, this, window));
+                    entryControllerList.get().add(new EntryController(gate, window));
                 }
             }
             List<ExitGate> exitGates = garage.getExitGates();
@@ -145,10 +157,6 @@ public class GarageController {
         stage.close();
     }
 
-    public Garage getGarage() {
-        return garage;
-    }
-
     public final ObservableList<EntryController> getEntryControllerList() {
         return entryControllerList.get();
     }
@@ -173,14 +181,66 @@ public class GarageController {
         return ticketControllerList;
     }
 
+    public Garage getBean() {
+        return this.bean;
+    }
+
+    public IntegerProperty occupancyProperty() {
+        return this.occupancy;
+    }
+
+    public StringProperty nameProperty() {
+        return this.name;
+    }
+
+    public ObjectProperty<List<EntryGate>> entryGatesProperty() {
+        return this.entryGates;
+    }
+
+    public ObjectProperty<List<ExitGate>> exitGatesProperty() {
+        return this.exitGates;
+    }
+
+    public final String getName() {
+        return this.name.get();
+    }
+
+    public final void setName(String value) {
+        this.name.set(value);
+    }
+
+    public final int getOccupancy() {
+        return this.occupancy.get();
+    }
+
+    public final void setOccupancy(int value) {
+        this.occupancy.set(value);
+    }
+
+    public final List<EntryGate> getEntryGates() {
+        return this.entryGates.get();
+    }
+
+    public final void setEntryGates(List<EntryGate> value) {
+        this.entryGates.set(value);
+    }
+
+    public final List<ExitGate> getExitGates() {
+        return this.exitGates.get();
+    }
+
+    public final void setExitGates(List<ExitGate> value) {
+        this.exitGates.set(value);
+    }
+
     @FXML
-    protected void handleAddEntryGate(ActionEvent event) throws IOException {
+    protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
         try {
             em.getTransaction().begin();
-            EntryGate gate = new EntryGate(garage);
+            EntryGate gate = new EntryGate(bean);
             em.persist(gate);
-            entryControllerList.get().add(new EntryController(gate, this, window));
-            garage.getEntryGates().add(gate);
+            entryControllerList.get().add(new EntryController(gate, window));
+            bean.getEntryGates().add(gate);
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {
@@ -190,13 +250,13 @@ public class GarageController {
     }
 
     @FXML
-    protected void handleAddExitGate(ActionEvent event) throws IOException {
+    protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
         try {
             em.getTransaction().begin();
-            ExitGate gate = new ExitGate(garage);
+            ExitGate gate = new ExitGate(bean);
             em.persist(gate);
             exitControllerList.get().add(new ExitController(gate, this, window));
-            garage.getExitGates().add(gate);
+            bean.getExitGates().add(gate);
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {
@@ -210,7 +270,7 @@ public class GarageController {
         try {
             em.getTransaction().begin();
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
-            EntryGate gate = controller.getGate();
+            EntryGate gate = controller.getBean();
             em.remove(em.merge(gate));
             entryControllerList.get().remove(controller);
             controller.closeView();
@@ -227,7 +287,7 @@ public class GarageController {
         try {
             em.getTransaction().begin();
             ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
-            ExitGate gate = controller.getGate();
+            ExitGate gate = controller.getBean();
             em.remove(em.merge(gate));
             exitControllerList.get().remove(controller);
             controller.closeView();

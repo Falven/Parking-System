@@ -11,7 +11,7 @@ public class Payment {
 
     private int id;
     private long ccNum;
-    private short csv;
+    private int csv;
     private BigDecimal amountPaid;
     private int expMonth;
     private int expYear;
@@ -72,12 +72,12 @@ public class Payment {
 
     @Column(nullable = false)
     @Access(AccessType.PROPERTY)
-    public short getCsv() {
+    public int getCsv() {
         return csv;
     }
 
-    public void setCsv(short csv) {
-        short oldCsv = this.csv;
+    public void setCsv(int csv) {
+        int oldCsv = this.csv;
         if(oldCsv != csv) {
             this.csv = csv;
             this.pcs.firePropertyChange("csv", oldCsv, this.csv);

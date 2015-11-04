@@ -18,6 +18,7 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.List;
 
 public class AdminController {
 
@@ -38,19 +39,22 @@ public class AdminController {
     private TableView garageTable;
 
     @FXML
-    private TableColumn<Garage, String> nameColumn;
+    private TableColumn<GarageController, String> nameColumn;
 
     @FXML
-    private TableColumn<Garage, Integer> occupancyColumn;
+    private TableColumn<GarageController, Integer> occupancyColumn;
 
-    private ObservableList<Garage> garages;
+    @FXML
+    private TableColumn<GarageController, Integer> entryGatesColumn;
 
-    ObservableMap<Garage, GarageController> controllerMap;
+    @FXML
+    private TableColumn<GarageController, Integer> exitGatesColumn;
 
-    public AdminController(Stage stage) throws IOException {
+    private ObservableList<GarageController> garages;
+
+    public AdminController(Stage stage) throws IOException, NoSuchMethodException {
         this.em = Main.getEmf().createEntityManager();
-        this.garages = FXCollections.observableArrayList(em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList());
-        this.controllerMap = Main.getGarageControllerMap();
+        this.garages = FXCollections.observableArrayList();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
         loader.setController(this);
@@ -64,8 +68,14 @@ public class AdminController {
         this.stage.show();
         this.window = this.scene.getWindow();
 
-        this.nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        this.occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
+        entryGatesColumn.setCellValueFactory(new PropertyValueFactory<>("entryGatesCount"));
+        exitGatesColumn.setCellValueFactory(new PropertyValueFactory<>("exitGatesCount"));
+        List<Garage> pojoGarages = em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
+        for(Garage g : pojoGarages) {
+            garages.add(new GarageController(g, window));
+        }
         this.garageTable.setItems(garages);
         this.garageTable.getSelectionModel().selectFirst();
     }
@@ -76,7 +86,7 @@ public class AdminController {
     }
 
     @FXML
-    protected void handleAddGarage(ActionEvent event) throws IOException {
+    protected void handleAddGarage(ActionEvent event) throws IOException, NoSuchMethodException {
         String garageName = garageField.getText();
         if(null != em.find(Garage.class, garageName)) {
             Main.showError("Add Garage error.", "Error creating garage.", "The provided garage already exists.");
@@ -87,8 +97,7 @@ public class AdminController {
                 em.getTransaction().begin();
                 Garage garage = new Garage(garageName);
                 em.persist(garage);
-                garages.add(garage);
-                controllerMap.put(garage, new GarageController(garage, window));
+                garages.add(new GarageController(garage, window));
                 em.getTransaction().commit();
             } finally {
                 if (em.getTransaction().isActive()) {
@@ -102,11 +111,9 @@ public class AdminController {
     protected void handleRemoveGarage(ActionEvent event) {
         try {
             em.getTransaction().begin();
-            Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
+            GarageController selected = (GarageController)this.garageTable.getSelectionModel().getSelectedItem();
             em.remove(em.merge(selected));
             garages.remove(selected);
-            controllerMap.get(selected).closeView();
-            controllerMap.remove(selected);
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {
@@ -117,9 +124,10 @@ public class AdminController {
 
     @FXML
     protected void handleManageGarage(ActionEvent event) throws IOException {
-        GarageController controller = controllerMap.get((Garage)this.garageTable.getSelectionModel().getSelectedItem());
-        if(null != controller) {
-            controller.showView();
-        }
+//        GarageController controller = (GarageController)this.garageTable.getSelectionModel().getSelectedItem();
+//        if(null != controller) {
+//            controller.showView();
+//        }
+        garages.get(0).setName("newName");
     }
 }

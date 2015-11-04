@@ -3,15 +3,18 @@ package Controller;
 import Model.EntryGate;
 import Model.Garage;
 import Model.Ticket;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.adapter.JavaBeanIntegerProperty;
+import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
+import javafx.beans.property.adapter.JavaBeanObjectProperty;
+import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -25,18 +28,19 @@ public class EntryController {
     @Resource
     EntityManager em;
 
-    @FXML
-    private Label entryGateNumber;
-
+    private final EntryGate bean;
+    private Window window;
     private Stage stage;
     private Scene scene;
-    private EntryGate gate;
-    private Window window;
-    private GarageController parent;
+    private JavaBeanIntegerProperty idProperty;
+    private JavaBeanObjectProperty<List<Ticket>> ticketsProperty;
+    private JavaBeanObjectProperty<Garage> garageProperty;
 
-    public EntryController(EntryGate gate, GarageController parent, Window owner) throws IOException {
-        this.gate = gate;
-        this.parent = parent;
+    public EntryController(EntryGate gate, Window owner) throws IOException, NoSuchMethodException {
+        this.bean = gate;
+        this.idProperty = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("id").build();
+        this.ticketsProperty = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("tickets").build();
+        this.garageProperty = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("garage").build();
         this.em = Main.getEmf().createEntityManager();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
@@ -55,24 +59,44 @@ public class EntryController {
         this.window = this.scene.getWindow();
     }
 
-    @FXML
-    protected void handleGetTicket(ActionEvent event) throws IOException {
-        try {
-            em.getTransaction().begin();
-            Ticket ticket = new Ticket(gate);
-            em.persist(ticket);
-            gate.getTickets().add(ticket);
-            TicketController controller = new TicketController(ticket, window);
-            parent.getTicketControllerList().add(controller);
-            Garage owner = parent.getGarage();
-            owner.setOccupancy(owner.getOccupancy() + 1);
-            controller.showView();
-            em.getTransaction().commit();
-        } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-        }
+    public EntryGate getBean() {
+        return this.bean;
+    }
+
+    public IntegerProperty idProperty() {
+        return this.idProperty;
+    }
+
+    public ObjectProperty<List<Ticket>> ticketsProperty() {
+        return this.ticketsProperty;
+    }
+
+    public ObjectProperty<Garage> garageProperty() {
+        return this.garageProperty;
+    }
+
+    public Integer getId() {
+        return this.idProperty.get();
+    }
+
+    public void setId(Integer id) {
+        this.idProperty.set(id);
+    }
+
+    public List<Ticket> getTickets() {
+        return this.ticketsProperty.get();
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.ticketsProperty.set(tickets);
+    }
+
+    public Garage getGarage() {
+        return this.garageProperty.get();
+    }
+
+    public void setGarage(Garage garage) {
+        this.garageProperty.set(garage);
     }
 
     public void showView() {
@@ -83,11 +107,27 @@ public class EntryController {
         stage.close();
     }
 
-    public EntryGate getGate() {
-        return gate;
+    @FXML
+    protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException {
+        try {
+            em.getTransaction().begin();
+            Ticket ticket = new Ticket(bean);
+            em.persist(ticket);
+            bean.getTickets().add(ticket);
+            TicketController controller = new TicketController(ticket, window);
+//            parent.getTicketControllerList().add(controller);
+            getGarage().setOccupancy(getGarage().getOccupancy() + 1);
+            controller.showView();
+            em.getTransaction().commit();
+        } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
     }
 
+    @Override
     public String toString() {
-        return gate.toString();
+        return bean.toString();
     }
 }
