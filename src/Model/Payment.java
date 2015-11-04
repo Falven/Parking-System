@@ -1,6 +1,7 @@
 package Model;
 
 import javax.persistence.*;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.math.BigDecimal;
 
@@ -32,6 +33,14 @@ public class Payment {
         setExpYear(expYear);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
+
     @Id
     @GeneratedValue()
     @Access(AccessType.PROPERTY)
@@ -43,7 +52,7 @@ public class Payment {
         int oldId = this.id;
         if(oldId != id) {
             this.id = id;
-            pcs.firePropertyChange("id", oldId, this.id);
+            this.pcs.firePropertyChange("id", oldId, this.id);
         }
     }
 
@@ -57,7 +66,7 @@ public class Payment {
         long oldCcNum = this.ccNum;
         if(oldCcNum != ccNum) {
             this.ccNum = ccNum;
-            pcs.firePropertyChange("ccNum", oldCcNum, this.ccNum);
+            this.pcs.firePropertyChange("ccNum", oldCcNum, this.ccNum);
         }
     }
 
@@ -71,7 +80,7 @@ public class Payment {
         short oldCsv = this.csv;
         if(oldCsv != csv) {
             this.csv = csv;
-            pcs.firePropertyChange("csv", oldCsv, this.csv);
+            this.pcs.firePropertyChange("csv", oldCsv, this.csv);
         }
     }
 
@@ -85,7 +94,7 @@ public class Payment {
         BigDecimal oldAmountPaid = this.amountPaid;
         if(oldAmountPaid != amountPaid) {
             this.amountPaid = amountPaid;
-            pcs.firePropertyChange("amountPaid", oldAmountPaid, this.amountPaid);
+            this.pcs.firePropertyChange("amountPaid", oldAmountPaid, this.amountPaid);
         }
     }
 
@@ -99,7 +108,7 @@ public class Payment {
         int oldExpMonth = this.expMonth;
         if(oldExpMonth != expMonth) {
             this.expMonth = expMonth;
-            pcs.firePropertyChange("expMonth", oldExpMonth, this.expMonth);
+            this.pcs.firePropertyChange("expMonth", oldExpMonth, this.expMonth);
         }
     }
 
@@ -113,7 +122,7 @@ public class Payment {
         int oldExpYear = this.expYear;
         if(oldExpYear != expYear) {
             this.expYear = expYear;
-            pcs.firePropertyChange("expYear", oldExpYear, this.expYear);
+            this.pcs.firePropertyChange("expYear", oldExpYear, this.expYear);
         }
     }
 
@@ -127,7 +136,7 @@ public class Payment {
         ExitGate oldExitGate = this.exitGate;
         if(oldExitGate != exitGate) {
             this.exitGate = exitGate;
-            pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
+            this.pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
         }
     }
 

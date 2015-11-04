@@ -1,6 +1,7 @@
 package Model;
 
 import javax.persistence.*;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
@@ -26,6 +27,14 @@ public class Garage {
         setName(name);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
+
     @Id
     @Basic(optional = false)
     @Column(nullable = false)
@@ -38,7 +47,7 @@ public class Garage {
         String oldName = this.name;
         if(oldName != name) {
             this.name = name;
-            pcs.firePropertyChange("name", oldName, this.name);
+            this.pcs.firePropertyChange("name", oldName, this.name);
         }
     }
 
@@ -52,7 +61,7 @@ public class Garage {
         int oldOccupancy = this.occupancy;
         if(oldOccupancy != occupancy) {
             this.occupancy = occupancy;
-            pcs.firePropertyChange("occupancy", oldOccupancy, this.occupancy);
+            this.pcs.firePropertyChange("occupancy", oldOccupancy, this.occupancy);
         }
     }
 
@@ -66,7 +75,7 @@ public class Garage {
         List<EntryGate> oldEntryGates = this.entryGates;
         if(oldEntryGates != entryGates) {
             this.entryGates = entryGates;
-            pcs.firePropertyChange("entryGates", oldEntryGates, this.entryGates);
+            this.pcs.firePropertyChange("entryGates", oldEntryGates, this.entryGates);
         }
     }
 
@@ -80,7 +89,7 @@ public class Garage {
         List<ExitGate> oldExitGates = this.exitGates;
         if(oldExitGates != exitGates) {
             this.exitGates = exitGates;
-            pcs.firePropertyChange("exitGates", oldExitGates, this.exitGates);
+            this.pcs.firePropertyChange("exitGates", oldExitGates, this.exitGates);
         }
     }
 

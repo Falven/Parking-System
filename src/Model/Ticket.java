@@ -1,6 +1,7 @@
 package Model;
 
 import javax.persistence.*;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -40,6 +41,14 @@ public class Ticket {
         setEntryGate(entryGate);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
+
     @Id
     @GeneratedValue()
     @Access(AccessType.PROPERTY)
@@ -51,7 +60,7 @@ public class Ticket {
         int oldId = this.id;
         if(oldId != id) {
             this.id = id;
-            pcs.firePropertyChange("id", oldId, this.id);
+            this.pcs.firePropertyChange("id", oldId, this.id);
         }
     }
 
@@ -65,7 +74,7 @@ public class Ticket {
         EntryGate oldEntryGate = this.entryGate;
         if(oldEntryGate != entryGate) {
             this.entryGate = entryGate;
-            pcs.firePropertyChange("entryGate", oldEntryGate, this.entryGate);
+            this.pcs.firePropertyChange("entryGate", oldEntryGate, this.entryGate);
         }
     }
 
@@ -79,7 +88,7 @@ public class Ticket {
         ExitGate oldExitGate = this.exitGate;
         if(oldExitGate != exitGate) {
             this.exitGate = exitGate;
-            pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
+            this.pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
         }
     }
 
@@ -93,7 +102,7 @@ public class Ticket {
         Date oldAssignedDate = this.assignedDate;
         if(oldAssignedDate != assignedDate) {
             this.assignedDate = assignedDate;
-            pcs.firePropertyChange("assignedDate", oldAssignedDate, this.assignedDate);
+            this.pcs.firePropertyChange("assignedDate", oldAssignedDate, this.assignedDate);
         }
     }
 
@@ -107,7 +116,7 @@ public class Ticket {
         Time oldAssignedTime = this.assignedTime;
         if(oldAssignedTime != assignedTime) {
             this.assignedTime = assignedTime;
-            pcs.firePropertyChange("assignedTime", oldAssignedTime, this.assignedTime);
+            this.pcs.firePropertyChange("assignedTime", oldAssignedTime, this.assignedTime);
         }
     }
 
@@ -121,7 +130,7 @@ public class Ticket {
         Date oldDueDate = this.dueDate;
         if(oldDueDate != dueDate) {
             this.dueDate = dueDate;
-            pcs.firePropertyChange("dueDate", oldDueDate, this.dueDate);
+            this.pcs.firePropertyChange("dueDate", oldDueDate, this.dueDate);
         }
     }
 
@@ -135,7 +144,7 @@ public class Ticket {
         Time oldDueTime = this.dueTime;
         if(oldDueTime != dueTime) {
             this.dueTime = dueTime;
-            pcs.firePropertyChange("dueTime", oldDueTime, this.dueTime);
+            this.pcs.firePropertyChange("dueTime", oldDueTime, this.dueTime);
         }
     }
 
@@ -149,7 +158,7 @@ public class Ticket {
         BigDecimal oldAmountDue = this.amountDue;
         if(oldAmountDue != amountDue) {
             this.amountDue = amountDue;
-            pcs.firePropertyChange("amountDue", oldAmountDue, this.amountDue);
+            this.pcs.firePropertyChange("amountDue", oldAmountDue, this.amountDue);
         }
     }
 

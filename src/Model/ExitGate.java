@@ -1,6 +1,7 @@
 package Model;
 
 import javax.persistence.*;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 
@@ -24,6 +25,14 @@ public class ExitGate {
         setGarage(owner);
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
+
     @Id
     @GeneratedValue()
     @Access(AccessType.PROPERTY)
@@ -35,7 +44,7 @@ public class ExitGate {
         int oldId = this.id;
         if(oldId != id) {
             this.id = id;
-            pcs.firePropertyChange("id", oldId, this.id);
+            this.pcs.firePropertyChange("id", oldId, this.id);
         }
     }
 
@@ -49,7 +58,7 @@ public class ExitGate {
         List<Ticket> oldTickets = this.tickets;
         if(oldTickets != tickets) {
             this.tickets = tickets;
-            pcs.firePropertyChange("tickets", oldTickets, this.tickets);
+            this.pcs.firePropertyChange("tickets", oldTickets, this.tickets);
         }
     }
 
@@ -63,7 +72,7 @@ public class ExitGate {
         List<Payment> oldPayments = this.payments;
         if(oldPayments != payments) {
             this.payments = payments;
-            pcs.firePropertyChange("payments", oldPayments, this.payments);
+            this.pcs.firePropertyChange("payments", oldPayments, this.payments);
         }
     }
 
@@ -77,12 +86,12 @@ public class ExitGate {
         Garage oldGarage = this.garage;
         if(oldGarage != garage) {
             this.garage = garage;
-            pcs.firePropertyChange("garage", oldGarage, this.garage);
+            this.pcs.firePropertyChange("garage", oldGarage, this.garage);
         }
     }
 
     @Override
     public String toString() {
-        return "Exit Gate #" + id;
+        return "Exit Gate #" + getId();
     }
 }
