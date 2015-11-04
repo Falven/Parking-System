@@ -75,9 +75,9 @@ public class ExitController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 350.0, 400.0);
+        this.stage = new Stage();
         this.stage.setMaxWidth(350.0);
         this.stage.setMaxHeight(400.0);
-        this.stage = new Stage();
         this.stage.setTitle("Exit Gate #" + gate.getId());
         this.stage.setScene(this.scene);
         this.stage.setX(owner.getX() + owner.getWidth());

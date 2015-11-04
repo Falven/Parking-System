@@ -20,7 +20,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        AdminController adminController = new AdminController(stage);
+        new AdminController(stage);
     }
 
     public static EntityManagerFactory getEmf() {

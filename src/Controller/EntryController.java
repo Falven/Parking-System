@@ -38,9 +38,9 @@ public class EntryController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 200.0, 350.0);
+        this.stage = new Stage();
         this.stage.setMaxWidth(200.0);
         this.stage.setMaxHeight(350.0);
-        this.stage = new Stage();
         this.stage.setTitle("Entry Gate #" + gate.getId());
         this.stage.setScene(this.scene);
         this.stage.setX(owner.getX());

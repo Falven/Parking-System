@@ -44,9 +44,9 @@ public class TicketController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/TicketView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 200.0, 300.0);
+        this.stage = new Stage();
         this.stage.setMaxWidth(200.0);
         this.stage.setMaxHeight(300.0);
-        this.stage = new Stage();
         this.stage.setTitle("Parking Ticket #" + ticket.getId());
         this.stage.setScene(this.scene);
         this.stage.setX(owner.getX());
