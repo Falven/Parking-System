@@ -8,120 +8,157 @@
 
 <TabPane tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <tabs>
-      <Tab closable="false" text="Gates">
+      <Tab text="Entry gates">
          <content>
-            <GridPane hgap="5.0">
+            <GridPane>
                <children>
-                  <VBox alignment="CENTER_LEFT">
+                  <ListView fx:id="entryGatesList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </GridPane.margin>
+                  </ListView>
+                  <HBox alignment="CENTER" GridPane.rowIndex="2">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleAddEntryGate" text="Add">
+                           <HBox.margin>
+                              <Insets bottom="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleRemoveEntryGate" text="Remove">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleShowEntryGate" text="Show">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <VBox>
+                     <children>
+                        <Label text="Entry gates:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="entryGatesCountLabel" text="0 total." />
+                     </children>
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </VBox>
-                  <GridPane GridPane.columnIndex="1">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints vgrow="NEVER" />
-                      <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="NEVER" />
-                    </rowConstraints>
-                     <children>
-                        <ListView fx:id="exitGatesList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets right="5.0" />
-                           </GridPane.margin></ListView>
-                        <HBox alignment="CENTER" GridPane.rowIndex="2">
-                           <children>
-                              <Button mnemonicParsing="false" onAction="#handleAddExitGate" text="Add">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button mnemonicParsing="false" onAction="#handleRemoveExitGate" text="Remove">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button mnemonicParsing="false" onAction="#handleShowExitGate" text="Show">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <VBox>
-                           <children>
-                              <Label text="Exit gates:">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="exitGatesCountLabel" text="0 total." />
-                           </children>
-                           <GridPane.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </GridPane.margin>
-                        </VBox>
-                     </children>
-                  </GridPane>
-                  <GridPane>
-                     <children>
-                        <ListView fx:id="entryGatesList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets left="5.0" />
-                           </GridPane.margin>
-                        </ListView>
-                        <HBox alignment="CENTER" GridPane.rowIndex="2">
-                           <children>
-                              <Button mnemonicParsing="false" onAction="#handleAddEntryGate" text="Add">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button mnemonicParsing="false" onAction="#handleRemoveEntryGate" text="Remove">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button mnemonicParsing="false" onAction="#handleShowEntryGate" text="Show">
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                 </HBox.margin>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <VBox>
-                           <children>
-                              <Label text="Entry gates:">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="entryGatesCountLabel" text="0 total." />
-                           </children>
-                           <GridPane.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </GridPane.margin>
-                        </VBox>
-                     </children>
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints vgrow="NEVER" />
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="NEVER" />
-                     </rowConstraints>
-                  </GridPane>
                </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" />
-                  <ColumnConstraints hgrow="SOMETIMES" />
                </columnConstraints>
                <rowConstraints>
+                  <RowConstraints vgrow="NEVER" />
                   <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="NEVER" />
                </rowConstraints>
+            </GridPane>
+         </content>
+      </Tab>
+      <Tab closable="false" text="Exit gates">
+         <content>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="NEVER" />
+                <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="NEVER" />
+              </rowConstraints>
+               <children>
+                  <ListView fx:id="exitGatesList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </GridPane.margin>
+                  </ListView>
+                  <HBox alignment="CENTER" GridPane.rowIndex="2">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleAddExitGate" text="Add">
+                           <HBox.margin>
+                              <Insets bottom="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleRemoveExitGate" text="Remove">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleShowExitGate" text="Show">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <VBox>
+                     <children>
+                        <Label text="Exit gates:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="exitGatesCountLabel" text="0 total." />
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </VBox>
+               </children>
+            </GridPane>
+         </content>
+      </Tab>
+      <Tab text="Tickets">
+         <content>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="NEVER" />
+                <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="NEVER" />
+              </rowConstraints>
+               <children>
+                  <VBox>
+                     <children>
+                        <Label text="Tickets">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="ticketCountLabel" text="0 total." />
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <HBox alignment="CENTER" GridPane.rowIndex="2">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleRemoveTicket" text="Remove">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#handleShowTicket" text="Show">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <ListView fx:id="ticketList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </GridPane.margin>
+                  </ListView>
+               </children>
             </GridPane>
          </content>
       </Tab>

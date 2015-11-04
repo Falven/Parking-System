@@ -53,7 +53,6 @@ public class TicketController {
         this.stage.setY(owner.getY());
         this.stage.resizableProperty().setValue(Boolean.FALSE);
         this.stage.initModality(Modality.NONE);
-        this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
 
         idLabel.setText(Integer.toString(ticket.getId()));

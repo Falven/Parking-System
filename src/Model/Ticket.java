@@ -91,4 +91,8 @@ public class Ticket {
     public BigDecimal getAmountDue() {
         return amountDue;
     }
+
+    public String toString() {
+        return "Ticket #" + getId();
+    }
 }

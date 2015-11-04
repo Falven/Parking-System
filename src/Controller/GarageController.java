@@ -3,6 +3,7 @@ package Controller;
 import Model.EntryGate;
 import Model.ExitGate;
 import Model.Garage;
+import Model.Ticket;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +25,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public class GarageController {
@@ -43,10 +45,16 @@ public class GarageController {
     private Label exitGatesCountLabel;
 
     @FXML
+    private Label ticketCountLabel;
+
+    @FXML
     private ListView<EntryController> entryGatesList;
 
     @FXML
     private ListView<ExitController> exitGatesList;
+
+    @FXML
+    private ListView<TicketController> ticketList;
 
     @FXML
     private DatePicker dayDatePicker;
@@ -57,13 +65,16 @@ public class GarageController {
     @FXML
     private ComboBox yearComboBox;
 
-    private SimpleListProperty<EntryController> entryControllerListProperty;
+    private SimpleListProperty<EntryController> entryControllerList;
 
-    private SimpleListProperty<ExitController> exitControllerListProperty;
+    private SimpleListProperty<ExitController> exitControllerList;
+
+    private SimpleListProperty<TicketController> ticketControllerList;
 
     public GarageController(Garage garage, Window owner) throws IOException {
-        this.entryControllerListProperty = new SimpleListProperty(FXCollections.<EntryController>observableArrayList());
-        this.exitControllerListProperty = new SimpleListProperty(FXCollections.<ExitController>observableArrayList());
+        this.entryControllerList = new SimpleListProperty(FXCollections.<EntryController>observableArrayList());
+        this.exitControllerList = new SimpleListProperty(FXCollections.<ExitController>observableArrayList());
+        this.ticketControllerList = new SimpleListProperty(FXCollections.<ExitController>observableArrayList());
         this.garage = garage;
         this.em = Main.getEmf().createEntityManager();
 
@@ -80,22 +91,30 @@ public class GarageController {
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
 
-        this.entryGatesList.setItems(entryControllerListProperty.get());
-        this.exitGatesList.setItems(exitControllerListProperty.get());
-        this.entryGatesCountLabel.textProperty().bind(this.entryControllerListProperty.sizeProperty().asString());
-        this.exitGatesCountLabel.textProperty().bind(this.exitControllerListProperty.sizeProperty().asString());
+        this.entryGatesList.setItems(entryControllerList.get());
+        this.exitGatesList.setItems(exitControllerList.get());
+        this.ticketList.setItems(ticketControllerList.get());
+        this.entryGatesCountLabel.textProperty().bind(this.entryControllerList.sizeProperty().asString());
+        this.exitGatesCountLabel.textProperty().bind(this.exitControllerList.sizeProperty().asString());
+        this.ticketCountLabel.textProperty().bind(this.ticketControllerList.sizeProperty().asString());
         try {
             em.getTransaction().begin();
             List<EntryGate> entryGates = garage.getEntryGates();
             if(null != entryGates) {
                 for(EntryGate gate : entryGates) {
-                    entryControllerListProperty.get().add(new EntryController(gate, window));
+                    entryControllerList.get().add(new EntryController(gate, this, window));
                 }
             }
             List<ExitGate> exitGates = garage.getExitGates();
             if(null != exitGates) {
                 for(ExitGate gate : exitGates) {
-                    exitControllerListProperty.get().add(new ExitController(gate, window));
+                    exitControllerList.get().add(new ExitController(gate, this, window));
+                }
+            }
+            Collection<Ticket> tickets = em.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
+            if(null != tickets) {
+                for(Ticket ticket : tickets) {
+                    ticketControllerList.get().add(new TicketController(ticket, window));
                 }
             }
             em.getTransaction().commit();
@@ -120,13 +139,37 @@ public class GarageController {
         return garage;
     }
 
+    public final ObservableList<EntryController> getEntryControllerList() {
+        return entryControllerList.get();
+    }
+
+    public SimpleListProperty<EntryController> entryControllerListProperty() {
+        return entryControllerList;
+    }
+
+    public final ObservableList<ExitController> getExitControllerList() {
+        return exitControllerList.get();
+    }
+
+    public SimpleListProperty<ExitController> exitControllerListProperty() {
+        return exitControllerList;
+    }
+
+    public final ObservableList<TicketController> getTicketControllerList() {
+        return ticketControllerList.get();
+    }
+
+    public SimpleListProperty<TicketController> ticketControllerListProperty() {
+        return ticketControllerList;
+    }
+
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException {
         try {
             em.getTransaction().begin();
             EntryGate gate = new EntryGate(garage);
             em.persist(gate);
-            entryControllerListProperty.get().add(new EntryController(gate, window));
+            entryControllerList.get().add(new EntryController(gate, this, window));
             garage.getEntryGates().add(gate);
             em.getTransaction().commit();
         } finally {
@@ -142,7 +185,7 @@ public class GarageController {
             em.getTransaction().begin();
             ExitGate gate = new ExitGate(garage);
             em.persist(gate);
-            exitControllerListProperty.get().add(new ExitController(gate, window));
+            exitControllerList.get().add(new ExitController(gate, this, window));
             garage.getExitGates().add(gate);
             em.getTransaction().commit();
         } finally {
@@ -159,7 +202,7 @@ public class GarageController {
             EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
             EntryGate gate = controller.getGate();
             em.remove(em.merge(gate));
-            entryControllerListProperty.get().remove(controller);
+            entryControllerList.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
         } finally {
@@ -176,7 +219,24 @@ public class GarageController {
             ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
             ExitGate gate = controller.getGate();
             em.remove(em.merge(gate));
-            exitControllerListProperty.get().remove(controller);
+            exitControllerList.get().remove(controller);
+            controller.closeView();
+            em.getTransaction().commit();
+        } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+        }
+    }
+
+    @FXML
+    protected void handleRemoveTicket(ActionEvent event) {
+        try {
+            em.getTransaction().begin();
+            TicketController controller = ticketList.getSelectionModel().getSelectedItem();
+            Ticket ticket = controller.getTicket();
+            em.remove(em.merge(ticket));
+            ticketControllerList.get().remove(controller);
             controller.closeView();
             em.getTransaction().commit();
         } finally {
@@ -197,6 +257,14 @@ public class GarageController {
     @FXML
     protected void handleShowExitGate(ActionEvent event) {
         ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
+        if(null != controller) {
+            controller.showView();
+        }
+    }
+
+    @FXML
+    protected void handleShowTicket(ActionEvent event) {
+        TicketController controller = ticketList.getSelectionModel().getSelectedItem();
         if(null != controller) {
             controller.showView();
         }

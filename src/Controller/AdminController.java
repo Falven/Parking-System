@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.Garage;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -39,10 +40,10 @@ public class AdminController {
     @FXML
     private ListView<GarageController> garageList;
 
-    private ObservableList<GarageController> garageControllers;
+    private SimpleListProperty<GarageController> garageControllerList;
 
     public AdminController(Stage stage) throws IOException {
-        this.garageControllers = FXCollections.observableArrayList();
+        this.garageControllerList = new SimpleListProperty(FXCollections.<EntryController>observableArrayList());
         this.em = Main.getEmf().createEntityManager();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
@@ -57,15 +58,23 @@ public class AdminController {
         this.stage.show();
         this.window = this.scene.getWindow();
 
-        this.garageList.setItems(garageControllers);
+        this.garageList.setItems(garageControllerList);
 
         TypedQuery query = em.createQuery("SELECT g FROM Garage g", Garage.class);
         Collection<Garage> garages = query.getResultList();
         for (Garage garage : garages) {
-            garageControllers.add(new GarageController(garage, window));
+            garageControllerList.add(new GarageController(garage, window));
         }
 
         garageList.getSelectionModel().selectFirst();
+    }
+
+    public final ObservableList<GarageController> getGarageControllerList() {
+        return garageControllerList.get();
+    }
+
+    public SimpleListProperty<GarageController> garageControllerListProperty() {
+        return garageControllerList;
     }
 
     @FXML
@@ -78,7 +87,7 @@ public class AdminController {
                 em.getTransaction().begin();
                 Garage garage = new Garage(garageName);
                 em.persist(garage);
-                garageControllers.add(new GarageController(garage, window));
+                garageControllerList.add(new GarageController(garage, window));
                 em.getTransaction().commit();
             } finally {
                 if (em.getTransaction().isActive()) {
@@ -103,7 +112,7 @@ public class AdminController {
             GarageController controller = garageList.getSelectionModel().getSelectedItem();
             Garage toBeRemoved = controller.getGarage();
             em.remove(em.merge(toBeRemoved));
-            garageControllers.remove(controller);
+            garageControllerList.remove(controller);
             controller.closeView();
             em.getTransaction().commit();
         } finally {

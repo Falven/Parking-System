@@ -38,6 +38,7 @@ public class ExitController {
     private Scene scene;
     private ExitGate gate;
     private Window window;
+    private GarageController parent;
 
     @FXML
     private TextField ticketIdField;
@@ -58,8 +59,9 @@ public class ExitController {
 
     private ObservableList<String> yearList;
 
-    public ExitController(ExitGate gate, Window owner) throws IOException {
+    public ExitController(ExitGate gate, GarageController parent, Window owner) throws IOException {
         this.gate = gate;
+        this.parent = parent;
         this.em = Main.getEmf().createEntityManager();
         monthList = FXCollections.observableArrayList(new DateFormatSymbols().getMonths());
         int lastIndex = monthList.size() - 1;
@@ -102,46 +104,50 @@ public class ExitController {
     protected void handleSubmit(ActionEvent event) {
         try {
             Ticket ticket = em.find(Ticket.class, Integer.parseInt(ticketIdField.getText()));
-            if(ticket.getEntryGate().getGarage().getName().equals(gate.getGarage().getName())) {
-                try {
-                    long ccNum = Long.parseLong(ccNumField.getText());
+            if(null == ticket.getExitGate()) {
+                if(ticket.getEntryGate().getGarage().getName().equals(gate.getGarage().getName())) {
                     try {
-                        short csv = Short.parseShort(csvField.getText());
+                        long ccNum = Long.parseLong(ccNumField.getText());
                         try {
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(new SimpleDateFormat("MMMM").parse((String)expMonthBox.getSelectionModel().getSelectedItem()));
-                            int month = cal.get(Calendar.MONTH);
+                            short csv = Short.parseShort(csvField.getText());
                             try {
-                                int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(new SimpleDateFormat("MMMM").parse((String)expMonthBox.getSelectionModel().getSelectedItem()));
+                                int month = cal.get(Calendar.MONTH);
                                 try {
-                                    em.getTransaction().begin();
-                                    Payment payment = new Payment(gate, ccNum, csv, ticket.getAmountDue(), month, year);
-                                    em.persist(payment);
-                                    gate.getPayments().add(payment);
-                                    Garage owner = gate.getGarage();
-                                    owner.setOccupancy(owner.getOccupancy() - 1);
-                                    ticket.getEntryGate().getTickets().remove(ticket);
-                                    em.getTransaction().commit();
-                                    Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
-                                } finally {
-                                    if (em.getTransaction().isActive()) {
-                                        em.getTransaction().rollback();
+                                    int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
+                                    try {
+                                        em.getTransaction().begin();
+                                        Payment payment = new Payment(gate, ccNum, csv, ticket.getAmountDue(), month, year);
+                                        em.persist(payment);
+                                        gate.getPayments().add(payment);
+                                        Garage owner = gate.getGarage();
+                                        owner.setOccupancy(owner.getOccupancy() - 1);
+                                        ticket.setExitGate(gate);
+                                        em.getTransaction().commit();
+                                        Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
+                                    } finally {
+                                        if (em.getTransaction().isActive()) {
+                                            em.getTransaction().rollback();
+                                        }
                                     }
+                                } catch (NumberFormatException nfe) {
+                                    Main.showError("Credit card error.", "Error processing your card.", "The provided expiration year is invalid.");
                                 }
-                            } catch (NumberFormatException nfe) {
-                                Main.showError("Credit card error.", "Error processing your card.", "The provided expiration year is invalid.");
+                            } catch (ParseException pe) {
+                                Main.showError("Credit card error.", "Error processing your card.", "The provided expiration month is invalid.");
                             }
-                        } catch (ParseException pe) {
-                            Main.showError("Credit card error.", "Error processing your card.", "The provided expiration month is invalid.");
+                        } catch(NumberFormatException nfe) {
+                            Main.showError("Credit card error.", "Error processing your card.", "The provided CSV number is invalid.");
                         }
                     } catch(NumberFormatException nfe) {
-                        Main.showError("Credit card error.", "Error processing your card.", "The provided CSV number is invalid.");
+                        Main.showError("Credit card error.", "Error reading your card.", "The provided credit card number is invalid.");
                     }
-                } catch(NumberFormatException nfe) {
-                    Main.showError("Credit card error.", "Error reading your card.", "The provided credit card number is invalid.");
+                } else {
+                    Main.showError("Ticket ID error.", "Invalid ticket.", "The provided ticket is not for this garage.");
                 }
             } else {
-                Main.showError("Ticket ID error.", "Invalid ticket.", "The provided ticket is not for this garage.");
+                Main.showError("Ticket ID error.", "Invalid ticket.", "The provided ticket has already been used.");
             }
         } catch(NumberFormatException nfe) {
             Main.showError("Ticket ID error.", "Error reading your ticket.", "The provided ticket ID is invalid.");

@@ -32,9 +32,11 @@ public class EntryController {
     private Scene scene;
     private EntryGate gate;
     private Window window;
+    private GarageController parent;
 
-    public EntryController(EntryGate gate, Window owner) throws IOException {
+    public EntryController(EntryGate gate, GarageController parent, Window owner) throws IOException {
         this.gate = gate;
+        this.parent = parent;
         this.em = Main.getEmf().createEntityManager();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EntryView.fxml"));
@@ -60,9 +62,10 @@ public class EntryController {
             Ticket ticket = new Ticket(gate);
             em.persist(ticket);
             gate.getTickets().add(ticket);
-            Garage owner = gate.getGarage();
-            owner.setOccupancy(owner.getOccupancy() + 1);
             TicketController controller = new TicketController(ticket, window);
+            parent.getTicketControllerList().add(controller);
+            Garage owner = parent.getGarage();
+            owner.setOccupancy(owner.getOccupancy() + 1);
             controller.showView();
             em.getTransaction().commit();
         } finally {
