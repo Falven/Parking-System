@@ -87,6 +87,7 @@ public class EntryController {
         Garage garage = ticket.getGarage();
         garage.getTickets().add(ticket);
         garage.setOccupancy(garage.getOccupancy() + 1);
+        Main.getDatabase().merge(garage);
         TicketController controller = new TicketController(ticket, window);
         controller.showView();
         GarageController.getTicketControllerLookup().put(ticket, controller);

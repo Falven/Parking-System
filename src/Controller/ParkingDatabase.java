@@ -32,7 +32,16 @@ public class ParkingDatabase {
     }
 
     public void remove(Object object) {
+        this.em.getTransaction().begin();
         em.remove(em.merge(object));
+        this.em.getTransaction().commit();
+    }
+
+    public <T> T merge(T var) {
+        this.em.getTransaction().begin();
+        T result = em.merge(var);
+        this.em.getTransaction().commit();
+        return result;
     }
 
     public List<Garage> getGarages() {
