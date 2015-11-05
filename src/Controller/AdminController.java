@@ -26,13 +26,10 @@ import java.util.List;
 
 public class AdminController {
 
-    @Resource
-    private EntityManager em;
     private Scene scene;
     private Stage stage;
     private Window window;
     private static final ListProperty<Garage> garages = new SimpleListProperty<>();
-    private static final MapProperty<Garage, GarageController> garageLookup = new SimpleMapProperty<>();
 
     @FXML
     private TextField garageField;
@@ -62,7 +59,6 @@ public class AdminController {
     private TableColumn<Garage, Number> exitGatesCountColumn;
 
     public AdminController(Stage stage) throws IOException, NoSuchMethodException {
-        this.em = Main.getEmf().createEntityManager();
         initUI(stage);
         initGarageTable();
     }
@@ -82,7 +78,7 @@ public class AdminController {
     }
 
     private void initGarageTable() throws IOException, NoSuchMethodException {
-        AdminController.setGarages(FXCollections.observableArrayList());
+        AdminController.setGarages(FXCollections.observableArrayList(Main.getDatabase().getGarages()));
         AdminController.setGarageLookup(FXCollections.observableHashMap());
 
         this.garageCountLabel.textProperty().bind(AdminController.garagesProperty().sizeProperty().asString());
@@ -92,14 +88,11 @@ public class AdminController {
         this.entryGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().entryGatesProperty().sizeProperty());
         this.exitGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().exitGatesProperty().sizeProperty());
 
-        List<Garage> garages = em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
-        if(null != garages) {
-            for (Garage garage : garages) {
-                AdminController.getGarages().add(garage);
-                AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
-            }
+        ObservableList<Garage> garages = AdminController.getGarages();
+        for (Garage garage : garages) {
+            AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
         }
-        this.garageTable.setItems(AdminController.getGarages());
+        this.garageTable.setItems(garages);
         this.garageTable.getSelectionModel().selectFirst();
     }
 
@@ -141,8 +134,9 @@ public class AdminController {
             Main.showError("Garage name error.", "Error creating garage.", "The provided garage name is invalid.");
         } else {
             try {
-                em.getTransaction().begin();
                 Garage garage = new Garage(garageName);
+
+                em.getTransaction().begin();
                 em.persist(garage);
                 em.getTransaction().commit();
 

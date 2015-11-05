@@ -28,13 +28,10 @@ import java.util.Calendar;
 
 public class ExitController {
 
-    @Resource
-    EntityManager em;
+    private final ExitGate bean;
 
     private Stage stage;
     private Scene scene;
-    private final ExitGate bean;
-    private GarageController parent;
     private Window window;
 
     @FXML
@@ -56,10 +53,8 @@ public class ExitController {
 
     private ObservableList<String> yearList;
 
-    public ExitController(ExitGate gate, GarageController parent, Window owner) throws IOException, NoSuchMethodException {
+    public ExitController(ExitGate gate, Window owner) throws IOException, NoSuchMethodException {
         this.bean = gate;
-        this.parent = parent;
-        this.em = Main.getEmf().createEntityManager();
         monthList = FXCollections.observableArrayList(new DateFormatSymbols().getMonths());
         int lastIndex = monthList.size() - 1;
         String finalMonth = monthList.get(lastIndex);
@@ -72,6 +67,19 @@ public class ExitController {
             yearList.add(Integer.toString(year));
         }
 
+        initUI(gate, owner);
+
+        expMonthBox.setItems(monthList);
+        expMonthBox.getSelectionModel().selectFirst();
+        expYearBox.setItems(yearList);
+        expYearBox.getSelectionModel().selectFirst();
+
+        addTextLimit(ticketIdField, 12);
+        addTextLimit(ccNumField, 16);
+        addTextLimit(csvField, 3);
+    }
+
+    public void initUI(ExitGate gate, Window owner) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 350.0, 400.0);
@@ -86,15 +94,6 @@ public class ExitController {
         this.stage.initModality(Modality.NONE);
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
-
-        expMonthBox.setItems(monthList);
-        expMonthBox.getSelectionModel().selectFirst();
-        expYearBox.setItems(yearList);
-        expYearBox.getSelectionModel().selectFirst();
-
-        addTextLimit(ticketIdField, 12);
-        addTextLimit(ccNumField, 16);
-        addTextLimit(csvField, 3);
     }
 
     public ExitGate getBean() {

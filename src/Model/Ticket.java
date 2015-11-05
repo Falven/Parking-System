@@ -1,9 +1,10 @@
 package Model;
 
+import Controller.GarageController;
+import Controller.TicketController;
 import javafx.beans.property.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.Calendar;
 
@@ -20,12 +21,13 @@ public class Ticket {
     private ObjectProperty<java.sql.Date> dueDate;
     private ObjectProperty<java.sql.Time> dueTime;
     private DoubleProperty amountDue;
+    private TicketController controller;
 
     public Ticket() {
-        this(null);
+        this(null, null);
     }
 
-    public Ticket(EntryGate gate) {
+    public Ticket(EntryGate gate, TicketController controller) {
         this.id = new SimpleIntegerProperty();
         Garage garage = (null == gate) ? null : gate.getGarage();
         this.garage = (null == garage) ? new SimpleObjectProperty<>() : new SimpleObjectProperty<>(garage);
@@ -38,6 +40,7 @@ public class Ticket {
         this.dueDate = new SimpleObjectProperty<>(new java.sql.Date(cal.getTimeInMillis()));
         this.dueTime = new SimpleObjectProperty<>(new java.sql.Time(getDueDate().getTime()));
         this.amountDue = new SimpleDoubleProperty(19.99);
+        setController(controller);
     }
 
     @Id
@@ -156,6 +159,15 @@ public class Ticket {
 
     public DoubleProperty amountDueProperty() {
         return this.amountDue;
+    }
+
+    @Transient
+    public TicketController getController() {
+        return this.controller;
+    }
+
+    public void setController(TicketController controller) {
+        this.controller = controller;
     }
 
     @Override

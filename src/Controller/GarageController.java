@@ -31,11 +31,10 @@ import java.util.List;
 
 public class GarageController {
 
-    @Resource
-    EntityManager em;
+    private final Garage bean;
+
     private Stage stage;
     private Scene scene;
-    private final Garage bean;
     private Window window;
 
     private static final MapProperty<EntryGate, EntryController> entryControllerLookup = new SimpleMapProperty<>();
@@ -107,7 +106,6 @@ public class GarageController {
 
     public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException {
         this.bean = garage;
-        this.em = Main.getEmf().createEntityManager();
 
         initUI(owner);
         initEntryGatesTab();
@@ -141,7 +139,7 @@ public class GarageController {
 
         ObservableList<EntryGate> entryGates = (ObservableList<EntryGate>)bean.getEntryGates();
         for(EntryGate gate : entryGates) {
-            getEntryControllerLookup().put(gate, new EntryController(gate, window));
+            getEntryControllerLookup().put(gate, new EntryController(gate, this, window));
         }
         this.entryGatesTable.setItems(entryGates);
         this.entryGatesTable.getSelectionModel().selectFirst();
@@ -155,7 +153,7 @@ public class GarageController {
 
         ObservableList<ExitGate> exitGates = (ObservableList<ExitGate>)bean.getExitGates();
         for(ExitGate gate : exitGates) {
-            getExitControllerLookup().put(gate, new ExitController(gate, this, window));
+            getExitControllerLookup().put(gate, new ExitController(gate, this.window));
         }
         this.exitGatesTable.setItems(exitGates);
         this.exitGatesTable.getSelectionModel().selectFirst();
@@ -249,11 +247,12 @@ public class GarageController {
         try {
             this.em.getTransaction().begin();
             Garage garage = getBean();
+            this.em.merge(garage);
             EntryGate gate = new EntryGate(garage);
             this.em.persist(gate);
             garage.getEntryGates().add(gate);
             this.em.merge(garage);
-            getEntryControllerLookup().put(gate, new EntryController(gate, window));
+            getEntryControllerLookup().put(gate, new EntryController(gate, this, window));
             this.em.getTransaction().commit();
         } finally {
             if (this.em.getTransaction().isActive()) {
@@ -267,11 +266,12 @@ public class GarageController {
         try {
             this.em.getTransaction().begin();
             Garage garage = getBean();
+            this.em.merge(garage);
             ExitGate gate = new ExitGate(garage);
             this.em.persist(gate);
             garage.getExitGates().add(gate);
             this.em.merge(garage);
-            getExitControllerLookup().put(gate, new ExitController(gate, this, window));
+            getExitControllerLookup().put(gate, new ExitController(gate, this.window));
             this.em.getTransaction().commit();
         } finally {
             if (this.em.getTransaction().isActive()) {
@@ -285,8 +285,8 @@ public class GarageController {
         try {
             this.em.getTransaction().begin();
             EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
-            this.em.remove(em.merge(selected));
-
+            this.em.merge(selected);
+            this.em.remove(selected);
             GarageController.getEntryControllerLookup().remove(selected).closeView();
             this.em.getTransaction().commit();
         } finally {
@@ -301,8 +301,8 @@ public class GarageController {
         try {
             this.em.getTransaction().begin();
             ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
-            this.em.remove(em.merge(selected));
-
+            this.em.merge(selected);
+            this.em.remove(selected);
             GarageController.getExitControllerLookup().remove(selected).closeView();
             this.em.getTransaction().commit();
         } finally {
@@ -317,12 +317,11 @@ public class GarageController {
         try {
             this.em.getTransaction().begin();
             Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
-            this.em.remove(em.merge(selected));
-
+            this.em.merge(selected);
+            this.em.remove(selected);
             Garage garage = selected.getGarage();
             garage.setOccupancy(garage.getOccupancy() - 1);
             this.em.merge(garage);
-
             GarageController.getTicketControllerLookup().remove(selected).closeView();
             this.em.getTransaction().commit();
         } finally {

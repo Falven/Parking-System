@@ -1,5 +1,6 @@
 package Model;
 
+import Controller.GarageController;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
@@ -18,21 +19,23 @@ public class Garage {
     private SimpleListProperty<Ticket> tickets;
     private SimpleListProperty<EntryGate> entryGates;
     private SimpleListProperty<ExitGate> exitGates;
+    private GarageController controller;
 
     @Transient
     private static final int MAX_OCCUPANCY = 20;
 
     public Garage() {
-        this(null);
+        this(null, null);
     }
 
-    public Garage(String name) {
+    public Garage(String name, GarageController controller) {
         this.name = new SimpleStringProperty(name);
         this.occupancy = new SimpleIntegerProperty();
         this.maxOccupancy = new SimpleIntegerProperty(MAX_OCCUPANCY);
         this.tickets = new SimpleListProperty<>();
         this.entryGates = new SimpleListProperty<>();
         this.exitGates = new SimpleListProperty<>();
+        setController(controller);
     }
 
     @Id
@@ -112,6 +115,15 @@ public class Garage {
 
     public ListProperty<ExitGate> exitGatesProperty() {
         return this.exitGates;
+    }
+
+    @Transient
+    public GarageController getController() {
+        return this.controller;
+    }
+
+    public void setController(GarageController controller) {
+        this.controller = controller;
     }
 
     @Override

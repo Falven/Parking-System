@@ -20,13 +20,12 @@ import java.io.IOException;
 
 public class EntryController {
 
-    @Resource
-    EntityManager em;
-
     private final EntryGate bean;
+
     private Window window;
     private Stage stage;
     private Scene scene;
+    private GarageController controller;
 
     @FXML
     private ImageView availabilityImage;
@@ -34,9 +33,9 @@ public class EntryController {
     @FXML
     private Button getTicketButton;
 
-    public EntryController(EntryGate gate, Window owner) throws IOException, NoSuchMethodException {
+    public EntryController(EntryGate gate, GarageController controller, Window owner) throws IOException, NoSuchMethodException {
         this.bean = gate;
-        this.em = Main.getEmf().createEntityManager();
+        this.controller = controller;
         initUI(gate, owner);
 
         Garage garage = bean.getGarage();
@@ -84,15 +83,27 @@ public class EntryController {
     @FXML
     protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException {
         try {
-            em.getTransaction().begin();
-            Garage garage = bean.getGarage();
-            Ticket ticket = new Ticket(bean);
-            em.persist(ticket);
+            this.em.getTransaction().begin();
+            EntryGate entry = getBean();
+            this.em.merge(entry);
+            this.em.getTransaction().commit();
 
+            Ticket ticket = new Ticket(entry);
+            Garage garage = ticket.getGarage();
+            Garage garage2 = this.controller.getBean();
+
+            this.em.getTransaction().begin();
+            this.em.persist(ticket);
             garage.getTickets().add(ticket);
-            garage.setOccupancy(garage.getOccupancy() + 1);
-            em.merge(garage);
-            em.getTransaction().commit();
+            this.em.getTransaction().commit();
+
+            this.em.getTransaction().begin();
+            this.em.merge(garage);
+            this.em.getTransaction().commit();
+
+            this.em.getTransaction().begin();
+            this.em.refresh(garage2);
+            this.em.getTransaction().commit();
 
             TicketController controller = new TicketController(ticket, window);
             controller.showView();

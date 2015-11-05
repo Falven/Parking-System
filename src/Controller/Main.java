@@ -1,7 +1,6 @@
 package Controller;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -9,43 +8,29 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class Main extends Application {
 
-    private static SimpleObjectProperty<AdminController> adminControllerProperty;
-
-    @PersistenceContext
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("PSPersistence");
+    private static final ParkingDatabase database = new ParkingDatabase();
 
     public static void main(String[] args) {
         launch(args);
-        emf.close();
+        database.close();
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
         try {
-            adminControllerProperty = new SimpleObjectProperty<>(new AdminController(stage));
+            AdminController adminController = new AdminController(primaryStage);
         }catch (Exception e) {
             showException(e);
         }
     }
 
-    public static AdminController getAdminController() {
-        return Main.adminControllerProperty.get();
-    }
-
-    public static EntityManagerFactory getEmf() {
-        return Main.emf;
-    }
-
-    public static void setEmf(EntityManagerFactory emf) {
-        Main.emf = emf;
+    public static ParkingDatabase getDatabase() {
+        return database;
     }
 
     public static void showError(String title, String header, String content) {
