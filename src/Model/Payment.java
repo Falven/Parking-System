@@ -1,7 +1,5 @@
 package Model;
 
-import Controller.GarageController;
-import Controller.PaymentController;
 import javafx.beans.property.*;
 
 import javax.persistence.*;
@@ -18,13 +16,12 @@ public class Payment {
     private IntegerProperty expMonth;
     private IntegerProperty expYear;
     private ObjectProperty<ExitGate> exitGate;
-    private PaymentController controller;
 
     public Payment() {
-        this(0, 0, 0.0, 0, 0, null, null);
+        this(0, 0, 0.0, 0, 0, null);
     }
 
-    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, ExitGate gate, PaymentController controller) {
+    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, ExitGate gate) {
         this.id = new SimpleIntegerProperty();
         this.ccNum = new SimpleLongProperty(ccNum);
         this.csv = new SimpleIntegerProperty(csv);
@@ -32,7 +29,6 @@ public class Payment {
         this.expMonth = new SimpleIntegerProperty(expMonth);
         this.expYear = new SimpleIntegerProperty(expYear);
         this.exitGate = new SimpleObjectProperty<>(gate);
-        setController(controller);
     }
 
     @Id
@@ -125,15 +121,6 @@ public class Payment {
 
     public ObjectProperty<ExitGate> exitGateProperty() {
         return this.exitGate;
-    }
-
-    @Transient
-    public PaymentController getController() {
-        return this.controller;
-    }
-
-    public void setController(PaymentController controller) {
-        this.controller = controller;
     }
 
     @Override

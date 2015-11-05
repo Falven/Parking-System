@@ -244,91 +244,43 @@ public class GarageController {
 
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
-        try {
-            this.em.getTransaction().begin();
-            Garage garage = getBean();
-            this.em.merge(garage);
-            EntryGate gate = new EntryGate(garage);
-            this.em.persist(gate);
-            garage.getEntryGates().add(gate);
-            this.em.merge(garage);
-            getEntryControllerLookup().put(gate, new EntryController(gate, this, window));
-            this.em.getTransaction().commit();
-        } finally {
-            if (this.em.getTransaction().isActive()) {
-                this.em.getTransaction().rollback();
-            }
-        }
+        Garage garage = getBean();
+        EntryGate gate = new EntryGate(garage);
+        Main.getDatabase().persist(gate);
+        garage.getEntryGates().add(gate);
+        getEntryControllerLookup().put(gate, new EntryController(gate, this, window));
     }
 
     @FXML
     protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
-        try {
-            this.em.getTransaction().begin();
-            Garage garage = getBean();
-            this.em.merge(garage);
-            ExitGate gate = new ExitGate(garage);
-            this.em.persist(gate);
-            garage.getExitGates().add(gate);
-            this.em.merge(garage);
-            getExitControllerLookup().put(gate, new ExitController(gate, this.window));
-            this.em.getTransaction().commit();
-        } finally {
-            if (this.em.getTransaction().isActive()) {
-                this.em.getTransaction().rollback();
-            }
-        }
+        Garage garage = getBean();
+        ExitGate gate = new ExitGate(garage);
+        Main.getDatabase().persist(gate);
+        garage.getExitGates().add(gate);
+        getExitControllerLookup().put(gate, new ExitController(gate, this.window));
     }
 
     @FXML
     protected void handleRemoveEntryGate(ActionEvent event) {
-        try {
-            this.em.getTransaction().begin();
-            EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
-            this.em.merge(selected);
-            this.em.remove(selected);
-            GarageController.getEntryControllerLookup().remove(selected).closeView();
-            this.em.getTransaction().commit();
-        } finally {
-            if (this.em.getTransaction().isActive()) {
-                this.em.getTransaction().rollback();
-            }
-        }
+        EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
+        Main.getDatabase().remove(selected);
+        GarageController.getEntryControllerLookup().remove(selected).closeView();
     }
 
     @FXML
     protected void handleRemoveExitGate(ActionEvent event) {
-        try {
-            this.em.getTransaction().begin();
-            ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
-            this.em.merge(selected);
-            this.em.remove(selected);
-            GarageController.getExitControllerLookup().remove(selected).closeView();
-            this.em.getTransaction().commit();
-        } finally {
-            if (this.em.getTransaction().isActive()) {
-                this.em.getTransaction().rollback();
-            }
-        }
+        ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
+        Main.getDatabase().remove(selected);
+        GarageController.getExitControllerLookup().remove(selected).closeView();
     }
 
     @FXML
     protected void handleRemoveTicket(ActionEvent event) {
-        try {
-            this.em.getTransaction().begin();
-            Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
-            this.em.merge(selected);
-            this.em.remove(selected);
-            Garage garage = selected.getGarage();
-            garage.setOccupancy(garage.getOccupancy() - 1);
-            this.em.merge(garage);
-            GarageController.getTicketControllerLookup().remove(selected).closeView();
-            this.em.getTransaction().commit();
-        } finally {
-            if (this.em.getTransaction().isActive()) {
-                this.em.getTransaction().rollback();
-            }
-        }
+        Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
+        Main.getDatabase().remove(selected);
+        Garage garage = selected.getGarage();
+        garage.setOccupancy(garage.getOccupancy() - 1);
+        GarageController.getTicketControllerLookup().remove(selected).closeView();
     }
 
     @FXML

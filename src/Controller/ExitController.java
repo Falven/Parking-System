@@ -123,7 +123,7 @@ public class ExitController {
     @FXML
     protected void handleSubmit(ActionEvent event) {
         try {
-            Ticket ticket = em.find(Ticket.class, Integer.parseInt(ticketIdField.getText()));
+            Ticket ticket = Main.getDatabase().findById(Ticket.class, Integer.parseInt(ticketIdField.getText()));
             if(null == ticket.getExitGate()) {
                 if(ticket.getEntryGate().getGarage().getName().equals(bean.getGarage().getName())) {
                     try {
@@ -136,24 +136,13 @@ public class ExitController {
                                 int month = cal.get(Calendar.MONTH);
                                 try {
                                     int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
-                                    try {
-                                        em.getTransaction().begin();
-                                        Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, bean);
-                                        bean.getPayments().add(payment);
-                                        Garage owner = bean.getGarage();
-                                        owner.setOccupancy(owner.getOccupancy() - 1);
-                                        ticket.setExitGate(bean);
-                                        em.persist(payment);
-                                        em.merge(bean);
-                                        em.merge(owner);
-                                        em.merge(ticket);
-                                        em.getTransaction().commit();
-                                        Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
-                                    } finally {
-                                        if (em.getTransaction().isActive()) {
-                                            em.getTransaction().rollback();
-                                        }
-                                    }
+                                    Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, bean);
+                                    bean.getPayments().add(payment);
+                                    Garage owner = bean.getGarage();
+                                    owner.setOccupancy(owner.getOccupancy() - 1);
+                                    ticket.setExitGate(bean);
+                                    Main.getDatabase().persist(payment);
+                                    Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
                                 } catch (NumberFormatException nfe) {
                                     Main.showError("Credit card error.", "Error processing your card.", "The provided expiration year is invalid.");
                                 }

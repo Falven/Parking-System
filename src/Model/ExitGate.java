@@ -1,7 +1,5 @@
 package Model;
 
-import Controller.EntryController;
-import Controller.ExitController;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
@@ -16,18 +14,16 @@ public class ExitGate {
     private ListProperty<Ticket> tickets;
     private ListProperty<Payment> payments;
     private ObjectProperty<Garage> garage;
-    private ExitController controller;
 
     public ExitGate() {
-        this(null, null);
+        this(null);
     }
 
-    public ExitGate(Garage owner, ExitController controller) {
+    public ExitGate(Garage owner) {
         this.id = new SimpleIntegerProperty();
         this.tickets = new SimpleListProperty<>();
         this.payments = new SimpleListProperty<>();
         this.garage = new SimpleObjectProperty<>(owner);
-        setController(controller);
     }
 
     @Id
@@ -81,15 +77,6 @@ public class ExitGate {
 
     public ObjectProperty<Garage> garageProperty() {
         return this.garage;
-    }
-
-    @Transient
-    public ExitController getController() {
-        return this.controller;
-    }
-
-    public void setController(ExitController controller) {
-        this.controller = controller;
     }
 
     @Override

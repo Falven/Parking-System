@@ -82,36 +82,13 @@ public class EntryController {
 
     @FXML
     protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException {
-        try {
-            this.em.getTransaction().begin();
-            EntryGate entry = getBean();
-            this.em.merge(entry);
-            this.em.getTransaction().commit();
-
-            Ticket ticket = new Ticket(entry);
-            Garage garage = ticket.getGarage();
-            Garage garage2 = this.controller.getBean();
-
-            this.em.getTransaction().begin();
-            this.em.persist(ticket);
-            garage.getTickets().add(ticket);
-            this.em.getTransaction().commit();
-
-            this.em.getTransaction().begin();
-            this.em.merge(garage);
-            this.em.getTransaction().commit();
-
-            this.em.getTransaction().begin();
-            this.em.refresh(garage2);
-            this.em.getTransaction().commit();
-
-            TicketController controller = new TicketController(ticket, window);
-            controller.showView();
-            GarageController.getTicketControllerLookup().put(ticket, controller);
-        } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-        }
+        EntryGate entry = getBean();
+        Ticket ticket = new Ticket(entry);
+        Main.getDatabase().persist(ticket);
+        Garage garage = ticket.getGarage();
+        garage.getTickets().add(ticket);
+        TicketController controller = new TicketController(ticket, window);
+        controller.showView();
+        GarageController.getTicketControllerLookup().put(ticket, controller);
     }
 }

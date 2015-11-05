@@ -30,6 +30,7 @@ public class AdminController {
     private Stage stage;
     private Window window;
     private static final ListProperty<Garage> garages = new SimpleListProperty<>();
+    private static final MapProperty<Garage, GarageController> garageLookup = new SimpleMapProperty<>();
 
     @FXML
     private TextField garageField;
@@ -78,7 +79,7 @@ public class AdminController {
     }
 
     private void initGarageTable() throws IOException, NoSuchMethodException {
-        AdminController.setGarages(FXCollections.observableArrayList(Main.getDatabase().getGarages()));
+        AdminController.setGarages(FXCollections.observableArrayList());
         AdminController.setGarageLookup(FXCollections.observableHashMap());
 
         this.garageCountLabel.textProperty().bind(AdminController.garagesProperty().sizeProperty().asString());
@@ -88,11 +89,12 @@ public class AdminController {
         this.entryGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().entryGatesProperty().sizeProperty());
         this.exitGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().exitGatesProperty().sizeProperty());
 
-        ObservableList<Garage> garages = AdminController.getGarages();
+        List<Garage> garages = Main.getDatabase().getGarages();
         for (Garage garage : garages) {
+            AdminController.getGarages().add(garage);
             AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
         }
-        this.garageTable.setItems(garages);
+        this.garageTable.setItems(AdminController.getGarages());
         this.garageTable.getSelectionModel().selectFirst();
     }
 
@@ -128,44 +130,25 @@ public class AdminController {
     @FXML
     protected void handleAddGarage(ActionEvent event) throws IOException, NoSuchMethodException {
         String garageName = garageField.getText();
-        if(null != em.find(Garage.class, garageName)) {
+        if(null != Main.getDatabase().findById(Garage.class, garageName)) {
             Main.showError("Add Garage error.", "Error creating garage.", "The provided garage already exists.");
         } else if(null == garageName || garageName.isEmpty()) {
             Main.showError("Garage name error.", "Error creating garage.", "The provided garage name is invalid.");
         } else {
-            try {
-                Garage garage = new Garage(garageName);
-
-                em.getTransaction().begin();
-                em.persist(garage);
-                em.getTransaction().commit();
-
-                AdminController.getGarages().add(garage);
-                AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
-                this.garageTable.getSelectionModel().selectLast();
-            } finally {
-                if (em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
-                }
-            }
+            Garage garage = new Garage(garageName);
+            Main.getDatabase().persist(garage);
+            AdminController.getGarages().add(garage);
+            AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
+            this.garageTable.getSelectionModel().selectLast();
         }
     }
 
     @FXML
     protected void handleRemoveGarage(ActionEvent event) {
-        try {
-            em.getTransaction().begin();
-            Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
-            em.remove(em.merge(selected));
-
-            AdminController.getGarages().remove(selected);
-            AdminController.getGarageLookup().remove(selected);
-            em.getTransaction().commit();
-        } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-        }
+        Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
+        Main.getDatabase().remove(selected);
+        AdminController.getGarages().remove(selected);
+        AdminController.getGarageLookup().remove(selected);
     }
 
     @FXML
