@@ -73,7 +73,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="totalLabel" />
+            <Label fx:id="amountDueLabel" />
          </children>
       </VBox>
       <VBox alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">

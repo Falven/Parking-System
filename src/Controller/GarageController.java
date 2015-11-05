@@ -4,22 +4,20 @@ import Model.EntryGate;
 import Model.ExitGate;
 import Model.Garage;
 import Model.Ticket;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.adapter.*;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -29,24 +27,22 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 
 public class GarageController {
 
     @Resource
     EntityManager em;
-
     private Stage stage;
     private Scene scene;
     private final Garage bean;
     private Window window;
-    private JavaBeanStringProperty name;
-    private JavaBeanIntegerProperty occupancy;
-    private JavaBeanObjectProperty<List<EntryGate>> entryGates;
-    private JavaBeanIntegerProperty entryGateCount;
-    private JavaBeanObjectProperty<List<ExitGate>> exitGates;
-    private JavaBeanIntegerProperty exitGateCount;
+
+    private static final MapProperty<EntryGate, EntryController> entryControllerLookup = new SimpleMapProperty<>();
+
+    private static final MapProperty<ExitGate, ExitController> exitControllerLookup = new SimpleMapProperty<>();
+
+    private static final MapProperty<Ticket, TicketController> ticketControllerLookup = new SimpleMapProperty<>();
 
     @FXML
     private Label entryGatesCountLabel;
@@ -58,28 +54,52 @@ public class GarageController {
     private Label ticketCountLabel;
 
     @FXML
-    private ListView<EntryController> entryGatesList;
+    private TableView<EntryGate> entryGatesTable;
 
     @FXML
-    private ListView<ExitController> exitGatesList;
+    private TableColumn<EntryGate, Number> entryGatesTableIdColumn;
 
     @FXML
-    private ListView<TicketController> ticketList;
+    private TableView<ExitGate> exitGatesTable;
+
+    @FXML
+    private TableColumn<ExitGate, Number> exitGatesTableIdColumn;
+
+    @FXML
+    private TableView<Ticket> ticketsTable;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableIdColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableEntryGateColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableExitGateColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableAssignedDateColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableAssignedTimeColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableDueDateColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableDueTimeColumn;
+
+    @FXML
+    private TableColumn<Ticket, String> ticketsTableAmountDueColumn;
 
     @FXML
     private DatePicker dayStatDatePicker;
 
     @FXML
-    private ComboBox monthStatComboBox;
+    private ComboBox<String> monthStatComboBox;
 
     @FXML
-    private ComboBox yearStatComboBox;
-
-    private SimpleListProperty<EntryController> entryControllerList;
-
-    private SimpleListProperty<ExitController> exitControllerList;
-
-    private SimpleListProperty<TicketController> ticketControllerList;
+    private ComboBox<String> yearStatComboBox;
 
     private SimpleListProperty<String> monthStatList;
 
@@ -87,19 +107,18 @@ public class GarageController {
 
     public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException {
         this.bean = garage;
-        this.name = JavaBeanStringPropertyBuilder.create().bean(this.bean).name("name").build();
-        this.occupancy = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("occupancy").build();
-        this.entryGates = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("entryGates").build();
-        this.entryGateCount = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("entryGateCount").build();
-        this.exitGates = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("exitGates").build();
-        this.exitGateCount = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("exitGateCount").build();
-        this.entryControllerList = new SimpleListProperty(FXCollections.observableArrayList());
-        this.exitControllerList = new SimpleListProperty(FXCollections.observableArrayList());
-        this.ticketControllerList = new SimpleListProperty(FXCollections.observableArrayList());
-        this.monthStatList = new SimpleListProperty(FXCollections.observableArrayList());
-        this.yearStatList = new SimpleListProperty(FXCollections.observableArrayList());
         this.em = Main.getEmf().createEntityManager();
 
+        initUI(owner);
+        initEntryGatesTab();
+        initExitGatesTab();
+        initTicketsTab();
+        initDailyStatsTab();
+        initMonthlyStatsTab();
+        initYearlyStatsTab();
+    }
+
+    private void initUI(Window owner) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GarageView.fxml"));
         loader.setController(this);
         this.scene = new Scene(loader.load(), 650.0, 500.0);
@@ -108,49 +127,113 @@ public class GarageController {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         this.stage.setX((screenBounds.getWidth() - this.stage.getWidth()) / 2);
         this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
-        this.stage.setTitle(garage.getName() + " Garage.");
+        this.stage.setTitle(bean.getName() + " garage.");
         this.stage.initModality(Modality.WINDOW_MODAL);
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
+    }
 
-        this.entryGatesList.setItems(this.entryControllerList.get());
-        this.exitGatesList.setItems(this.exitControllerList.get());
-        this.ticketList.setItems(this.ticketControllerList.get());
-        this.entryGatesCountLabel.textProperty().bind(this.entryControllerList.sizeProperty().asString());
-        this.exitGatesCountLabel.textProperty().bind(this.exitControllerList.sizeProperty().asString());
-        this.ticketCountLabel.textProperty().bind(this.ticketControllerList.sizeProperty().asString());
-        try {
-            em.getTransaction().begin();
-            List<EntryGate> entryGates = garage.getEntryGates();
-            if(null != entryGates) {
-                for(EntryGate gate : entryGates) {
-                    entryControllerList.get().add(new EntryController(gate, window));
-                }
-            }
-            List<ExitGate> exitGates = garage.getExitGates();
-            if(null != exitGates) {
-                for(ExitGate gate : exitGates) {
-                    exitControllerList.get().add(new ExitController(gate, this, window));
-                }
-            }
-            Collection<Ticket> tickets = em.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
-            if(null != tickets) {
-                for(Ticket ticket : tickets) {
-                    ticketControllerList.get().add(new TicketController(ticket, window));
-                }
-            }
-            em.getTransaction().commit();
-        } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
+    private void initEntryGatesTab() throws IOException, NoSuchMethodException {
+        GarageController.setEntryControllerLookup(FXCollections.observableHashMap());
+
+        this.entryGatesCountLabel.textProperty().bind(this.bean.entryGatesProperty().sizeProperty().asString());
+        this.entryGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        ObservableList<EntryGate> entryGates = (ObservableList<EntryGate>)bean.getEntryGates();
+        for(EntryGate gate : entryGates) {
+            getEntryControllerLookup().put(gate, new EntryController(gate, window));
         }
-        entryGatesList.getSelectionModel().selectFirst();
-        exitGatesList.getSelectionModel().selectFirst();
+        this.entryGatesTable.setItems(entryGates);
+        this.entryGatesTable.getSelectionModel().selectFirst();
+    }
 
+    private void initExitGatesTab() throws IOException, NoSuchMethodException {
+        GarageController.setExitControllerLookup(FXCollections.observableHashMap());
+
+        this.exitGatesCountLabel.textProperty().bind(this.bean.entryGatesProperty().sizeProperty().asString());
+        this.exitGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        ObservableList<ExitGate> exitGates = (ObservableList<ExitGate>)bean.getExitGates();
+        for(ExitGate gate : exitGates) {
+            getExitControllerLookup().put(gate, new ExitController(gate, this, window));
+        }
+        this.exitGatesTable.setItems(exitGates);
+        this.exitGatesTable.getSelectionModel().selectFirst();
+    }
+
+    private void initTicketsTab() throws IOException, NoSuchMethodException {
+        GarageController.setTicketControllerLookup(FXCollections.observableHashMap());
+
+        this.ticketCountLabel.textProperty().bind(this.bean.ticketsProperty().sizeProperty().asString());
+        this.ticketsTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.ticketsTableEntryGateColumn.setCellValueFactory(new PropertyValueFactory<>("entryGate"));
+        this.ticketsTableExitGateColumn.setCellValueFactory(new PropertyValueFactory<>("exitGate"));
+        this.ticketsTableAssignedDateColumn.setCellValueFactory(new PropertyValueFactory<>("assignedDate"));
+        this.ticketsTableAssignedTimeColumn.setCellValueFactory(new PropertyValueFactory<>("assignedTime"));
+        this.ticketsTableDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        this.ticketsTableDueTimeColumn.setCellValueFactory(new PropertyValueFactory<>("dueTime"));
+        this.ticketsTableAmountDueColumn.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+
+        ObservableList<Ticket> tickets = (ObservableList<Ticket>)bean.getTickets();
+        for(Ticket ticket : tickets) {
+            getTicketControllerLookup().put(ticket, new TicketController(ticket, window));
+        }
+        this.ticketsTable.setItems(tickets);
+        this.ticketsTable.getSelectionModel().selectFirst();
+    }
+
+    private void initDailyStatsTab() {
+
+    }
+
+    private void initMonthlyStatsTab() {
+        this.monthStatList = new SimpleListProperty<String>(FXCollections.observableArrayList());
         this.monthStatComboBox.setItems(this.monthStatList.get());
+    }
+
+    private void initYearlyStatsTab() {
+        this.yearStatList = new SimpleListProperty<String>(FXCollections.observableArrayList());
         this.yearStatComboBox.setItems(this.yearStatList.get());
-        Collection<Ticket> tickets = em.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
+    }
+
+    public Garage getBean() {
+        return this.bean;
+    }
+
+    public static ObservableMap<EntryGate, EntryController> getEntryControllerLookup() {
+        return GarageController.entryControllerLookup.get();
+    }
+
+    public static void setEntryControllerLookup(ObservableMap<EntryGate, EntryController> entryControllerLookup) {
+        GarageController.entryControllerLookup.set(entryControllerLookup);
+    }
+
+    public static MapProperty<EntryGate, EntryController> entryControllerLookupProperty() {
+        return GarageController.entryControllerLookup;
+    }
+
+    public static ObservableMap<ExitGate, ExitController> getExitControllerLookup() {
+        return GarageController.exitControllerLookup.get();
+    }
+
+    public static void setExitControllerLookup(ObservableMap<ExitGate, ExitController> exitControllerLookup) {
+        GarageController.exitControllerLookup.set(exitControllerLookup);
+    }
+
+    public static MapProperty<ExitGate, ExitController> exitControllerLookupProperty() {
+        return GarageController.exitControllerLookup;
+    }
+
+    public static ObservableMap<Ticket, TicketController> getTicketControllerLookup() {
+        return GarageController.ticketControllerLookup.get();
+    }
+
+    public static void setTicketControllerLookup(ObservableMap<Ticket, TicketController> ticketControllerLookup) {
+        GarageController.ticketControllerLookup.set(ticketControllerLookup);
+    }
+
+    public static MapProperty<Ticket, TicketController> ticketControllerLookupProperty() {
+        return GarageController.ticketControllerLookup;
     }
 
     public void showView() {
@@ -161,127 +244,20 @@ public class GarageController {
         stage.close();
     }
 
-    public ObservableList<EntryController> getEntryControllerList() {
-        return entryControllerList.get();
-    }
-
-    public SimpleListProperty<EntryController> entryControllerListProperty() {
-        return entryControllerList;
-    }
-
-    public ObservableList<ExitController> getExitControllerList() {
-        return exitControllerList.get();
-    }
-
-    public SimpleListProperty<ExitController> exitControllerListProperty() {
-        return exitControllerList;
-    }
-
-    public ObservableList<TicketController> getTicketControllerList() {
-        return ticketControllerList.get();
-    }
-
-    public SimpleListProperty<TicketController> ticketControllerListProperty() {
-        return ticketControllerList;
-    }
-
-    public Garage getBean() {
-        return this.bean;
-    }
-
-    public IntegerProperty occupancyProperty() {
-        return this.occupancy;
-    }
-
-    public StringProperty nameProperty() {
-        return this.name;
-    }
-
-    public ObjectProperty<List<EntryGate>> entryGatesProperty() {
-        return this.entryGates;
-    }
-
-    public ObjectProperty<List<ExitGate>> exitGatesProperty() {
-        return this.exitGates;
-    }
-
-    public String getName() {
-        return this.name.get();
-    }
-
-    public void setName(String value) {
-        this.name.set(value);
-    }
-
-    public int getOccupancy() {
-        return this.occupancy.get();
-    }
-
-    public void setOccupancy(int value) {
-        this.occupancy.set(value);
-    }
-
-    public List<EntryGate> getEntryGates() {
-        return this.entryGates.get();
-    }
-
-    public void setEntryGates(List<EntryGate> value) {
-        this.entryGates.set(value);
-    }
-
-    public int getEntryGateCount() {
-        return this.entryGateCount.get();
-    }
-
-    public void setEntryGateCount(int value) {
-        this.entryGateCount.set(value);
-    }
-
-    public void incrementEntryGateCount() {
-        this.entryGateCount.set(this.entryGateCount.get() + 1);
-    }
-
-    public void decrementEntryGateCount() {
-        this.entryGateCount.set(this.entryGateCount.get() - 1);
-    }
-
-    public List<ExitGate> getExitGates() {
-        return this.exitGates.get();
-    }
-
-    public void setExitGates(List<ExitGate> value) {
-        this.exitGates.set(value);
-    }
-
-    public int getExitGateCount() {
-        return this.exitGateCount.get();
-    }
-
-    public void setExitGateCount(int value) {
-        this.exitGateCount.set(value);
-    }
-
-    public void incrementExitGateCount() {
-        this.exitGateCount.set(this.exitGateCount.get() + 1);
-    }
-
-    public void decrementExitGateCount() {
-        this.exitGateCount.set(this.exitGateCount.get() - 1);
-    }
-
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
         try {
-            em.getTransaction().begin();
-            EntryGate gate = new EntryGate(bean);
-            em.persist(gate);
-            bean.incrementEntryGateCount();
-            entryControllerList.get().add(new EntryController(gate, window));
-            bean.getEntryGates().add(gate);
-            em.getTransaction().commit();
+            this.em.getTransaction().begin();
+            Garage garage = getBean();
+            EntryGate gate = new EntryGate(garage);
+            this.em.persist(gate);
+            garage.getEntryGates().add(gate);
+            this.em.merge(garage);
+            getEntryControllerLookup().put(gate, new EntryController(gate, window));
+            this.em.getTransaction().commit();
         } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (this.em.getTransaction().isActive()) {
+                this.em.getTransaction().rollback();
             }
         }
     }
@@ -289,16 +265,17 @@ public class GarageController {
     @FXML
     protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
         try {
-            em.getTransaction().begin();
-            ExitGate gate = new ExitGate(bean);
-            em.persist(gate);
-            bean.incrementExitGateCount();
-            exitControllerList.get().add(new ExitController(gate, this, window));
-            bean.getExitGates().add(gate);
-            em.getTransaction().commit();
+            this.em.getTransaction().begin();
+            Garage garage = getBean();
+            ExitGate gate = new ExitGate(garage);
+            this.em.persist(gate);
+            garage.getExitGates().add(gate);
+            this.em.merge(garage);
+            getExitControllerLookup().put(gate, new ExitController(gate, this, window));
+            this.em.getTransaction().commit();
         } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (this.em.getTransaction().isActive()) {
+                this.em.getTransaction().rollback();
             }
         }
     }
@@ -306,17 +283,15 @@ public class GarageController {
     @FXML
     protected void handleRemoveEntryGate(ActionEvent event) {
         try {
-            em.getTransaction().begin();
-            EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
-            EntryGate gate = controller.getBean();
-            em.remove(em.merge(gate));
-            bean.decrementEntryGateCount();
-            entryControllerList.get().remove(controller);
-            controller.closeView();
-            em.getTransaction().commit();
+            this.em.getTransaction().begin();
+            EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
+            this.em.remove(em.merge(selected));
+
+            GarageController.getEntryControllerLookup().remove(selected).closeView();
+            this.em.getTransaction().commit();
         } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (this.em.getTransaction().isActive()) {
+                this.em.getTransaction().rollback();
             }
         }
     }
@@ -324,17 +299,15 @@ public class GarageController {
     @FXML
     protected void handleRemoveExitGate(ActionEvent event) {
         try {
-            em.getTransaction().begin();
-            ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
-            ExitGate gate = controller.getBean();
-            em.remove(em.merge(gate));
-            bean.decrementExitGateCount();
-            exitControllerList.get().remove(controller);
-            controller.closeView();
-            em.getTransaction().commit();
+            this.em.getTransaction().begin();
+            ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
+            this.em.remove(em.merge(selected));
+
+            GarageController.getExitControllerLookup().remove(selected).closeView();
+            this.em.getTransaction().commit();
         } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (this.em.getTransaction().isActive()) {
+                this.em.getTransaction().rollback();
             }
         }
     }
@@ -342,41 +315,44 @@ public class GarageController {
     @FXML
     protected void handleRemoveTicket(ActionEvent event) {
         try {
-            em.getTransaction().begin();
-            TicketController controller = ticketList.getSelectionModel().getSelectedItem();
-            Ticket ticket = controller.getTicket();
-            em.remove(em.merge(ticket));
-            ticketControllerList.get().remove(controller);
-            controller.closeView();
-            em.getTransaction().commit();
+            this.em.getTransaction().begin();
+            Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
+            this.em.remove(em.merge(selected));
+
+            Garage garage = selected.getGarage();
+            garage.setOccupancy(garage.getOccupancy() - 1);
+            this.em.merge(garage);
+
+            GarageController.getTicketControllerLookup().remove(selected).closeView();
+            this.em.getTransaction().commit();
         } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            if (this.em.getTransaction().isActive()) {
+                this.em.getTransaction().rollback();
             }
         }
     }
 
     @FXML
     protected void handleShowEntryGate(ActionEvent event) {
-        EntryController controller = entryGatesList.getSelectionModel().getSelectedItem();
-        if(null != controller) {
-            controller.showView();
+        EntryGate entryGate = entryGatesTable.getSelectionModel().getSelectedItem();
+        if(null != entryGate) {
+            GarageController.getEntryControllerLookup().get(entryGate).showView();
         }
     }
 
     @FXML
     protected void handleShowExitGate(ActionEvent event) {
-        ExitController controller = exitGatesList.getSelectionModel().getSelectedItem();
-        if(null != controller) {
-            controller.showView();
+        ExitGate exitGate = exitGatesTable.getSelectionModel().getSelectedItem();
+        if(null != exitGate) {
+            GarageController.getExitControllerLookup().get(exitGate).showView();
         }
     }
 
     @FXML
     protected void handleShowTicket(ActionEvent event) {
-        TicketController controller = ticketList.getSelectionModel().getSelectedItem();
-        if(null != controller) {
-            controller.showView();
+        Ticket ticket = ticketsTable.getSelectionModel().getSelectedItem();
+        if(null != ticket) {
+            GarageController.getTicketControllerLookup().get(ticket).showView();
         }
     }
 

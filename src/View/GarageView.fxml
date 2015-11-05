@@ -12,11 +12,6 @@
          <content>
             <GridPane>
                <children>
-                  <ListView fx:id="entryGatesList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </GridPane.margin>
-                  </ListView>
                   <HBox alignment="CENTER" GridPane.rowIndex="2">
                      <children>
                         <Button mnemonicParsing="false" onAction="#handleAddEntryGate" text="Add">
@@ -49,6 +44,11 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </VBox>
+                  <TableView fx:id="entryGatesTable" GridPane.rowIndex="1">
+                     <columns>
+                        <TableColumn fx:id="entryGatesTableIdColumn" prefWidth="75.0" text="id" />
+                     </columns>
+                  </TableView>
                </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" />
@@ -73,11 +73,6 @@
                   <RowConstraints vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <ListView fx:id="exitGatesList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </GridPane.margin>
-                  </ListView>
                   <HBox alignment="CENTER" GridPane.rowIndex="2">
                      <children>
                         <Button mnemonicParsing="false" onAction="#handleAddExitGate" text="Add">
@@ -110,6 +105,11 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
                   </VBox>
+                  <TableView fx:id="exitGatesTable" GridPane.rowIndex="1">
+                     <columns>
+                        <TableColumn fx:id="exitGatesTableIdColumn" prefWidth="75.0" text="id" />
+                     </columns>
+                  </TableView>
                </children>
             </GridPane>
          </content>
@@ -133,7 +133,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="ticketCountLabel" text="0 total." />
+                        <Label fx:id="ticketCountLabel" text="0" />
                      </children>
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -153,11 +153,18 @@
                         </Button>
                      </children>
                   </HBox>
-                  <ListView fx:id="ticketList" prefHeight="196.0" prefWidth="426.0" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </GridPane.margin>
-                  </ListView>
+                  <TableView fx:id="ticketsTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                    <columns>
+                      <TableColumn fx:id="ticketsTableIdColumn" prefWidth="64.0" text="id" />
+                        <TableColumn fx:id="ticketsTableEntryGateColumn" prefWidth="77.0" text="Entry gate" />
+                        <TableColumn fx:id="ticketsTableExitGateColumn" prefWidth="74.0" text="Exit gate" />
+                        <TableColumn fx:id="ticketsTableAssignedDateColumn" prefWidth="94.0" text="Assigned date" />
+                        <TableColumn fx:id="ticketsTableAssignedTimeColumn" prefWidth="87.0" text="Assigned time" />
+                        <TableColumn fx:id="ticketsTableDueDateColumn" prefWidth="63.0" text="Due date" />
+                        <TableColumn fx:id="ticketsTableDueTimeColumn" prefWidth="83.0" text="Due time" />
+                        <TableColumn fx:id="ticketsTableAmountDueColumn" prefWidth="81.0" text="Amount due" />
+                    </columns>
+                  </TableView>
                </children>
             </GridPane>
          </content>

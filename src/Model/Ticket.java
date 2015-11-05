@@ -1,10 +1,9 @@
 package Model;
 
+import javafx.beans.property.*;
+
 import javax.persistence.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Time;
 import java.util.Calendar;
 
@@ -12,158 +11,154 @@ import java.util.Calendar;
 @Access(AccessType.PROPERTY)
 public class Ticket {
 
-    private int id;
-    private EntryGate entryGate;
-    private ExitGate exitGate;
-    private java.sql.Date assignedDate;
-    private java.sql.Time assignedTime;
-    private java.sql.Date dueDate;
-    private java.sql.Time dueTime;
-    private BigDecimal amountDue;
-
-    @Transient
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private IntegerProperty id;
+    private ObjectProperty<Garage> garage;
+    private ObjectProperty<EntryGate> entryGate;
+    private ObjectProperty<ExitGate> exitGate;
+    private ObjectProperty<java.sql.Date> assignedDate;
+    private ObjectProperty<java.sql.Time> assignedTime;
+    private ObjectProperty<java.sql.Date> dueDate;
+    private ObjectProperty<java.sql.Time> dueTime;
+    private DoubleProperty amountDue;
 
     public Ticket() {
+        this(null, null);
+    }
+
+    public Ticket(Garage garage, EntryGate entryGate) {
+        this.id = new SimpleIntegerProperty();
+        this.garage = new SimpleObjectProperty<>(garage);
+        this.entryGate = new SimpleObjectProperty<>(entryGate);
+        this.exitGate = new SimpleObjectProperty<>();
         Calendar cal = Calendar.getInstance();
-        setAssignedDate(new Date(cal.getTimeInMillis()));
-        setAssignedTime(new java.sql.Time(assignedDate.getTime()));
-
+        this.assignedDate = new SimpleObjectProperty<>(new java.sql.Date(cal.getTimeInMillis()));
+        this.assignedTime = new SimpleObjectProperty<>(new java.sql.Time(getAssignedDate().getTime()));
         cal.add(Calendar.DATE, 1);
-        setDueDate(new Date(cal.getTimeInMillis()));
-        setDueTime(new java.sql.Time(dueDate.getTime()));
-
-        setAmountDue(new BigDecimal(19.99));
-    }
-
-    public Ticket(EntryGate entryGate) {
-        this();
-        setEntryGate(entryGate);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
+        this.dueDate = new SimpleObjectProperty<>(new java.sql.Date(cal.getTimeInMillis()));
+        this.dueTime = new SimpleObjectProperty<>(new java.sql.Time(getDueDate().getTime()));
+        this.amountDue = new SimpleDoubleProperty(19.99);
     }
 
     @Id
     @GeneratedValue()
-    @Access(AccessType.PROPERTY)
     public int getId() {
-        return id;
+        return this.id.get();
     }
 
     public void setId(int id) {
-        int oldId = this.id;
-        if(oldId != id) {
-            this.id = id;
-            this.pcs.firePropertyChange("id", oldId, this.id);
-        }
+        this.id.set(id);
+    }
+
+    public IntegerProperty idProperty() {
+        return this.id;
     }
 
     @ManyToOne()
-    @Access(AccessType.PROPERTY)
+    public Garage getGarage() {
+        return this.garage.get();
+    }
+
+    public void setGarage(Garage garage) {
+        this.garage.set(garage);
+    }
+
+    public ObjectProperty<Garage> garageProperty() {
+        return this.garage;
+    }
+
+    @ManyToOne()
     public EntryGate getEntryGate() {
-        return entryGate;
+        return this.entryGate.get();
     }
 
     public void setEntryGate(EntryGate entryGate) {
-        EntryGate oldEntryGate = this.entryGate;
-        if(oldEntryGate != entryGate) {
-            this.entryGate = entryGate;
-            this.pcs.firePropertyChange("entryGate", oldEntryGate, this.entryGate);
-        }
+        this.entryGate.set(entryGate);
+    }
+
+    public ObjectProperty<EntryGate> entryGateProperty() {
+        return this.entryGate;
     }
 
     @ManyToOne()
-    @Access(AccessType.PROPERTY)
     public ExitGate getExitGate() {
-        return exitGate;
+        return this.exitGate.get();
     }
 
     public void setExitGate(ExitGate exitGate) {
-        ExitGate oldExitGate = this.exitGate;
-        if(oldExitGate != exitGate) {
-            this.exitGate = exitGate;
-            this.pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
-        }
+        this.exitGate.set(exitGate);
+    }
+
+    public ObjectProperty<ExitGate> exitGateProperty() {
+        return this.exitGate;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
-    public Date getAssignedDate() {
-        return assignedDate;
+    public java.sql.Date getAssignedDate() {
+        return this.assignedDate.get();
     }
 
-    public void setAssignedDate(Date assignedDate) {
-        Date oldAssignedDate = this.assignedDate;
-        if(oldAssignedDate != assignedDate) {
-            this.assignedDate = assignedDate;
-            this.pcs.firePropertyChange("assignedDate", oldAssignedDate, this.assignedDate);
-        }
+    public void setAssignedDate(java.sql.Date assignedDate) {
+        this.assignedDate.set(assignedDate);
+    }
+
+    public ObjectProperty<java.sql.Date> assignedDateProperty() {
+        return this.assignedDate;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public Time getAssignedTime() {
-        return assignedTime;
+        return this.assignedTime.get();
     }
 
     public void setAssignedTime(Time assignedTime) {
-        Time oldAssignedTime = this.assignedTime;
-        if(oldAssignedTime != assignedTime) {
-            this.assignedTime = assignedTime;
-            this.pcs.firePropertyChange("assignedTime", oldAssignedTime, this.assignedTime);
-        }
+        this.assignedTime.set(assignedTime);
+    }
+
+    public ObjectProperty<java.sql.Time> assignedTimeProperty() {
+        return this.assignedTime;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
-    public Date getDueDate() {
-        return dueDate;
+    public java.sql.Date getDueDate() {
+        return this.dueDate.get();
     }
 
-    public void setDueDate(Date dueDate) {
-        Date oldDueDate = this.dueDate;
-        if(oldDueDate != dueDate) {
-            this.dueDate = dueDate;
-            this.pcs.firePropertyChange("dueDate", oldDueDate, this.dueDate);
-        }
+    public void setDueDate(java.sql.Date dueDate) {
+        this.dueDate.set(dueDate);
+    }
+
+    public ObjectProperty<java.sql.Date> dueDateProperty() {
+        return this.dueDate;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public Time getDueTime() {
-        return dueTime;
+        return this.dueTime.get();
     }
 
     public void setDueTime(Time dueTime) {
-        Time oldDueTime = this.dueTime;
-        if(oldDueTime != dueTime) {
-            this.dueTime = dueTime;
-            this.pcs.firePropertyChange("dueTime", oldDueTime, this.dueTime);
-        }
+        this.dueTime.set(dueTime);
+    }
+
+    public ObjectProperty<java.sql.Time> dueTimeProperty() {
+        return this.dueTime;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
-    public BigDecimal getAmountDue() {
-        return amountDue;
+    public double getAmountDue() {
+        return this.amountDue.get();
     }
 
-    public void setAmountDue(BigDecimal amountDue) {
-        BigDecimal oldAmountDue = this.amountDue;
-        if(oldAmountDue != amountDue) {
-            this.amountDue = amountDue;
-            this.pcs.firePropertyChange("amountDue", oldAmountDue, this.amountDue);
-        }
+    public void setAmountDue(double amountDue) {
+        this.amountDue.set(amountDue);
+    }
+
+    public DoubleProperty amountDueProperty() {
+        return this.amountDue;
     }
 
     @Override
     public String toString() {
-        return "Ticket #" + getId();
+        return Integer.toString(getId());
     }
 }

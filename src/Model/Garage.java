@@ -1,5 +1,8 @@
 package Model;
 
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+
 import javax.persistence.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -9,138 +12,110 @@ import java.util.List;
 @Access(AccessType.PROPERTY)
 public class Garage {
 
-    private String name;
-    private int occupancy;
-    private List<EntryGate> entryGates;
-    private int entryGateCount;
-    private List<ExitGate> exitGates;
-    private int exitGateCount;
+    private SimpleStringProperty name;
+    private SimpleIntegerProperty occupancy;
+    private SimpleIntegerProperty maxOccupancy;
+    private SimpleListProperty<Ticket> tickets;
+    private SimpleListProperty<EntryGate> entryGates;
+    private SimpleListProperty<ExitGate> exitGates;
 
     @Transient
-    public static final int MAX_OCCUPANCY = 20;
-    @Transient
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private static final int MAX_OCCUPANCY = 20;
 
     public Garage() {
+        this(null);
     }
 
     public Garage(String name) {
-        this();
-        setName(name);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
+        this.name = new SimpleStringProperty(name);
+        this.occupancy = new SimpleIntegerProperty();
+        this.maxOccupancy = new SimpleIntegerProperty(MAX_OCCUPANCY);
+        this.tickets = new SimpleListProperty<>();
+        this.entryGates = new SimpleListProperty<>();
+        this.exitGates = new SimpleListProperty<>();
     }
 
     @Id
-    @Basic(optional = false)
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public String getName() {
-        return name;
+        return this.name.get();
     }
 
     public void setName(String name) {
-        String oldName = this.name;
-        if(oldName != name) {
-            this.name = name;
-            this.pcs.firePropertyChange("name", oldName, this.name);
-        }
+        this.name.set(name);
+    }
+
+    public StringProperty nameProperty() {
+        return this.name;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public int getOccupancy() {
-        return occupancy;
+        return this.occupancy.get();
     }
 
     public void setOccupancy(int occupancy) {
-        int oldOccupancy = this.occupancy;
-        if(oldOccupancy != occupancy) {
-            this.occupancy = occupancy;
-            this.pcs.firePropertyChange("occupancy", oldOccupancy, this.occupancy);
-        }
+        this.occupancy.set(occupancy);
+    }
+
+    public IntegerProperty occupancyProperty() {
+        return this.occupancy;
+    }
+
+    @Column(nullable = false)
+    public int getMaxOccupancy() {
+        return this.maxOccupancy.get();
+    }
+
+    public void setMaxOccupancy(int maxOccupancy) {
+        this.maxOccupancy.set(maxOccupancy);
+    }
+
+    public IntegerProperty maxOccupancyProperty() {
+        return this.maxOccupancy;
     }
 
     @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
-    @Access(AccessType.PROPERTY)
+    public List<Ticket> getTickets() {
+        return this.tickets.get();
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets.set(FXCollections.observableArrayList(tickets));
+    }
+
+    public ListProperty<Ticket> ticketsProperty() {
+        return this.tickets;
+    }
+
+    @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
     public List<EntryGate> getEntryGates() {
-        return entryGates;
+        return this.entryGates.get();
     }
 
     public void setEntryGates(List<EntryGate> entryGates) {
-        List<EntryGate> oldEntryGates = this.entryGates;
-        if(oldEntryGates != entryGates) {
-            this.entryGates = entryGates;
-            this.pcs.firePropertyChange("entryGates", oldEntryGates, this.entryGates);
-        }
+        this.entryGates.set(FXCollections.observableArrayList(entryGates));
     }
 
-    @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
-    public int getEntryGateCount() {
-        return this.entryGateCount;
-    }
-
-    public void setEntryGateCount(int entryGateCount) {
-        int oldEntryGateCount = this.entryGateCount;
-        if(oldEntryGateCount != entryGateCount) {
-            this.entryGateCount = entryGateCount;
-            this.pcs.firePropertyChange("entryGateCount", oldEntryGateCount, this.entryGateCount);
-        }
-    }
-
-    public void incrementEntryGateCount() {
-        this.setEntryGateCount(this.getEntryGateCount() + 1);
-    }
-
-    public void decrementEntryGateCount() {
-        this.setEntryGateCount(this.getEntryGateCount() - 1);
+    public ListProperty<EntryGate> entryGatesProperty() {
+        return this.entryGates;
     }
 
     @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
-    @Access(AccessType.PROPERTY)
     public List<ExitGate> getExitGates() {
-        return exitGates;
+        return this.exitGates.get();
     }
 
     public void setExitGates(List<ExitGate> exitGates) {
-        List<ExitGate> oldExitGates = this.exitGates;
-        if(oldExitGates != exitGates) {
-            this.exitGates = exitGates;
-            this.pcs.firePropertyChange("exitGates", oldExitGates, this.exitGates);
-        }
+        this.exitGates.set(FXCollections.observableArrayList(exitGates));
     }
 
-    @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
-    public int getExitGateCount() {
-        return this.exitGateCount;
-    }
-
-    public void setExitGateCount(int exitGateCount) {
-        int oldExitGateCount = this.exitGateCount;
-        if(oldExitGateCount != exitGateCount) {
-            this.exitGateCount = exitGateCount;
-            this.pcs.firePropertyChange("exitGateCount", oldExitGateCount, this.exitGateCount);
-        }
-    }
-
-    public void incrementExitGateCount() {
-        this.setExitGateCount(this.getExitGateCount() + 1);
-    }
-
-    public void decrementExitGateCount() {
-        this.setExitGateCount(this.getExitGateCount() - 1);
+    public ListProperty<ExitGate> exitGatesProperty() {
+        return this.exitGates;
     }
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 }

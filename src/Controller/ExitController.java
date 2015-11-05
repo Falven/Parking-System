@@ -4,12 +4,6 @@ import Model.ExitGate;
 import Model.Garage;
 import Model.Payment;
 import Model.Ticket;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.adapter.JavaBeanIntegerProperty;
-import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
-import javafx.beans.property.adapter.JavaBeanObjectProperty;
-import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -17,24 +11,20 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 public class ExitController {
 
@@ -44,12 +34,8 @@ public class ExitController {
     private Stage stage;
     private Scene scene;
     private final ExitGate bean;
-    private JavaBeanIntegerProperty idProperty;
-    private JavaBeanObjectProperty<List<Ticket>> ticketsProperty;
-    private JavaBeanObjectProperty<List<Payment>> paymentsProperty;
-    private JavaBeanObjectProperty<Garage> garageProperty;
-    private Window window;
     private GarageController parent;
+    private Window window;
 
     @FXML
     private TextField ticketIdField;
@@ -72,10 +58,6 @@ public class ExitController {
 
     public ExitController(ExitGate gate, GarageController parent, Window owner) throws IOException, NoSuchMethodException {
         this.bean = gate;
-        this.idProperty = JavaBeanIntegerPropertyBuilder.create().bean(this.bean).name("id").build();
-        this.ticketsProperty = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("tickets").build();
-        this.paymentsProperty = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("payments").build();
-        this.garageProperty = JavaBeanObjectPropertyBuilder.create().bean(this.bean).name("garage").build();
         this.parent = parent;
         this.em = Main.getEmf().createEntityManager();
         monthList = FXCollections.observableArrayList(new DateFormatSymbols().getMonths());
@@ -119,54 +101,6 @@ public class ExitController {
         return this.bean;
     }
 
-    public IntegerProperty idProperty() {
-        return this.idProperty;
-    }
-
-    public ObjectProperty<List<Ticket>> ticketsProperty() {
-        return this.ticketsProperty;
-    }
-
-    public ObjectProperty<List<Payment>> paymentsProperty() {
-        return this.paymentsProperty;
-    }
-
-    public ObjectProperty<Garage> garageProperty() {
-        return this.garageProperty;
-    }
-
-    public Integer getId() {
-        return this.idProperty.get();
-    }
-
-    public void setId(Integer id) {
-        this.idProperty.set(id);
-    }
-
-    public List<Ticket> getTickets() {
-        return this.ticketsProperty.get();
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.ticketsProperty.set(tickets);
-    }
-
-    public List<Payment> getPayments() {
-        return this.paymentsProperty.get();
-    }
-
-    public void setPayments(List<Payment> payments) {
-        this.paymentsProperty.set(payments);
-    }
-
-    public Garage getGarage() {
-        return this.garageProperty.get();
-    }
-
-    public void setGarage(Garage garage) {
-        this.garageProperty.set(garage);
-    }
-
     public void showView() {
         stage.show();
     }
@@ -205,12 +139,15 @@ public class ExitController {
                                     int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
                                     try {
                                         em.getTransaction().begin();
-                                        Payment payment = new Payment(bean, ccNum, csv, ticket.getAmountDue(), month, year);
-                                        em.persist(payment);
+                                        Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, bean);
                                         bean.getPayments().add(payment);
                                         Garage owner = bean.getGarage();
                                         owner.setOccupancy(owner.getOccupancy() - 1);
                                         ticket.setExitGate(bean);
+                                        em.persist(payment);
+                                        em.merge(bean);
+                                        em.merge(owner);
+                                        em.merge(ticket);
                                         em.getTransaction().commit();
                                         Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
                                     } finally {
@@ -239,10 +176,5 @@ public class ExitController {
         } catch(NumberFormatException nfe) {
             Main.showError("Ticket ID error.", "Error reading your ticket.", "The provided ticket ID is invalid.");
         }
-    }
-
-    @Override
-    public String toString() {
-        return bean.toString();
     }
 }

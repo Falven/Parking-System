@@ -1,147 +1,130 @@
 package Model;
 
+import javafx.beans.property.*;
+
 import javax.persistence.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.math.BigDecimal;
 
 @Entity
 @Access(AccessType.PROPERTY)
 public class Payment {
 
-    private int id;
-    private long ccNum;
-    private int csv;
-    private BigDecimal amountPaid;
-    private int expMonth;
-    private int expYear;
-    private ExitGate exitGate;
-
-    @Transient
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private IntegerProperty id;
+    private LongProperty ccNum;
+    private IntegerProperty csv;
+    private DoubleProperty amountPaid;
+    private IntegerProperty expMonth;
+    private IntegerProperty expYear;
+    private ObjectProperty<ExitGate> exitGate;
 
     public Payment() {
+        this(0, 0, 0.0, 0, 0, null);
     }
 
-    public Payment(ExitGate gate, long ccNum, short csv, BigDecimal amountPaid, int expMonth, int expYear) {
-        this();
-        setExitGate(gate);
-        setCcNum(ccNum);
-        setCsv(csv);
-        setAmountPaid(amountPaid);
-        setExpMonth(expMonth);
-        setExpYear(expYear);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
+    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, ExitGate gate) {
+        this.id = new SimpleIntegerProperty();
+        this.ccNum = new SimpleLongProperty(ccNum);
+        this.csv = new SimpleIntegerProperty(csv);
+        this.amountPaid = new SimpleDoubleProperty(amountPaid);
+        this.expMonth = new SimpleIntegerProperty(expMonth);
+        this.expYear = new SimpleIntegerProperty(expYear);
+        this.exitGate = new SimpleObjectProperty<>(gate);
     }
 
     @Id
     @GeneratedValue()
-    @Access(AccessType.PROPERTY)
     public int getId() {
-        return id;
+        return this.id.get();
     }
 
     public void setId(int id) {
-        int oldId = this.id;
-        if(oldId != id) {
-            this.id = id;
-            this.pcs.firePropertyChange("id", oldId, this.id);
-        }
+        this.id.set(id);
+    }
+
+    public IntegerProperty idProperty() {
+        return this.id;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public long getCcNum() {
-        return ccNum;
+        return this.ccNum.get();
     }
 
     public void setCcNum(long ccNum) {
-        long oldCcNum = this.ccNum;
-        if(oldCcNum != ccNum) {
-            this.ccNum = ccNum;
-            this.pcs.firePropertyChange("ccNum", oldCcNum, this.ccNum);
-        }
+        this.ccNum.setValue(ccNum);
+    }
+
+    public LongProperty ccNumProperty() {
+        return this.ccNum;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public int getCsv() {
-        return csv;
+        return this.csv.get();
     }
 
     public void setCsv(int csv) {
-        int oldCsv = this.csv;
-        if(oldCsv != csv) {
-            this.csv = csv;
-            this.pcs.firePropertyChange("csv", oldCsv, this.csv);
-        }
+        this.csv.set(csv);
+    }
+
+    public IntegerProperty csvProperty() {
+        return this.csv;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
-    public BigDecimal getAmountPaid() {
-        return amountPaid;
+    public double getAmountPaid() {
+        return this.amountPaid.get();
     }
 
-    public void setAmountPaid(BigDecimal amountPaid) {
-        BigDecimal oldAmountPaid = this.amountPaid;
-        if(oldAmountPaid != amountPaid) {
-            this.amountPaid = amountPaid;
-            this.pcs.firePropertyChange("amountPaid", oldAmountPaid, this.amountPaid);
-        }
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid.set(amountPaid);
+    }
+
+    public DoubleProperty amountPaidProperty() {
+        return this.amountPaid;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public int getExpMonth() {
-        return expMonth;
+        return this.expMonth.get();
     }
 
     public void setExpMonth(int expMonth) {
-        int oldExpMonth = this.expMonth;
-        if(oldExpMonth != expMonth) {
-            this.expMonth = expMonth;
-            this.pcs.firePropertyChange("expMonth", oldExpMonth, this.expMonth);
-        }
+        this.expMonth.set(expMonth);
+    }
+
+    public IntegerProperty expMonthProperty() {
+        return this.expMonth;
     }
 
     @Column(nullable = false)
-    @Access(AccessType.PROPERTY)
     public int getExpYear() {
-        return expYear;
+        return this.expYear.get();
     }
 
     public void setExpYear(int expYear) {
-        int oldExpYear = this.expYear;
-        if(oldExpYear != expYear) {
-            this.expYear = expYear;
-            this.pcs.firePropertyChange("expYear", oldExpYear, this.expYear);
-        }
+        this.expYear.set(expYear);
+    }
+
+    public IntegerProperty expYearProperty() {
+        return this.expYear;
     }
 
     @ManyToOne()
-    @Access(AccessType.PROPERTY)
     public ExitGate getExitGate() {
-        return exitGate;
+        return this.exitGate.get();
     }
 
     public void setExitGate(ExitGate exitGate) {
-        ExitGate oldExitGate = this.exitGate;
-        if(oldExitGate != exitGate) {
-            this.exitGate = exitGate;
-            this.pcs.firePropertyChange("exitGate", oldExitGate, this.exitGate);
-        }
+        this.exitGate.set(exitGate);
+    }
+
+    public ObjectProperty<ExitGate> exitGateProperty() {
+        return this.exitGate;
     }
 
     @Override
     public String toString() {
-        return "Payment #" + getId();
+        return Integer.toString(getId());
     }
 }

@@ -16,14 +16,14 @@
     <RowConstraints vgrow="NEVER" />
   </rowConstraints>
    <children>
-      <Button mnemonicParsing="false" onAction="#handleGetTicket" text="Get Ticket" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+      <Button fx:id="getTicketButton" mnemonicParsing="false" onAction="#handleGetTicket" text="Get Ticket" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin></Button>
       <VBox alignment="CENTER">
          <children>
             <Label text="Parking Space" textFill="WHITE" />
-            <ImageView fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="availabilityImage" fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@Available.png" />
                </image>

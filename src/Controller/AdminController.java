@@ -1,9 +1,13 @@
 package Controller;
 
 import Model.Garage;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,12 +27,12 @@ import java.util.List;
 public class AdminController {
 
     @Resource
-    EntityManager em;
-
+    private EntityManager em;
     private Scene scene;
     private Stage stage;
     private Window window;
-    private SimpleListProperty<GarageController> garageControllers;
+    private static final ListProperty<Garage> garages = new SimpleListProperty<>();
+    private static final MapProperty<Garage, GarageController> garageLookup = new SimpleMapProperty<>();
 
     @FXML
     private TextField garageField;
@@ -40,27 +44,33 @@ public class AdminController {
     private Label garageCountLabel;
 
     @FXML
-    private TableView garageTable;
+    private TableView<Garage> garageTable;
 
     @FXML
-    private TableColumn<GarageController, String> nameColumn;
+    private TableColumn<Garage, String> nameColumn;
 
     @FXML
-    private TableColumn<GarageController, Integer> occupancyColumn;
+    private TableColumn<Garage, Number> occupancyColumn;
 
     @FXML
-    private TableColumn<GarageController, Integer> entryGatesColumn;
+    private TableColumn<Garage, Number> maxOccupancyColumn;
 
     @FXML
-    private TableColumn<GarageController, Integer> exitGatesColumn;
+    private TableColumn<Garage, Number> entryGatesCountColumn;
+
+    @FXML
+    private TableColumn<Garage, Number> exitGatesCountColumn;
 
     public AdminController(Stage stage) throws IOException, NoSuchMethodException {
         this.em = Main.getEmf().createEntityManager();
-        this.garageControllers = new SimpleListProperty(FXCollections.observableArrayList());
+        initUI(stage);
+        initGarageTable();
+    }
 
+    private void initUI(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
         loader.setController(this);
-        this.scene = new Scene(loader.load(), 305.0, 400.0);
+        this.scene = new Scene(loader.load(), 380.0, 400.0);
         this.stage = stage;
         this.stage.setScene(this.scene);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -69,19 +79,52 @@ public class AdminController {
         this.stage.setTitle("Admin Controls");
         this.stage.show();
         this.window = this.scene.getWindow();
+    }
 
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
-        entryGatesColumn.setCellValueFactory(new PropertyValueFactory<>("entryGateCount"));
-        exitGatesColumn.setCellValueFactory(new PropertyValueFactory<>("exitGateCount"));
+    private void initGarageTable() throws IOException, NoSuchMethodException {
+        AdminController.setGarages(FXCollections.observableArrayList());
+        AdminController.setGarageLookup(FXCollections.observableHashMap());
+
+        this.garageCountLabel.textProperty().bind(AdminController.garagesProperty().sizeProperty().asString());
+        this.nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        this.occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
+        this.maxOccupancyColumn.setCellValueFactory(new PropertyValueFactory<>("maxOccupancy"));
+        this.entryGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().entryGatesProperty().sizeProperty());
+        this.exitGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().exitGatesProperty().sizeProperty());
 
         List<Garage> garages = em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
-        for(Garage garage : garages) {
-            garageControllers.add(new GarageController(garage, window));
+        if(null != garages) {
+            for (Garage garage : garages) {
+                AdminController.getGarages().add(garage);
+                AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
+            }
         }
-        this.garageTable.setItems(garageControllers);
+        this.garageTable.setItems(AdminController.getGarages());
         this.garageTable.getSelectionModel().selectFirst();
-        this.garageCountLabel.textProperty().bind(this.garageControllers.sizeProperty().asString());
+    }
+
+    public static ObservableList<Garage> getGarages() {
+        return AdminController.garages.get();
+    }
+
+    public static void setGarages(ObservableList<Garage> garages) {
+        AdminController.garages.set(garages);
+    }
+
+    public static ListProperty<Garage> garagesProperty() {
+        return AdminController.garages;
+    }
+
+    public static ObservableMap<Garage, GarageController> getGarageLookup() {
+        return AdminController.garageLookup.get();
+    }
+
+    public static void setGarageLookup(ObservableMap<Garage, GarageController> garageLookup) {
+        AdminController.garageLookup.set(garageLookup);
+    }
+
+    public static MapProperty<Garage, GarageController> garageLookupProperty() {
+        return AdminController.garageLookup;
     }
 
     @FXML
@@ -101,8 +144,11 @@ public class AdminController {
                 em.getTransaction().begin();
                 Garage garage = new Garage(garageName);
                 em.persist(garage);
-                garageControllers.add(new GarageController(garage, window));
                 em.getTransaction().commit();
+
+                AdminController.getGarages().add(garage);
+                AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
+                this.garageTable.getSelectionModel().selectLast();
             } finally {
                 if (em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
@@ -115,9 +161,11 @@ public class AdminController {
     protected void handleRemoveGarage(ActionEvent event) {
         try {
             em.getTransaction().begin();
-            GarageController selected = (GarageController)this.garageTable.getSelectionModel().getSelectedItem();
+            Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
             em.remove(em.merge(selected));
-            garageControllers.remove(selected);
+
+            AdminController.getGarages().remove(selected);
+            AdminController.getGarageLookup().remove(selected);
             em.getTransaction().commit();
         } finally {
             if (em.getTransaction().isActive()) {
@@ -128,9 +176,12 @@ public class AdminController {
 
     @FXML
     protected void handleManageGarage(ActionEvent event) throws IOException {
-        GarageController controller = (GarageController)this.garageTable.getSelectionModel().getSelectedItem();
-        if(null != controller) {
-            controller.showView();
+        Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
+        if(null != selected) {
+            GarageController controller = AdminController.getGarageLookup().get(selected);
+            if(null != controller) {
+                controller.showView();
+            }
         }
     }
 }

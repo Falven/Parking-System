@@ -1,82 +1,71 @@
 package Model;
 
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+
 import javax.persistence.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.List;
 
 @Entity
 @Access(AccessType.PROPERTY)
 public class EntryGate {
 
-    private int id;
-    private List<Ticket> tickets;
-    private Garage garage;
-
-    @Transient
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private IntegerProperty id;
+    private ListProperty<Ticket> tickets;
+    private ObjectProperty<Garage> garage;
 
     public EntryGate() {
+        this(null);
     }
 
-    public EntryGate(Garage owner) {
-        this();
-        setGarage(owner);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
+    public EntryGate(Garage garage) {
+        this.id = new SimpleIntegerProperty();
+        this.tickets = new SimpleListProperty<>();
+        this.garage = new SimpleObjectProperty<>(garage);
     }
 
     @Id
     @GeneratedValue()
-    @Access(AccessType.PROPERTY)
     public int getId() {
-        return id;
+        return this.id.get();
     }
 
     public void setId(int id) {
-        int oldId = this.id;
-        if(oldId != id) {
-            this.id = id;
-            this.pcs.firePropertyChange("id", oldId, this.id);
-        }
+        this.id.set(id);
+    }
+
+    public IntegerProperty idProperty() {
+        return this.id;
     }
 
     @OneToMany(mappedBy="entryGate", cascade = CascadeType.ALL)
-    @Access(AccessType.PROPERTY)
     public List<Ticket> getTickets() {
-        return tickets;
+        return this.tickets.get();
     }
 
     public void setTickets(List<Ticket> tickets) {
-        List<Ticket> oldTickets = this.tickets;
-        if(oldTickets != tickets) {
-            this.tickets = tickets;
-            this.pcs.firePropertyChange("tickets", oldTickets, this.tickets);
-        }
+        this.tickets.set(FXCollections.observableArrayList(tickets));
+    }
+
+    public ListProperty<Ticket> ticketsProperty() {
+        return this.tickets;
     }
 
     @ManyToOne()
-    @Access(AccessType.PROPERTY)
     public Garage getGarage() {
-        return garage;
+        return this.garage.get();
     }
 
     public void setGarage(Garage garage) {
-        Garage oldGarage = this.garage;
-        if(oldGarage != garage) {
-            this.garage = garage;
-            this.pcs.firePropertyChange("garage", oldGarage, this.garage);
-        }
+        this.garage.set(garage);
+    }
+
+    public ObjectProperty<Garage> garageProperty() {
+        return this.garage;
     }
 
     @Override
     public String toString() {
-        return "Entry Gate #" + this.getId();
+        return Integer.toString(getId());
     }
 }
