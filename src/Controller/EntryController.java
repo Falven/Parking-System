@@ -82,12 +82,19 @@ public class EntryController {
 
     @FXML
     protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException {
-        Ticket ticket = new Ticket(getBean());
+        EntryGate gate = getBean();
+        Garage garage = gate.getGarage();
+
+        Ticket ticket = new Ticket(gate, garage);
         Main.getDatabase().persist(ticket);
-        Garage garage = ticket.getGarage();
+
+        gate.getTickets().add(ticket);
+        Main.getDatabase().merge(gate);
+
         garage.getTickets().add(ticket);
         garage.setOccupancy(garage.getOccupancy() + 1);
         Main.getDatabase().merge(garage);
+
         TicketController controller = new TicketController(ticket, window);
         controller.showView();
         GarageController.getTicketControllerLookup().put(ticket, controller);

@@ -21,12 +21,11 @@ public class Ticket {
     private DoubleProperty amountDue;
 
     public Ticket() {
-        this(null);
+        this(null, null);
     }
 
-    public Ticket(EntryGate gate) {
+    public Ticket(EntryGate gate, Garage garage) {
         this.id = new SimpleIntegerProperty();
-        Garage garage = (null == gate) ? null : gate.getGarage();
         this.garage = (null == garage) ? new SimpleObjectProperty<>() : new SimpleObjectProperty<>(garage);
         this.entryGate = (null == gate) ? new SimpleObjectProperty<>() : new SimpleObjectProperty<>(gate);
         this.exitGate = new SimpleObjectProperty<>();
