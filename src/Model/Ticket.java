@@ -22,13 +22,14 @@ public class Ticket {
     private DoubleProperty amountDue;
 
     public Ticket() {
-        this(null, null);
+        this(null);
     }
 
-    public Ticket(Garage garage, EntryGate entryGate) {
+    public Ticket(EntryGate gate) {
         this.id = new SimpleIntegerProperty();
-        this.garage = new SimpleObjectProperty<>(garage);
-        this.entryGate = new SimpleObjectProperty<>(entryGate);
+        Garage garage = (null == gate) ? null : gate.getGarage();
+        this.garage = (null == garage) ? new SimpleObjectProperty<>() : new SimpleObjectProperty<>(garage);
+        this.entryGate = (null == gate) ? new SimpleObjectProperty<>() : new SimpleObjectProperty<>(gate);
         this.exitGate = new SimpleObjectProperty<>();
         Calendar cal = Calendar.getInstance();
         this.assignedDate = new SimpleObjectProperty<>(new java.sql.Date(cal.getTimeInMillis()));
