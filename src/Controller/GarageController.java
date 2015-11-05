@@ -148,7 +148,7 @@ public class GarageController {
     private void initExitGatesTab() throws IOException, NoSuchMethodException {
         GarageController.setExitControllerLookup(FXCollections.observableHashMap());
 
-        this.exitGatesCountLabel.textProperty().bind(this.bean.entryGatesProperty().sizeProperty().asString());
+        this.exitGatesCountLabel.textProperty().bind(this.bean.exitGatesProperty().sizeProperty().asString());
         this.exitGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         ObservableList<ExitGate> exitGates = (ObservableList<ExitGate>)bean.getExitGates();
@@ -280,6 +280,7 @@ public class GarageController {
         Main.getDatabase().remove(selected);
         Garage garage = selected.getGarage();
         garage.setOccupancy(garage.getOccupancy() - 1);
+        Main.getDatabase().merge(garage);
         GarageController.getTicketControllerLookup().remove(selected).closeView();
     }
 

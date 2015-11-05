@@ -44,6 +44,12 @@ public class ParkingDatabase {
         return result;
     }
 
+    public void refresh(Object object) {
+        this.em.getTransaction().begin();
+        this.em.refresh(object);
+        this.em.getTransaction().commit();
+    }
+
     public List<Garage> getGarages() {
         return em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
     }
