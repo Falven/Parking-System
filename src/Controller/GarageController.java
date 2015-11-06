@@ -21,7 +21,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
@@ -56,55 +58,55 @@ public class GarageController extends Controller<Garage> {
     private TableView<Ticket> ticketsTable;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsIdCol;
+    private TableColumn<Ticket, Number> ticketsIdCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsEntryGateCol;
+    private TableColumn<Ticket, Number> ticketsEntryGateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsExitGateCol;
+    private TableColumn<Ticket, Number> ticketsExitGateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsAssignedDateCol;
+    private TableColumn<Ticket, Date> ticketsAssignedDateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsAssignedTimeCol;
+    private TableColumn<Ticket, Time> ticketsAssignedTimeCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsDueDateCol;
+    private TableColumn<Ticket, Date> ticketsDueDateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsDueTimeCol;
+    private TableColumn<Ticket, Time> ticketsDueTimeCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsAmountDueCol;
+    private TableColumn<Ticket, Double> ticketsAmountDueCol;
 
     @FXML
     private TableView<Payment> paymentsTable;
 
     @FXML
-    private TableColumn<Payment, String> paymentsPaymentIdCol;
+    private TableColumn<Payment, Number> paymentsPaymentIdCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsTicketIdCol;
+    private TableColumn<Payment, Number> paymentsTicketIdCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsCCNumCol;
+    private TableColumn<Payment, Long> paymentsCCNumCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsCSVCol;
+    private TableColumn<Payment, Number> paymentsCSVCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsAmountCol;
+    private TableColumn<Payment, Double> paymentsAmountCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsExpMonthCol;
+    private TableColumn<Payment, Number> paymentsExpMonthCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsExpYearCol;
+    private TableColumn<Payment, Number> paymentsExpYearCol;
 
     @FXML
-    private TableColumn<Payment, String> paymentsExitGateIdCol;
+    private TableColumn<Payment, Number> paymentsExitGateIdCol;
 
     @FXML
     private DatePicker dayStatDatePicker;
@@ -123,10 +125,6 @@ public class GarageController extends Controller<Garage> {
 
     private ListProperty<Payment> payments;
 
-    private ListProperty<String> monthStatList;
-
-    private ListProperty<String> yearStatList;
-
     public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException, SQLException {
         super(garage);
         double stageWidth = 650.0;
@@ -140,8 +138,6 @@ public class GarageController extends Controller<Garage> {
         initTicketsTab();
         initPaymentsTab();
         initDailyStatsTab();
-        initMonthlyStatsTab();
-        initYearlyStatsTab();
     }
 
     private void initEntryGatesTab() throws IOException, NoSuchMethodException, SQLException {
@@ -192,16 +188,6 @@ public class GarageController extends Controller<Garage> {
 
     private void initDailyStatsTab() {
 
-    }
-
-    private void initMonthlyStatsTab() {
-        this.monthStatList = new SimpleListProperty<String>(FXCollections.observableArrayList());
-        this.monthStatComboBox.setItems(this.monthStatList.get());
-    }
-
-    private void initYearlyStatsTab() {
-        this.yearStatList = new SimpleListProperty<String>(FXCollections.observableArrayList());
-        this.yearStatComboBox.setItems(this.yearStatList.get());
     }
 
     public ObservableList<EntryGate> getEntryGates() {
@@ -370,19 +356,5 @@ public class GarageController extends Controller<Garage> {
             }
             controller.showStage();
         }
-    }
-
-    @FXML
-    protected void handleDaySelected(ActionEvent event) {
-        LocalDate localDate = dayStatDatePicker.getValue();
-        java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
-    }
-
-    @FXML
-    protected void handleMonthSelected(ActionEvent event) {
-    }
-
-    @FXML
-    protected void handleYearSelected(ActionEvent event) {
     }
 }
