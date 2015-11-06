@@ -17,8 +17,11 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class EntryGateController extends Controller<EntryGate> {
+
+    private GarageController garageController;
 
     @FXML
     private ImageView availabilityImage;
@@ -26,11 +29,14 @@ public class EntryGateController extends Controller<EntryGate> {
     @FXML
     private Button getTicketButton;
 
-    public EntryGateController(EntryGate entryGate, Window owner) throws IOException, NoSuchMethodException {
+    public EntryGateController(EntryGate entryGate, GarageController garageController) throws IOException, NoSuchMethodException {
         super(entryGate);
-        initUI(getModel().toString(), "/view/EntryView.fxml", 200.0, 400.0, 200.0, 400.0, owner.getX(), owner.getY(), false, Modality.WINDOW_MODAL, null, owner);
-//        garage.occupancyProperty().addListener((observable, oldValue, newValue) -> verifyOccupancy(newValue.intValue(), garage.getMaxOccupancy()));
-//        verifyOccupancy(garage.getOccupancy(), garage.getMaxOccupancy());
+        Window owner = garageController.getScene().getWindow();
+        initUI(getModel().toString(), "/view/EntryView.fxml", 200.0, 400.0, 200.0, 400.0, owner.getX(), owner.getY(), false, Modality.NONE, null, owner);
+
+        Garage garage = garageController.getModel();
+        garage.occupancyProperty().addListener((observable, oldValue, newValue) -> verifyOccupancy(newValue.intValue(), garage.getMaxOccupancy()));
+        verifyOccupancy(garage.getOccupancy(), garage.getMaxOccupancy());
     }
 
     private void verifyOccupancy(int occupancy, int maxOccupancy) {
@@ -44,16 +50,14 @@ public class EntryGateController extends Controller<EntryGate> {
     }
 
     @FXML
-    protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException {
-//        EntryGate gate = getBean();
-//        Garage garage = gate.getGarage();
-//        Ticket ticket = new Ticket(gate, garage);
-//        gate.getTickets().add(ticket);
-//        garage.getTickets().add(ticket);
-//        ParkingDatabase.getInstance().add(ticket);
-//        garage.setOccupancy(garage.getOccupancy() + 1);
-//        TicketController controller = new TicketController(ticket, window);
-//        controller.showView();
-//        GarageController.getTicketControllerLookup().put(ticket, controller);
+    protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
+        EntryGate gate = getModel();
+        Ticket ticket = new Ticket(gate.getId());
+        ParkingDatabase.getInstance().add(ticket);
+        Garage garage = garageController.getModel();
+        garage.setOccupancy(garage.getOccupancy() + 1);
+        ParkingDatabase.getInstance().merge(garage);
+        TicketController controller = new TicketController(ticket, getScene().getWindow());
+        controller.showStage();
     }
 }

@@ -448,14 +448,13 @@ public class ParkingDatabase {
      * @throws SQLException If there was an error adding the Ticket to the Database.
      */
     public void add(Ticket ticket) throws SQLException {
-        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO TICKET(ASSIGNED_DATE, ASSIGNED_TIME, DUE_DATE, DUE_TIME, AMOUNT_DUE, ENTRYGATE_ID, EXITGATE_ID) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO TICKET(ASSIGNED_DATE, ASSIGNED_TIME, DUE_DATE, DUE_TIME, AMOUNT_DUE, ENTRYGATE_ID) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         prepStmt.setDate(1, ticket.getAssignedDate());
         prepStmt.setTime(2, ticket.getAssignedTime());
         prepStmt.setDate(3, ticket.getDueDate());
         prepStmt.setTime(4, ticket.getDueTime());
         prepStmt.setDouble(5, ticket.getAmountDue());
         prepStmt.setInt(6, ticket.getEntryGateId());
-        prepStmt.setInt(7, ticket.getExitGateId());
         prepStmt.executeUpdate();
         ResultSet rs = prepStmt.getGeneratedKeys();
         if (rs.next()) {

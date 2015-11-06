@@ -21,6 +21,10 @@ public class Ticket extends Model<TicketController> {
     private IntegerProperty exitGateId;
 
     public Ticket() {
+        this(0);
+    }
+
+    public Ticket(int entryGateId) {
         this.id = new SimpleIntegerProperty();
         Calendar cal = Calendar.getInstance();
         this.assignedDate = new SimpleObjectProperty<>(new Date(cal.getTimeInMillis()));
@@ -29,7 +33,7 @@ public class Ticket extends Model<TicketController> {
         this.dueDate = new SimpleObjectProperty<>(new Date(cal.getTimeInMillis()));
         this.dueTime = new SimpleObjectProperty<>(new Time(getDueDate().getTime()));
         this.amountDue = new SimpleDoubleProperty(DEFAULT_AMOUNT_DUE);
-        this.entryGateId = new SimpleIntegerProperty();
+        this.entryGateId = new SimpleIntegerProperty(entryGateId);
         this.exitGateId = new SimpleIntegerProperty();
     }
 

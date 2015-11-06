@@ -202,13 +202,18 @@ public class GarageController extends Controller<Garage> {
         getEntryGates().add(gate);
         garage.setEntryGates(garage.getEntryGates() + 1);
         ParkingDatabase.getInstance().merge(garage);
+        entryGatesTable.getSelectionModel().selectLast();
     }
 
     @FXML
     protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
-        ExitGate gate = new ExitGate(getModel().getName());
+        Garage garage = getModel();
+        ExitGate gate = new ExitGate(garage.getName());
         ParkingDatabase.getInstance().add(gate);
         getExitGates().add(gate);
+        garage.setExitGates(garage.getExitGates() + 1);
+        ParkingDatabase.getInstance().merge(garage);
+        entryGatesTable.getSelectionModel().selectLast();
     }
 
     @FXML
@@ -254,7 +259,7 @@ public class GarageController extends Controller<Garage> {
         if (null != selected) {
             EntryGateController controller = selected.getController();
             if (null == controller) {
-                controller = new EntryGateController(selected, getScene().getWindow());
+                controller = new EntryGateController(selected, this);
                 selected.setController(controller);
             }
             controller.showStage();
