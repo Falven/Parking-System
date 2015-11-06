@@ -271,7 +271,7 @@ public class GarageController extends Controller<Garage> {
         getExitGates().add(gate);
         garage.setExitGates(garage.getExitGates() + 1);
         ParkingDatabase.getInstance().merge(garage);
-        entryGatesTable.getSelectionModel().selectLast();
+        exitGatesTable.getSelectionModel().selectLast();
     }
 
     @FXML

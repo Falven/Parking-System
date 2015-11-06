@@ -301,8 +301,6 @@
                         <TableColumn prefWidth="101.0" text="Max Occupancy" />
                         <TableColumn prefWidth="60.0" text="Tickets" />
                         <TableColumn prefWidth="81.0" text="Payments" />
-                        <TableColumn prefWidth="108.0" text="Foregone Tickets" />
-                        <TableColumn prefWidth="129.0" text="Foregone Payments" />
                      </columns>
                   </TableView>
                </children>
@@ -349,8 +347,6 @@
                         <TableColumn prefWidth="101.0" text="Max Occupancy" />
                         <TableColumn prefWidth="60.0" text="Tickets" />
                         <TableColumn prefWidth="81.0" text="Payments" />
-                        <TableColumn prefWidth="108.0" text="Foregone Tickets" />
-                        <TableColumn prefWidth="129.0" text="Foregone Payments" />
                      </columns>
                   </TableView>
                </children>

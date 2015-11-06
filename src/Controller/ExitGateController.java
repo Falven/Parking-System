@@ -98,7 +98,7 @@ public class ExitGateController extends Controller<ExitGate> {
     protected void handleSubmit(ActionEvent event) throws SQLException {
         try {
             Ticket ticket = ParkingDatabase.getInstance().getTicket(Integer.parseInt(ticketIdField.getText()));
-            if(0 == ticket.getExitGateId()) {
+            if(null == ParkingDatabase.getInstance().getPayment(ticket)) {
                 ExitGate exitGate = getModel();
                 if(ParkingDatabase.getInstance().getEntryGate(ticket.getEntryGateId()).getGarageName().equals(exitGate.getGarageName())) {
                     try {
@@ -136,7 +136,7 @@ public class ExitGateController extends Controller<ExitGate> {
                     Main.showError("Ticket ID error.", "Invalid ticket.", "The provided ticket is not for this garage.");
                 }
             } else {
-                Main.showError("Ticket ID error.", "Invalid ticket.", "The provided ticket has already been used.");
+                Main.showError("Ticket ID error.", "Invalid ticket.", "The provided ticket has already been paid.");
             }
         } catch(NumberFormatException nfe) {
             Main.showError("Ticket ID error.", "Error reading your ticket.", "The provided ticket ID is invalid.");

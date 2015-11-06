@@ -375,6 +375,24 @@ public class ParkingDatabase {
     }
 
     /**
+     * Gets the Payment associated with the provided ticket from the database.
+     *
+     * @param ticket The ticket to search the Database for.
+     * @throws SQLException If there was a problem searching the ParkingDatabase.
+     */
+    public Payment getPayment(Ticket ticket) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM PAYMENT p WHERE p.TICKET_ID = ?");
+        prepStmt.setInt(1, ticket.getId());
+        ResultSet rs = prepStmt.executeQuery();
+        if (rs.next()) {
+            return new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
+                    rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
+                    rs.getInt("EXITGATE_ID"), rs.getInt("TICKET_ID"));
+        }
+        return null;
+    }
+
+    /**
      * Adds the given Garage to the ParkingDatabase.
      *
      * @param garage The Garage to add to the Database.
@@ -695,6 +713,9 @@ public class ParkingDatabase {
      * Gets all Tickets from the Database.
      */
     public List<Ticket> getTickets(EntryGate entryGate) throws SQLException {
+
+        String sql = "SELECT ASSIGNED_TIME, OCCUPANCY, MAX_OCCUPANCY, ";
+
         PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET e WHERE e.ENTRYGATE_ID = ?");
         prepStmt.setInt(1, entryGate.getId());
         ResultSet rs = prepStmt.executeQuery();
