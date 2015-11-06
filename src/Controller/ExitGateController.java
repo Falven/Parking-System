@@ -53,7 +53,9 @@ public class ExitGateController extends Controller<ExitGate> {
         initMonthsList();
         initYearsList();
         Window owner = garageController.getScene().getWindow();
-        initUI("Exit Gate #" + getModel().getId(), "/view/ExitView.fxml", 350.0, 400.0, 350.0, 400.0, owner.getX() + owner.getWidth(), owner.getY(), false, Modality.NONE, null, owner);
+        double width = 350.0;
+        double height = 400.0;
+        initUI("Exit Gate #" + getModel().getId(), "/view/ExitView.fxml", width, height, width, height, owner.getX() + owner.getWidth(), owner.getY(), false, Modality.NONE, null, owner);
         expMonthBox.setItems(monthList);
         expMonthBox.getSelectionModel().selectFirst();
         expYearBox.setItems(yearList);

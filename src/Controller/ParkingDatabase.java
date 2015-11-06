@@ -543,7 +543,7 @@ public class ParkingDatabase {
         prepStmt.setDate(5, ticket.getDueDate());
         prepStmt.setTime(6, ticket.getDueTime());
         prepStmt.setDouble(7, ticket.getAmountDue());
-        prepStmt.setInt(7, ticket.getId());
+        prepStmt.setInt(8, ticket.getId());
         prepStmt.execute();
     }
 

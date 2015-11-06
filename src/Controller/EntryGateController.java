@@ -33,7 +33,9 @@ public class EntryGateController extends Controller<EntryGate> {
         super(entryGate);
         this.garageController = garageController;
         Window owner = this.garageController.getScene().getWindow();
-        initUI(getModel().toString(), "/view/EntryView.fxml", 200.0, 400.0, 200.0, 400.0, owner.getX(), owner.getY(), false, Modality.NONE, null, owner);
+        double width = 200.0;
+        double height = 400.0;
+        initUI(getModel().toString(), "/view/EntryView.fxml", width, height, width, height, owner.getX() - width, owner.getY(), false, Modality.NONE, null, owner);
 
         Garage garage = this.garageController.getModel();
         garage.occupancyProperty().addListener((observable, oldValue, newValue) -> verifyOccupancy(newValue.intValue(), garage.getMaxOccupancy()));
