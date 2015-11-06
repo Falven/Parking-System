@@ -23,6 +23,7 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class AdminController extends ViewController {
@@ -56,7 +57,7 @@ public class AdminController extends ViewController {
     @FXML
     private TableColumn<Garage, Number> exitGatesCountColumn;
 
-    public AdminController(Stage stage) throws IOException, NoSuchMethodException {
+    public AdminController(Stage stage) throws IOException, NoSuchMethodException, SQLException {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double stageWidth = 380.0;
         double stageHeight = 400.0;
@@ -66,7 +67,7 @@ public class AdminController extends ViewController {
         initGarageTable();
     }
 
-    private void initGarageTable() throws IOException, NoSuchMethodException {
+    private void initGarageTable() throws IOException, NoSuchMethodException, SQLException {
         setGarages(FXCollections.observableArrayList(ParkingDatabase.getInstance().getGarages()));
         this.garageCountLabel.textProperty().bind(garagesProperty().sizeProperty().asString());
         this.nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -96,7 +97,7 @@ public class AdminController extends ViewController {
     }
 
     @FXML
-    protected void handleAddGarage(ActionEvent event) throws IOException, NoSuchMethodException {
+    protected void handleAddGarage(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
         String garageName = garageField.getText();
         if(null != ParkingDatabase.getInstance().getGarage(garageName)) {
             Main.showError("Add Garage error.", "Error creating garage.", "The provided garage already exists.");
@@ -111,7 +112,7 @@ public class AdminController extends ViewController {
     }
 
     @FXML
-    protected void handleRemoveGarage(ActionEvent event) {
+    protected void handleRemoveGarage(ActionEvent event) throws SQLException {
         Garage selected = this.garageTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
         getGarages().remove(selected);

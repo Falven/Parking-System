@@ -18,6 +18,7 @@ import javafx.stage.Window;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,7 +90,7 @@ public class ExitGateController extends Controller<ExitGate> {
     }
 
     @FXML
-    protected void handleSubmit(ActionEvent event) {
+    protected void handleSubmit(ActionEvent event) throws SQLException {
         try {
             Ticket ticket = ParkingDatabase.getInstance().getTicket(Integer.parseInt(ticketIdField.getText()));
             if(null == ParkingDatabase.getInstance().getExitGate(ticket.getExitGateId())) {

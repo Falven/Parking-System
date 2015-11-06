@@ -15,8 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException, NoSuchMethodException, SQLException {
-        ParkingDatabase database = ParkingDatabase.getInstance();
-        database.tryCreateTables();
+        ParkingDatabase.getInstance().tryCreateTables();
         AdminController adminController = new AdminController(primaryStage);
     }
 
