@@ -1,6 +1,6 @@
-package Model;
+package model;
 
-import Controller.TicketController;
+import controller.TicketController;
 import javafx.beans.property.*;
 
 import java.sql.Date;

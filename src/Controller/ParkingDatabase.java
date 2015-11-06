@@ -1,16 +1,9 @@
-package Controller;
+package controller;
 
-import Model.*;
+import model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.*;
 import java.util.Collection;
 import java.util.List;

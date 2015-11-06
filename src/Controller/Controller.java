@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 public class Controller<T> extends ModelController<T> {
 

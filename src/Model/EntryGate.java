@@ -1,6 +1,6 @@
-package Model;
+package model;
 
-import Controller.EntryGateController;
+import controller.EntryGateController;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

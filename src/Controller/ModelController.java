@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 public class ModelController<T> extends ViewController {
 

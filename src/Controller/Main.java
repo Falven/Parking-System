@@ -1,4 +1,4 @@
-package Controller;
+package controller;
 
 import javafx.application.Application;
 import javafx.scene.control.Alert;
@@ -8,7 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;

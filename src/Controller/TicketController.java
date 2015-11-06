@@ -1,6 +1,6 @@
-package Controller;
+package controller;
 
-import Model.Ticket;
+import model.Ticket;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
