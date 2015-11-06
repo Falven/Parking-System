@@ -701,6 +701,27 @@ public class ParkingDatabase {
         }
     }
 
+    /**
+     * Gets all Tickets from the Database.
+     */
+    public List<Ticket> getTickets(EntryGate entryGate) {
+        try {
+            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET e WHERE e.ENTRYGATE_ID = ?;");
+            prepStmt.setInt(1, entryGate.getId());
+            ResultSet rs = prepStmt.executeQuery();
+            List<Ticket> tickets = FXCollections.observableArrayList();
+            while (rs.next()) {
+                tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
+                        rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
+                        rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
+            }
+            return tickets;
+        } catch (SQLException se) {
+            showException(se);
+            return null;
+        }
+    }
+
     private void showException(Exception ex) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Exception Dialog");

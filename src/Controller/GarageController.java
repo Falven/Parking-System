@@ -211,35 +211,29 @@ public class GarageController extends Controller<Garage> {
     protected void handleRemoveEntryGate(ActionEvent event) {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
-        
-        getModel().setOccupancy(getModel().getOccupancy() - selected.getTickets().size());
-        Garage garage = selected.getGarage();
-
-        garage.getTickets().removeAll(selected.getTickets());
-        garage.getEntryGates().remove(selected);
-        Main.getDatabase().remove(selected);
-        GarageController.getEntryControllerLookup().remove(selected).closeView();
+        List<Ticket> tickets = ParkingDatabase.getInstance().getTickets(selected);
+        getModel().setOccupancy(getModel().getOccupancy() - tickets.size());
+        ParkingDatabase.getInstance().merge(getModel());
+        getEntryGates().remove(selected);
+        selected.getController().closeStage();
     }
 
     @FXML
     protected void handleRemoveExitGate(ActionEvent event) {
         ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
-        Garage garage = selected.getGarage();
-        garage.getExitGates().remove(selected);
-        Main.getDatabase().remove(selected);
-        GarageController.getExitControllerLookup().remove(selected).closeView();
+        ParkingDatabase.getInstance().remove(selected);
+        getExitGates().remove(selected);
+        selected.getController().closeStage();
     }
 
     @FXML
     protected void handleRemoveTicket(ActionEvent event) {
         Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
-        Garage garage = selected.getGarage();
-        EntryGate entry = selected.getEntryGate();
-        entry.getTickets().remove(selected);
-        garage.getTickets().remove(selected);
-        garage.setOccupancy(garage.getOccupancy() - 1);
-        Main.getDatabase().remove(selected);
-        GarageController.getTicketControllerLookup().remove(selected).closeView();
+        ParkingDatabase.getInstance().remove(selected);
+        getTickets().remove(selected);
+        selected.getController().closeStage();
+        getModel().setOccupancy(getModel().getOccupancy() - 1);
+        ParkingDatabase.getInstance().merge(getModel());
     }
 
     @FXML
@@ -248,8 +242,10 @@ public class GarageController extends Controller<Garage> {
         if(null != selected) {
             EntryGateController controller = selected.getController();
             if(null == controller) {
-                selected.setController(new EntryGateController(selected, getScene().getWindow()));
+                controller = new EntryGateController(selected, getScene().getWindow());
+                selected.setController(controller);
             }
+            controller.showStage();
         }
     }
 
@@ -267,10 +263,15 @@ public class GarageController extends Controller<Garage> {
     }
 
     @FXML
-    protected void handleShowTicket(ActionEvent event) {
-        Ticket ticket = ticketsTable.getSelectionModel().getSelectedItem();
-        if(null != ticket) {
-            GarageController.getTicketControllerLookup().get(ticket).showView();
+    protected void handleShowTicket(ActionEvent event) throws IOException, NoSuchMethodException {
+        Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
+        if(null != selected) {
+            TicketController controller = selected.getController();
+            if(null == controller) {
+                controller = new TicketController(selected, getScene().getWindow());
+                selected.setController(controller);
+            }
+            controller.showStage();
         }
     }
 
