@@ -26,7 +26,8 @@ public abstract class ViewController {
         this.stage.setX(stageX);
         this.stage.setY(stageY);
         this.stage.resizableProperty().setValue(resizable);
-        this.stage.initModality(modality);
+        if(null != modality)
+            this.stage.initModality(modality);
         if(null != owner) this.stage.initOwner(owner);
     }
 

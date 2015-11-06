@@ -63,7 +63,7 @@ public class AdminController extends ViewController {
         double stageHeight = 400.0;
         double stageX = (screenBounds.getWidth() - stageWidth) / 2;
         double stageY = (screenBounds.getHeight() - stageHeight) / 2;
-        initUI("Admin Controls", "/view/AdminView.fxml", stageWidth, stageHeight, Double.MAX_VALUE, Double.MAX_VALUE, stageX, stageY, true, Modality.APPLICATION_MODAL, stage, null);
+        initUI("Admin Controls", "/view/AdminView.fxml", stageWidth, stageHeight, Double.MAX_VALUE, Double.MAX_VALUE, stageX, stageY, true, null, stage, null);
         initGarageTable();
     }
 
