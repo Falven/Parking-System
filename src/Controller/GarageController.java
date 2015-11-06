@@ -4,6 +4,7 @@ import Model.EntryGate;
 import Model.ExitGate;
 import Model.Garage;
 import Model.Ticket;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
@@ -24,20 +25,9 @@ import javafx.stage.Window;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
-public class GarageController {
-
-    private final Garage bean;
-
-    private Stage stage;
-    private Scene scene;
-    private Window window;
-
-    private static final MapProperty<EntryGate, EntryGateController> entryControllerLookup = new SimpleMapProperty<>();
-
-    private static final MapProperty<ExitGate, ExitGateController> exitControllerLookup = new SimpleMapProperty<>();
-
-    private static final MapProperty<Ticket, TicketController> ticketControllerLookup = new SimpleMapProperty<>();
+public class GarageController extends Controller<Garage> {
 
     @FXML
     private Label entryGatesCountLabel;
@@ -96,14 +86,24 @@ public class GarageController {
     @FXML
     private ComboBox<String> yearStatComboBox;
 
-    private SimpleListProperty<String> monthStatList;
+    private ListProperty<EntryGate> entryGates;
 
-    private SimpleListProperty<String> yearStatList;
+    private ListProperty<ExitGate> exitGates;
+
+    private ListProperty<Ticket> tickets;
+
+    private ListProperty<String> monthStatList;
+
+    private ListProperty<String> yearStatList;
 
     public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException {
-        this.bean = garage;
-
-        initUI(owner);
+        super(garage);
+        double stageWidth = 650.0;
+        double stageHeight = 500.0;
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double stageX = (screenBounds.getWidth() - stageWidth) / 2;
+        double stageY = (screenBounds.getHeight() - stageHeight) / 2;
+        initUI(getModel().getName() + " garage.", "/view/GarageView.fxml", stageWidth, stageHeight, Double.MAX_VALUE, Double.MAX_VALUE, stageX, stageY, true, Modality.APPLICATION_MODAL, null, owner);
         initEntryGatesTab();
         initExitGatesTab();
         initTicketsTab();
@@ -112,67 +112,34 @@ public class GarageController {
         initYearlyStatsTab();
     }
 
-    private void initUI(Window owner) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GarageView.fxml"));
-        loader.setController(this);
-        this.scene = new Scene(loader.load(), 650.0, 500.0);
-        this.stage = new Stage();
-        this.stage.setScene(this.scene);
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        this.stage.setX((screenBounds.getWidth() - this.stage.getWidth()) / 2);
-        this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
-        this.stage.setTitle(bean.getName() + " garage.");
-        this.stage.initModality(Modality.WINDOW_MODAL);
-        this.stage.initOwner(owner);
-        this.window = this.scene.getWindow();
-    }
-
     private void initEntryGatesTab() throws IOException, NoSuchMethodException {
-        GarageController.setEntryControllerLookup(FXCollections.observableHashMap());
-
-        this.entryGatesCountLabel.textProperty().bind(this.bean.entryGatesProperty().sizeProperty().asString());
+        entryGates = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.entryGatesCountLabel.textProperty().bind(entryGatesProperty().sizeProperty().asString());
         this.entryGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        ObservableList<EntryGate> entryGates = (ObservableList<EntryGate>)bean.getEntryGates();
-        for(EntryGate gate : entryGates) {
-            getEntryControllerLookup().put(gate, new EntryGateController(gate, this, window));
-        }
-        this.entryGatesTable.setItems(entryGates);
+        this.entryGatesTable.setItems(getEntryGates());
         this.entryGatesTable.getSelectionModel().selectFirst();
     }
 
     private void initExitGatesTab() throws IOException, NoSuchMethodException {
-        GarageController.setExitControllerLookup(FXCollections.observableHashMap());
-
-        this.exitGatesCountLabel.textProperty().bind(this.bean.exitGatesProperty().sizeProperty().asString());
+        exitGates = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.exitGatesCountLabel.textProperty().bind(exitGatesProperty().sizeProperty().asString());
         this.exitGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        ObservableList<ExitGate> exitGates = (ObservableList<ExitGate>)bean.getExitGates();
-        for(ExitGate gate : exitGates) {
-            getExitControllerLookup().put(gate, new ExitGateController(gate, this.window));
-        }
-        this.exitGatesTable.setItems(exitGates);
+        this.exitGatesTable.setItems(getExitGates());
         this.exitGatesTable.getSelectionModel().selectFirst();
     }
 
     private void initTicketsTab() throws IOException, NoSuchMethodException {
-        GarageController.setTicketControllerLookup(FXCollections.observableHashMap());
-
-        this.ticketCountLabel.textProperty().bind(this.bean.ticketsProperty().sizeProperty().asString());
+        tickets = new SimpleListProperty<>(FXCollections.observableArrayList());
+        this.ticketCountLabel.textProperty().bind(ticketsProperty().sizeProperty().asString());
         this.ticketsTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        this.ticketsTableEntryGateColumn.setCellValueFactory(new PropertyValueFactory<>("entryGate"));
-        this.ticketsTableExitGateColumn.setCellValueFactory(new PropertyValueFactory<>("exitGate"));
         this.ticketsTableAssignedDateColumn.setCellValueFactory(new PropertyValueFactory<>("assignedDate"));
         this.ticketsTableAssignedTimeColumn.setCellValueFactory(new PropertyValueFactory<>("assignedTime"));
         this.ticketsTableDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
         this.ticketsTableDueTimeColumn.setCellValueFactory(new PropertyValueFactory<>("dueTime"));
         this.ticketsTableAmountDueColumn.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
-
-        ObservableList<Ticket> tickets = (ObservableList<Ticket>)bean.getTickets();
-        for(Ticket ticket : tickets) {
-            getTicketControllerLookup().put(ticket, new TicketController(ticket, window));
-        }
-        this.ticketsTable.setItems(tickets);
+        this.ticketsTableEntryGateColumn.setCellValueFactory(new PropertyValueFactory<>("entryGateId"));
+        this.ticketsTableExitGateColumn.setCellValueFactory(new PropertyValueFactory<>("exitGateId"));
+        this.ticketsTable.setItems(getTickets());
         this.ticketsTable.getSelectionModel().selectFirst();
     }
 
@@ -190,73 +157,64 @@ public class GarageController {
         this.yearStatComboBox.setItems(this.yearStatList.get());
     }
 
-    public Garage getBean() {
-        return this.bean;
+    private ObservableList<EntryGate> getEntryGates() {
+        return this.entryGates.get();
     }
 
-    public static ObservableMap<EntryGate, EntryGateController> getEntryControllerLookup() {
-        return GarageController.entryControllerLookup.get();
+    private void setEntryGates(ObservableList<EntryGate> entryGates) {
+        this.entryGates.set(entryGates);
     }
 
-    public static void setEntryControllerLookup(ObservableMap<EntryGate, EntryGateController> entryControllerLookup) {
-        GarageController.entryControllerLookup.set(entryControllerLookup);
+    private ListProperty<EntryGate> entryGatesProperty() {
+        return this.entryGates;
     }
 
-    public static MapProperty<EntryGate, EntryGateController> entryControllerLookupProperty() {
-        return GarageController.entryControllerLookup;
+    private ObservableList<ExitGate> getExitGates() {
+        return this.exitGates.get();
     }
 
-    public static ObservableMap<ExitGate, ExitGateController> getExitControllerLookup() {
-        return GarageController.exitControllerLookup.get();
+    private void setExitGates(ObservableList<ExitGate> exitGates) {
+        this.exitGates.set(exitGates);
     }
 
-    public static void setExitControllerLookup(ObservableMap<ExitGate, ExitGateController> exitControllerLookup) {
-        GarageController.exitControllerLookup.set(exitControllerLookup);
+    private ListProperty<ExitGate> exitGatesProperty() {
+        return this.exitGates;
     }
 
-    public static MapProperty<ExitGate, ExitGateController> exitControllerLookupProperty() {
-        return GarageController.exitControllerLookup;
+    private ObservableList<Ticket> getTickets() {
+        return this.tickets.get();
     }
 
-    public static ObservableMap<Ticket, TicketController> getTicketControllerLookup() {
-        return GarageController.ticketControllerLookup.get();
+    private void setTickets(ObservableList<Ticket> tickets) {
+        this.tickets.set(tickets);
     }
 
-    public static void setTicketControllerLookup(ObservableMap<Ticket, TicketController> ticketControllerLookup) {
-        GarageController.ticketControllerLookup.set(ticketControllerLookup);
-    }
-
-    public static MapProperty<Ticket, TicketController> ticketControllerLookupProperty() {
-        return GarageController.ticketControllerLookup;
-    }
-
-    public void showView() {
-        stage.show();
+    private ListProperty<Ticket> ticketsProperty() {
+        return this.tickets;
     }
 
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
-        Garage garage = getBean();
-        EntryGate gate = new EntryGate(garage);
-        Main.getDatabase().persist(gate);
-        garage.getEntryGates().add(gate);
-        getEntryControllerLookup().put(gate, new EntryGateController(gate, this, window));
+        EntryGate gate = new EntryGate(getModel().getName());
+        ParkingDatabase.getInstance().add(gate);
+        getEntryGates().add(gate);
     }
 
     @FXML
     protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
-        Garage garage = getBean();
-        ExitGate gate = new ExitGate(garage);
-        Main.getDatabase().persist(gate);
-        garage.getExitGates().add(gate);
-        getExitControllerLookup().put(gate, new ExitGateController(gate, this.window));
+        ExitGate gate = new ExitGate(getModel().getName());
+        ParkingDatabase.getInstance().add(gate);
+        getExitGates().add(gate);
     }
 
     @FXML
     protected void handleRemoveEntryGate(ActionEvent event) {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
+        ParkingDatabase.getInstance().remove(selected);
+        
+        getModel().setOccupancy(getModel().getOccupancy() - selected.getTickets().size());
         Garage garage = selected.getGarage();
-        garage.setOccupancy(garage.getOccupancy() - selected.getTickets().size());
+
         garage.getTickets().removeAll(selected.getTickets());
         garage.getEntryGates().remove(selected);
         Main.getDatabase().remove(selected);
@@ -285,18 +243,26 @@ public class GarageController {
     }
 
     @FXML
-    protected void handleShowEntryGate(ActionEvent event) {
-        EntryGate entryGate = entryGatesTable.getSelectionModel().getSelectedItem();
-        if(null != entryGate) {
-            GarageController.getEntryControllerLookup().get(entryGate).showView();
+    protected void handleShowEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
+        EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
+        if(null != selected) {
+            EntryGateController controller = selected.getController();
+            if(null == controller) {
+                selected.setController(new EntryGateController(selected, getScene().getWindow()));
+            }
         }
     }
 
     @FXML
-    protected void handleShowExitGate(ActionEvent event) {
-        ExitGate exitGate = exitGatesTable.getSelectionModel().getSelectedItem();
-        if(null != exitGate) {
-            GarageController.getExitControllerLookup().get(exitGate).showView();
+    protected void handleShowExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
+        ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
+        if(null != selected) {
+            ExitGateController controller = selected.getController();
+            if(null == controller) {
+                controller = new ExitGateController(selected, this);
+                selected.setController(controller);
+            }
+            controller.showStage();
         }
     }
 

@@ -15,6 +15,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -24,13 +25,9 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.List;
 
-public class AdminController {
+public class AdminController extends ViewController {
 
-    private Scene scene;
-    private Stage stage;
-    private Window window;
     private static final ListProperty<Garage> garages = new SimpleListProperty<>();
-    private static final MapProperty<Garage, GarageController> garageLookup = new SimpleMapProperty<>();
 
     @FXML
     private TextField garageField;
@@ -60,41 +57,24 @@ public class AdminController {
     private TableColumn<Garage, Number> exitGatesCountColumn;
 
     public AdminController(Stage stage) throws IOException, NoSuchMethodException {
-        initUI(stage);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double stageWidth = 380.0;
+        double stageHeight = 400.0;
+        double stageX = (screenBounds.getWidth() - stageWidth) / 2;
+        double stageY = (screenBounds.getHeight() - stageHeight) / 2;
+        initUI("Admin Controls", "/view/AdminView.fxml", stageWidth, stageHeight, Double.MAX_VALUE, Double.MAX_VALUE, stageX, stageY, true, Modality.APPLICATION_MODAL, stage, null);
         initGarageTable();
     }
 
-    private void initUI(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AdminView.fxml"));
-        loader.setController(this);
-        this.scene = new Scene(loader.load(), 380.0, 400.0);
-        this.stage = stage;
-        this.stage.setScene(this.scene);
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        this.stage.setX((screenBounds.getWidth() - this.stage.getWidth()) / 2);
-        this.stage.setY((screenBounds.getHeight() - this.stage.getHeight()) / 2);
-        this.stage.setTitle("Admin Controls");
-        this.stage.show();
-        this.window = this.scene.getWindow();
-    }
-
     private void initGarageTable() throws IOException, NoSuchMethodException {
-        AdminController.setGarages(FXCollections.observableArrayList());
-        AdminController.setGarageLookup(FXCollections.observableHashMap());
-
-        this.garageCountLabel.textProperty().bind(AdminController.garagesProperty().sizeProperty().asString());
+        setGarages(FXCollections.observableArrayList(ParkingDatabase.getInstance().getGarages()));
+        this.garageCountLabel.textProperty().bind(garagesProperty().sizeProperty().asString());
         this.nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         this.occupancyColumn.setCellValueFactory(new PropertyValueFactory<>("occupancy"));
         this.maxOccupancyColumn.setCellValueFactory(new PropertyValueFactory<>("maxOccupancy"));
-        this.entryGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().entryGatesProperty().sizeProperty());
-        this.exitGatesCountColumn.setCellValueFactory(cellData -> cellData.getValue().exitGatesProperty().sizeProperty());
-
-        List<Garage> garages = Main.getDatabase().getGarages();
-        for (Garage garage : garages) {
-            AdminController.getGarages().add(garage);
-            AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
-        }
-        this.garageTable.setItems(AdminController.getGarages());
+        this.entryGatesCountColumn.setCellValueFactory(new PropertyValueFactory<>("entryGates"));
+        this.exitGatesCountColumn.setCellValueFactory(new PropertyValueFactory<>("exitGates"));
+        this.garageTable.setItems(getGarages());
         this.garageTable.getSelectionModel().selectFirst();
     }
 
@@ -110,18 +90,6 @@ public class AdminController {
         return AdminController.garages;
     }
 
-    public static ObservableMap<Garage, GarageController> getGarageLookup() {
-        return AdminController.garageLookup.get();
-    }
-
-    public static void setGarageLookup(ObservableMap<Garage, GarageController> garageLookup) {
-        AdminController.garageLookup.set(garageLookup);
-    }
-
-    public static MapProperty<Garage, GarageController> garageLookupProperty() {
-        return AdminController.garageLookup;
-    }
-
     @FXML
     protected void handleGarageFieldAction(ActionEvent event) {
         addButton.fire();
@@ -130,35 +98,35 @@ public class AdminController {
     @FXML
     protected void handleAddGarage(ActionEvent event) throws IOException, NoSuchMethodException {
         String garageName = garageField.getText();
-        if(null != Main.getDatabase().findById(Garage.class, garageName)) {
+        if(null != ParkingDatabase.getInstance().getGarage(garageName)) {
             Main.showError("Add Garage error.", "Error creating garage.", "The provided garage already exists.");
         } else if(null == garageName || garageName.isEmpty()) {
             Main.showError("Garage name error.", "Error creating garage.", "The provided garage name is invalid.");
         } else {
             Garage garage = new Garage(garageName);
-            Main.getDatabase().persist(garage);
-            AdminController.getGarages().add(garage);
-            AdminController.getGarageLookup().put(garage, new GarageController(garage, this.window));
+            ParkingDatabase.getInstance().add(garage);
+            getGarages().add(garage);
             this.garageTable.getSelectionModel().selectLast();
         }
     }
 
     @FXML
     protected void handleRemoveGarage(ActionEvent event) {
-        Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
-        Main.getDatabase().remove(selected);
-        AdminController.getGarages().remove(selected);
-        AdminController.getGarageLookup().remove(selected);
+        Garage selected = this.garageTable.getSelectionModel().getSelectedItem();
+        ParkingDatabase.getInstance().remove(selected);
+        getGarages().remove(selected);
     }
 
     @FXML
-    protected void handleManageGarage(ActionEvent event) throws IOException {
-        Garage selected = (Garage)this.garageTable.getSelectionModel().getSelectedItem();
+    protected void handleManageGarage(ActionEvent event) throws IOException, NoSuchMethodException {
+        Garage selected = this.garageTable.getSelectionModel().getSelectedItem();
         if(null != selected) {
-            GarageController controller = AdminController.getGarageLookup().get(selected);
-            if(null != controller) {
-                controller.showView();
+            GarageController controller = selected.getController();
+            if(null == controller) {
+                controller = new GarageController(selected, getScene().getWindow());
+                selected.setController(controller);
             }
+            controller.showStage();
         }
     }
 }

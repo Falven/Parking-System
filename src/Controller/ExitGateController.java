@@ -1,9 +1,6 @@
 package Controller;
 
-import Model.ExitGate;
-import Model.Garage;
-import Model.Payment;
-import Model.Ticket;
+import Model.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -26,13 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class ExitGateController {
-
-    private final ExitGate bean;
-
-    private Stage stage;
-    private Scene scene;
-    private Window window;
+public class ExitGateController extends Controller<ExitGate> {
 
     @FXML
     private TextField ticketIdField;
@@ -53,59 +44,36 @@ public class ExitGateController {
 
     private ObservableList<String> yearList;
 
-    public ExitGateController(ExitGate gate, Window owner) throws IOException, NoSuchMethodException {
-        this.bean = gate;
+    public ExitGateController(ExitGate gate, GarageController controller) throws IOException, NoSuchMethodException {
+        super(gate);
+        initMonthsList();
+        initYearsList();
+        Window owner = controller.getScene().getWindow();
+        initUI("Exit Gate #" + getModel().getId(), "/view/ExitView.fxml", 350.0, 400.0, 350.0, 400.0, owner.getX() + owner.getWidth(), owner.getY(), false, Modality.NONE, null, owner);
+        expMonthBox.setItems(monthList);
+        expMonthBox.getSelectionModel().selectFirst();
+        expYearBox.setItems(yearList);
+        expYearBox.getSelectionModel().selectFirst();
+        addTextLimit(ticketIdField, 12);
+        addTextLimit(ccNumField, 16);
+        addTextLimit(csvField, 3);
+    }
+
+    private void initMonthsList() {
         monthList = FXCollections.observableArrayList(new DateFormatSymbols().getMonths());
         int lastIndex = monthList.size() - 1;
         String finalMonth = monthList.get(lastIndex);
         if(finalMonth.isEmpty()) {
             monthList.remove(lastIndex);
         }
+    }
+
+    private void initYearsList() {
         yearList = FXCollections.observableArrayList();
         int year = Calendar.getInstance().get(Calendar.YEAR) + 1, endYear = year + 10;
         for(; year < endYear; ++year) {
             yearList.add(Integer.toString(year));
         }
-
-        initUI(gate, owner);
-
-        expMonthBox.setItems(monthList);
-        expMonthBox.getSelectionModel().selectFirst();
-        expYearBox.setItems(yearList);
-        expYearBox.getSelectionModel().selectFirst();
-
-        addTextLimit(ticketIdField, 12);
-        addTextLimit(ccNumField, 16);
-        addTextLimit(csvField, 3);
-    }
-
-    public void initUI(ExitGate gate, Window owner) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ExitView.fxml"));
-        loader.setController(this);
-        this.scene = new Scene(loader.load(), 350.0, 400.0);
-        this.stage = new Stage();
-        this.stage.setMaxWidth(350.0);
-        this.stage.setMaxHeight(400.0);
-        this.stage.setTitle("Exit Gate #" + gate.getId());
-        this.stage.setScene(this.scene);
-        this.stage.setX(owner.getX() + owner.getWidth());
-        this.stage.setY(owner.getY());
-        this.stage.resizableProperty().setValue(Boolean.FALSE);
-        this.stage.initModality(Modality.NONE);
-        this.stage.initOwner(owner);
-        this.window = this.scene.getWindow();
-    }
-
-    public ExitGate getBean() {
-        return this.bean;
-    }
-
-    public void showView() {
-        stage.show();
-    }
-
-    public void closeView() {
-        stage.close();
     }
 
     public void addTextLimit(final TextField tf, final int maxLength) {
@@ -123,9 +91,10 @@ public class ExitGateController {
     @FXML
     protected void handleSubmit(ActionEvent event) {
         try {
-            Ticket ticket = Main.getDatabase().findById(Ticket.class, Integer.parseInt(ticketIdField.getText()));
-            if(null == ticket.getExitGate()) {
-                if(ticket.getEntryGate().getGarage().getName().equals(bean.getGarage().getName())) {
+            Ticket ticket = ParkingDatabase.getInstance().getTicket(Integer.parseInt(ticketIdField.getText()));
+            if(null == ParkingDatabase.getInstance().getExitGate(ticket.getExitGateId())) {
+                EntryGate ticketGate = ParkingDatabase.getInstance().getEntryGate(ticket.getEntryGateId());
+                if(ticketGate.getGarageName().equals(getModel().getGarageName())) {
                     try {
                         long ccNum = Long.parseLong(ccNumField.getText());
                         try {
@@ -136,13 +105,13 @@ public class ExitGateController {
                                 int month = cal.get(Calendar.MONTH);
                                 try {
                                     int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
-                                    Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, bean);
-                                    bean.getPayments().add(payment);
-                                    Garage owner = bean.getGarage();
-                                    owner.setOccupancy(owner.getOccupancy() - 1);
-                                    ticket.setExitGate(bean);
-                                    Main.getDatabase().persist(payment);
-                                    Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
+                                    Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, getModel().getId());
+//                                    bean.getPayments().add(payment);
+//                                    Garage owner = bean.getGarage();
+//                                    owner.setOccupancy(owner.getOccupancy() - 1);
+//                                    ticket.setExitGate(bean);
+//                                    Main.getDatabase().persist(payment);
+//                                    Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
                                 } catch (NumberFormatException nfe) {
                                     Main.showError("Credit card error.", "Error processing your card.", "The provided expiration year is invalid.");
                                 }

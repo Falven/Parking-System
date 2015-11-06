@@ -1,14 +1,19 @@
 package Model;
 
+import Controller.EntryGateController;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class EntryGate {
+public class EntryGate extends Model<EntryGateController> {
 
     private IntegerProperty id;
     private StringProperty garageName;
+
+    public EntryGate(String garageName) {
+        this(0, garageName);
+    }
 
     public EntryGate(int id, String garageName) {
         this.id = new SimpleIntegerProperty(id);

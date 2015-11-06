@@ -1,8 +1,9 @@
 package Model;
 
+import Controller.PaymentController;
 import javafx.beans.property.*;
 
-public class Payment {
+public class Payment extends Model<PaymentController> {
 
     private IntegerProperty id;
     private LongProperty ccNum;
@@ -14,6 +15,10 @@ public class Payment {
 
     public Payment() {
         this(0, 0, 0, 0.0, 0, 0, 0);
+    }
+
+    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId) {
+        this(0, ccNum, csv, amountPaid, expMonth, expYear, exitGateId);
     }
 
     public Payment(int id, long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId) {

@@ -1,12 +1,13 @@
 package Model;
 
+import Controller.TicketController;
 import javafx.beans.property.*;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Calendar;
 
-public class Ticket {
+public class Ticket extends Model<TicketController> {
 
     public static final double DEFAULT_AMOUNT_DUE = 19.99;
 

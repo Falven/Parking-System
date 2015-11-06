@@ -156,13 +156,13 @@
                   <TableView fx:id="ticketsTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                     <columns>
                       <TableColumn fx:id="ticketsTableIdColumn" prefWidth="64.0" text="id" />
-                        <TableColumn fx:id="ticketsTableEntryGateColumn" prefWidth="77.0" text="Entry gate" />
-                        <TableColumn fx:id="ticketsTableExitGateColumn" prefWidth="74.0" text="Exit gate" />
                         <TableColumn fx:id="ticketsTableAssignedDateColumn" prefWidth="94.0" text="Assigned date" />
                         <TableColumn fx:id="ticketsTableAssignedTimeColumn" prefWidth="87.0" text="Assigned time" />
                         <TableColumn fx:id="ticketsTableDueDateColumn" prefWidth="63.0" text="Due date" />
                         <TableColumn fx:id="ticketsTableDueTimeColumn" prefWidth="83.0" text="Due time" />
                         <TableColumn fx:id="ticketsTableAmountDueColumn" prefWidth="81.0" text="Amount due" />
+                        <TableColumn fx:id="ticketsTableEntryGateColumn" prefWidth="77.0" text="EntryGate id" />
+                        <TableColumn fx:id="ticketsTableExitGateColumn" prefWidth="74.0" text="ExitGate id" />
                     </columns>
                   </TableView>
                </children>
