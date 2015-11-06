@@ -74,11 +74,11 @@
       </HBox>
       <TableView fx:id="garageTable" GridPane.rowIndex="2">
         <columns>
-          <TableColumn fx:id="nameColumn" prefWidth="63.0" text="Name" />
-          <TableColumn fx:id="occupancyColumn" prefWidth="69.0" text="Occupancy" />
-            <TableColumn fx:id="maxOccupancyColumn" prefWidth="102.0" text="Max occupancy" />
-            <TableColumn fx:id="entryGatesCountColumn" prefWidth="73.0" text="Entry gates" />
-            <TableColumn fx:id="exitGatesCountColumn" prefWidth="68.0" text="Exit gates" />
+          <TableColumn fx:id="nameColumn" editable="false" prefWidth="63.0" text="Name" />
+          <TableColumn fx:id="occupancyColumn" editable="false" prefWidth="69.0" text="Occupancy" />
+            <TableColumn fx:id="maxOccupancyColumn" editable="false" prefWidth="102.0" text="Max occupancy" />
+            <TableColumn fx:id="entryGatesCountColumn" editable="false" prefWidth="73.0" text="Entry gates" />
+            <TableColumn fx:id="exitGatesCountColumn" editable="false" prefWidth="68.0" text="Exit gates" />
         </columns>
       </TableView>
    </children>

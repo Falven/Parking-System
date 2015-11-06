@@ -26,6 +26,7 @@ import javafx.stage.Window;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 
 public class GarageController extends Controller<Garage> {
@@ -158,39 +159,39 @@ public class GarageController extends Controller<Garage> {
         this.yearStatComboBox.setItems(this.yearStatList.get());
     }
 
-    private ObservableList<EntryGate> getEntryGates() {
+    public ObservableList<EntryGate> getEntryGates() {
         return this.entryGates.get();
     }
 
-    private void setEntryGates(ObservableList<EntryGate> entryGates) {
+    public void setEntryGates(ObservableList<EntryGate> entryGates) {
         this.entryGates.set(entryGates);
     }
 
-    private ListProperty<EntryGate> entryGatesProperty() {
+    public ListProperty<EntryGate> entryGatesProperty() {
         return this.entryGates;
     }
 
-    private ObservableList<ExitGate> getExitGates() {
+    public ObservableList<ExitGate> getExitGates() {
         return this.exitGates.get();
     }
 
-    private void setExitGates(ObservableList<ExitGate> exitGates) {
+    public void setExitGates(ObservableList<ExitGate> exitGates) {
         this.exitGates.set(exitGates);
     }
 
-    private ListProperty<ExitGate> exitGatesProperty() {
+    public ListProperty<ExitGate> exitGatesProperty() {
         return this.exitGates;
     }
 
-    private ObservableList<Ticket> getTickets() {
+    public ObservableList<Ticket> getTickets() {
         return this.tickets.get();
     }
 
-    private void setTickets(ObservableList<Ticket> tickets) {
+    public void setTickets(ObservableList<Ticket> tickets) {
         this.tickets.set(tickets);
     }
 
-    private ListProperty<Ticket> ticketsProperty() {
+    public ListProperty<Ticket> ticketsProperty() {
         return this.tickets;
     }
 
@@ -219,38 +220,51 @@ public class GarageController extends Controller<Garage> {
     @FXML
     protected void handleRemoveEntryGate(ActionEvent event) throws SQLException {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
-        ParkingDatabase.getInstance().remove(selected);
-        List<Ticket> tickets = ParkingDatabase.getInstance().getTickets(selected);
-        ParkingDatabase.getInstance().remove(tickets);
-        getModel().setOccupancy(getModel().getOccupancy() - tickets.size());
-        getModel().setEntryGates(getModel().getEntryGates() - 1);
-        ParkingDatabase.getInstance().merge(getModel());
-        getEntryGates().remove(selected);
-        EntryGateController controller = selected.getController();
-        if(null != controller)
-            controller.closeStage();
+        if(null != selected) {
+            ObservableList<Ticket> tickets = getTickets();
+            Iterator<Ticket> itr = tickets.iterator();
+            while (itr.hasNext()) {
+                Ticket ticket = itr.next();
+                if (ticket.getEntryGateId() == selected.getId()) {
+                    itr.remove();
+                    ParkingDatabase.getInstance().remove(ticket);
+                    getModel().setOccupancy(getModel().getOccupancy() - 1);
+                }
+            }
+            ParkingDatabase.getInstance().remove(selected);
+            getModel().setEntryGates(getModel().getEntryGates() - 1);
+            ParkingDatabase.getInstance().merge(getModel());
+            getEntryGates().remove(selected);
+            EntryGateController controller = selected.getController();
+            if (null != controller)
+                controller.closeStage();
+        }
     }
 
     @FXML
     protected void handleRemoveExitGate(ActionEvent event) throws SQLException {
         ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
-        ParkingDatabase.getInstance().remove(selected);
-        getExitGates().remove(selected);
-        getModel().setExitGates(getModel().getExitGates() - 1);
-        ParkingDatabase.getInstance().merge(getModel());
-        ExitGateController controller = selected.getController();
-        if(null != controller)
-            controller.closeStage();
+        if(null != selected) {
+            ParkingDatabase.getInstance().remove(selected);
+            getExitGates().remove(selected);
+            getModel().setExitGates(getModel().getExitGates() - 1);
+            ParkingDatabase.getInstance().merge(getModel());
+            ExitGateController controller = selected.getController();
+            if (null != controller)
+                controller.closeStage();
+        }
     }
 
     @FXML
     protected void handleRemoveTicket(ActionEvent event) throws SQLException {
         Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
-        ParkingDatabase.getInstance().remove(selected);
-        getTickets().remove(selected);
-        selected.getController().closeStage();
-        getModel().setOccupancy(getModel().getOccupancy() - 1);
-        ParkingDatabase.getInstance().merge(getModel());
+        if(null != selected) {
+            ParkingDatabase.getInstance().remove(selected);
+            getTickets().remove(selected);
+            selected.getController().closeStage();
+            getModel().setOccupancy(getModel().getOccupancy() - 1);
+            ParkingDatabase.getInstance().merge(getModel());
+        }
     }
 
     @FXML

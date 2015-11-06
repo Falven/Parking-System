@@ -46,7 +46,7 @@
                   </VBox>
                   <TableView fx:id="entryGatesTable" GridPane.rowIndex="1">
                      <columns>
-                        <TableColumn fx:id="entryGatesTableIdColumn" prefWidth="75.0" text="id" />
+                        <TableColumn fx:id="entryGatesTableIdColumn" editable="false" prefWidth="75.0" text="id" />
                      </columns>
                   </TableView>
                </children>
@@ -107,7 +107,7 @@
                   </VBox>
                   <TableView fx:id="exitGatesTable" GridPane.rowIndex="1">
                      <columns>
-                        <TableColumn fx:id="exitGatesTableIdColumn" prefWidth="75.0" text="id" />
+                        <TableColumn fx:id="exitGatesTableIdColumn" editable="false" prefWidth="75.0" text="id" />
                      </columns>
                   </TableView>
                </children>
@@ -155,14 +155,14 @@
                   </HBox>
                   <TableView fx:id="ticketsTable" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                     <columns>
-                      <TableColumn fx:id="ticketsTableIdColumn" prefWidth="64.0" text="id" />
-                        <TableColumn fx:id="ticketsTableAssignedDateColumn" prefWidth="94.0" text="Assigned date" />
-                        <TableColumn fx:id="ticketsTableAssignedTimeColumn" prefWidth="87.0" text="Assigned time" />
-                        <TableColumn fx:id="ticketsTableDueDateColumn" prefWidth="63.0" text="Due date" />
-                        <TableColumn fx:id="ticketsTableDueTimeColumn" prefWidth="83.0" text="Due time" />
-                        <TableColumn fx:id="ticketsTableAmountDueColumn" prefWidth="81.0" text="Amount due" />
-                        <TableColumn fx:id="ticketsTableEntryGateColumn" prefWidth="77.0" text="EntryGate id" />
-                        <TableColumn fx:id="ticketsTableExitGateColumn" prefWidth="74.0" text="ExitGate id" />
+                      <TableColumn fx:id="ticketsTableIdColumn" editable="false" prefWidth="64.0" text="id" />
+                        <TableColumn fx:id="ticketsTableAssignedDateColumn" editable="false" prefWidth="94.0" text="Assigned date" />
+                        <TableColumn fx:id="ticketsTableAssignedTimeColumn" editable="false" prefWidth="87.0" text="Assigned time" />
+                        <TableColumn fx:id="ticketsTableDueDateColumn" editable="false" prefWidth="63.0" text="Due date" />
+                        <TableColumn fx:id="ticketsTableDueTimeColumn" editable="false" prefWidth="83.0" text="Due time" />
+                        <TableColumn fx:id="ticketsTableAmountDueColumn" editable="false" prefWidth="81.0" text="Amount due" />
+                        <TableColumn fx:id="ticketsTableEntryGateColumn" editable="false" prefWidth="77.0" text="EntryGate id" />
+                        <TableColumn fx:id="ticketsTableExitGateColumn" editable="false" prefWidth="74.0" text="ExitGate id" />
                     </columns>
                   </TableView>
                </children>
