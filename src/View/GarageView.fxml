@@ -153,14 +153,14 @@
                         </Button>
                      </children>
                   </HBox>
-                  <TableView fx:id="ticketsTable" editable="true" GridPane.rowIndex="1">
+                  <TableView fx:id="ticketsTable" GridPane.rowIndex="1">
                     <columns>
                       <TableColumn fx:id="ticketsIdCol" editable="false" prefWidth="64.0" text="id" />
-                        <TableColumn fx:id="ticketsAssignedDateCol" prefWidth="94.0" text="Assigned date" />
-                        <TableColumn fx:id="ticketsAssignedTimeCol" prefWidth="87.0" text="Assigned time" />
-                        <TableColumn fx:id="ticketsDueDateCol" prefWidth="63.0" text="Due date" />
-                        <TableColumn fx:id="ticketsDueTimeCol" prefWidth="83.0" text="Due time" />
-                        <TableColumn fx:id="ticketsAmountDueCol" prefWidth="81.0" text="Amount due" />
+                        <TableColumn fx:id="ticketsAssignedDateCol" editable="false" prefWidth="94.0" text="Assigned date" />
+                        <TableColumn fx:id="ticketsAssignedTimeCol" editable="false" prefWidth="87.0" text="Assigned time" />
+                        <TableColumn fx:id="ticketsDueDateCol" editable="false" prefWidth="63.0" text="Due date" />
+                        <TableColumn fx:id="ticketsDueTimeCol" editable="false" prefWidth="83.0" text="Due time" />
+                        <TableColumn fx:id="ticketsAmountDueCol" editable="false" prefWidth="81.0" text="Amount due" />
                         <TableColumn fx:id="ticketsEntryGateCol" editable="false" prefWidth="77.0" text="EntryGate id" />
                         <TableColumn fx:id="ticketsExitGateCol" editable="false" prefWidth="74.0" text="ExitGate id" />
                     </columns>
@@ -181,15 +181,15 @@
                 <RowConstraints vgrow="NEVER" />
               </rowConstraints>
                <children>
-                  <TableView fx:id="paymentsTable" editable="true" GridPane.rowIndex="1">
+                  <TableView fx:id="paymentsTable" GridPane.rowIndex="1">
                      <columns>
                         <TableColumn fx:id="paymentsPaymentIdCol" editable="false" prefWidth="71.0" text="Payment id" />
                         <TableColumn fx:id="paymentsTicketIdCol" editable="false" prefWidth="63.0" text="Ticket Id" />
-                        <TableColumn fx:id="paymentsCCNumCol" prefWidth="163.0" text="CC Num" />
-                        <TableColumn fx:id="paymentsCSVCol" prefWidth="42.0" text="CSV" />
-                        <TableColumn fx:id="paymentsAmountCol" prefWidth="65.0" text="Amount" />
-                        <TableColumn fx:id="paymentsExpMonthCol" prefWidth="91.0" text="Exp. Month" />
-                        <TableColumn fx:id="paymentsExpYearCol" prefWidth="60.0" text="Exp. Year" />
+                        <TableColumn fx:id="paymentsCCNumCol" editable="false" prefWidth="163.0" text="CC Num" />
+                        <TableColumn fx:id="paymentsCSVCol" editable="false" prefWidth="42.0" text="CSV" />
+                        <TableColumn fx:id="paymentsAmountCol" editable="false" prefWidth="65.0" text="Amount" />
+                        <TableColumn fx:id="paymentsExpMonthCol" editable="false" prefWidth="91.0" text="Exp. Month" />
+                        <TableColumn fx:id="paymentsExpYearCol" editable="false" prefWidth="60.0" text="Exp. Year" />
                         <TableColumn fx:id="paymentsExitGateIdCol" editable="false" prefWidth="75.0" text="ExitGate id" />
                      </columns>
                   </TableView>
