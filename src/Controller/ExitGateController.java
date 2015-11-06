@@ -95,7 +95,7 @@ public class ExitGateController extends Controller<ExitGate> {
     }
 
     @FXML
-    protected void handleSubmit(ActionEvent event) throws SQLException {
+    protected void handlePayTicket(ActionEvent event) throws SQLException {
         try {
             Ticket ticket = ParkingDatabase.getInstance().getTicket(Integer.parseInt(ticketIdField.getText()));
             if(null == ParkingDatabase.getInstance().getPayment(ticket)) {
