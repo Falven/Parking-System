@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class Main extends Application {
 
@@ -13,7 +14,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException, NoSuchMethodException {
+    public void start(Stage primaryStage) throws IOException, NoSuchMethodException, SQLException {
         ParkingDatabase database = ParkingDatabase.getInstance();
         database.tryCreateTables();
         AdminController adminController = new AdminController(primaryStage);

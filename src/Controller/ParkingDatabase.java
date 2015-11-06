@@ -27,17 +27,13 @@ public class ParkingDatabase {
      * @throws SQLException The ParkingDatabase was unable to create the default Library tables on the provided Database.
      * @see ParkingDatabase#ParkingDatabase()
      */
-    public ParkingDatabase() {
-        try {
-            Properties properties = new Properties();
-            this.conn = DriverManager.getConnection(URL, properties);
-            this.conn.setAutoCommit(true);
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public ParkingDatabase() throws SQLException {
+        Properties properties = new Properties();
+        this.conn = DriverManager.getConnection(URL, properties);
+        this.conn.setAutoCommit(true);
     }
 
-    public static ParkingDatabase getInstance() {
+    public static ParkingDatabase getInstance() throws SQLException {
         if (null == instance) {
             instance = new ParkingDatabase();
         }
@@ -49,7 +45,7 @@ public class ParkingDatabase {
      *
      * @throws SQLException The ParkingDatabase was unable to create the default tables.
      */
-    public void tryCreateTables() {
+    public void tryCreateTables() throws SQLException {
         createGarageTable();
         createEntryGateTable();
         createExitGateTable();
@@ -62,7 +58,7 @@ public class ParkingDatabase {
      *
      * @throws SQLException The ParkingDatabase was unable to create the default tables.
      */
-    public void dropTables() {
+    public void dropTables() throws SQLException {
         dropGarageTable();
         dropEntryGateTable();
         dropExitGateTable();
@@ -70,133 +66,93 @@ public class ParkingDatabase {
         dropPaymentTable();
     }
 
-    public void createGarageTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE GARAGE (\n" +
-                    "  NAME VARCHAR(255) NOT NULL,\n" +
-                    "  OCCUPANCY INTEGER,\n" +
-                    "  MAX_OCCUPANCY INTEGER,\n" +
-                    "  ENTRYGATES INTEGER,\n" +
-                    "  EXITGATES INTEGER,\n" +
-                    "  PRIMARY KEY (NAME)\n" +
-                    ");");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void createGarageTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE GARAGE (\n" +
+                "  NAME VARCHAR(255) NOT NULL,\n" +
+                "  OCCUPANCY INTEGER,\n" +
+                "  MAX_OCCUPANCY INTEGER,\n" +
+                "  ENTRYGATES INTEGER,\n" +
+                "  EXITGATES INTEGER,\n" +
+                "  PRIMARY KEY (NAME)\n" +
+                ");");
     }
 
-    public void dropGarageTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP TABLE GARAGE;");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void dropGarageTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE GARAGE;");
     }
 
-    public void createEntryGateTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE ENTRYGATE (\n" +
-                    "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
-                    "  GARAGE_NAME VARCHAR(255) NOT NULL,\n" +
-                    "  PRIMARY KEY (ID),\n" +
-                    "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME)\n" +
-                    ");");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void createEntryGateTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE ENTRYGATE (\n" +
+                "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
+                "  GARAGE_NAME VARCHAR(255) NOT NULL,\n" +
+                "  PRIMARY KEY (ID),\n" +
+                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME)\n" +
+                ");");
     }
 
-    public void dropEntryGateTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP TABLE ENTRYGATE;");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void dropEntryGateTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE ENTRYGATE;");
     }
 
-    public void createExitGateTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE EXITGATE (\n" +
-                    "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
-                    "  GARAGE_NAME VARCHAR(255) NOT NULL,\n" +
-                    "  PRIMARY KEY (ID),\n" +
-                    "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME)\n" +
-                    ");");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void createExitGateTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE EXITGATE (\n" +
+                "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
+                "  GARAGE_NAME VARCHAR(255) NOT NULL,\n" +
+                "  PRIMARY KEY (ID),\n" +
+                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME)\n" +
+                ");");
     }
 
-    public void dropExitGateTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP TABLE EXITGATE;");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void dropExitGateTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE EXITGATE;");
     }
 
-    public void createTicketTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE TICKET (\n" +
-                    "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
-                    "  ASSIGNED_DATE DATE,\n" +
-                    "  ASSIGNED_TIME TIME,\n" +
-                    "  DUE_DATE DATE,\n" +
-                    "  DUE_TIME TIME,\n" +
-                    "  AMOUNT_DUE DOUBLE,\n" +
-                    "  ENTRYGATE_ID INT NOT NULL,\n" +
-                    "  EXITGATE_ID INT,\n" +
-                    "  PRIMARY KEY (ID),\n" +
-                    "  FOREIGN KEY (ENTRYGATE_ID) REFERENCES ENTRYGATE(ID),\n" +
-                    "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID)\n" +
-                    ");");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void createTicketTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE TICKET (\n" +
+                "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
+                "  ASSIGNED_DATE DATE,\n" +
+                "  ASSIGNED_TIME TIME,\n" +
+                "  DUE_DATE DATE,\n" +
+                "  DUE_TIME TIME,\n" +
+                "  AMOUNT_DUE DOUBLE,\n" +
+                "  ENTRYGATE_ID INT NOT NULL,\n" +
+                "  EXITGATE_ID INT,\n" +
+                "  PRIMARY KEY (ID),\n" +
+                "  FOREIGN KEY (ENTRYGATE_ID) REFERENCES ENTRYGATE(ID),\n" +
+                "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID)\n" +
+                ");");
     }
 
-    public void dropTicketTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP TABLE TICKET;");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void dropTicketTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE TICKET;");
     }
 
-    public void createPaymentTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("CREATE TABLE PAYMENT (\n" +
-                    "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
-                    "  CCNUM BIGINT,\n" +
-                    "  CSV INTEGER,\n" +
-                    "  AMOUNTPAID DOUBLE,\n" +
-                    "  EXP_MONTH INT,\n" +
-                    "  EXP_YEAR INT,\n" +
-                    "  EXITGATE_ID INT NOT NULL,\n" +
-                    "  PRIMARY KEY (ID),\n" +
-                    "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID)\n" +
-                    ");");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void createPaymentTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE PAYMENT (\n" +
+                "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
+                "  CCNUM BIGINT,\n" +
+                "  CSV INTEGER,\n" +
+                "  AMOUNTPAID DOUBLE,\n" +
+                "  EXP_MONTH INT,\n" +
+                "  EXP_YEAR INT,\n" +
+                "  EXITGATE_ID INT NOT NULL,\n" +
+                "  PRIMARY KEY (ID),\n" +
+                "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID)\n" +
+                ");");
     }
 
-    public void dropPaymentTable() {
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.execute("DROP TABLE PAYMENT;");
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void dropPaymentTable() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("DROP TABLE PAYMENT;");
     }
 
     /**
@@ -221,20 +177,15 @@ public class ParkingDatabase {
      * @param name The name to search the Database for.
      * @throws SQLException If there was a problem searching the ParkingDatabase.
      */
-    public Garage getGarage(String name) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM GARAGE g WHERE g.NAME = ?;");
-            prepStmt.setString(1, name);
-            ResultSet rs = prepStmt.executeQuery();
-            if(rs.next()) {
-                return null;
-            } else {
-                return new Garage(rs.getString("NAME"), rs.getInt("OCCUPANCY"), rs.getInt("MAX_OCCUPANCY"),
-                        rs.getInt("ENTRYGATES"), rs.getInt("EXITGATES"));
-            }
-        } catch (SQLException se) {
-            showException(se);
+    public Garage getGarage(String name) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM GARAGE g WHERE g.NAME = ?;");
+        prepStmt.setString(1, name);
+        ResultSet rs = prepStmt.executeQuery();
+        if (rs.next()) {
             return null;
+        } else {
+            return new Garage(rs.getString("NAME"), rs.getInt("OCCUPANCY"), rs.getInt("MAX_OCCUPANCY"),
+                    rs.getInt("ENTRYGATES"), rs.getInt("EXITGATES"));
         }
     }
 
@@ -244,19 +195,14 @@ public class ParkingDatabase {
      * @param id The id to search the Database for.
      * @throws SQLException If there was a problem searching the ParkingDatabase.
      */
-    public EntryGate getEntryGate(int id) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM ENTRYGATE e WHERE e.ID = ?;");
-            prepStmt.setInt(1, id);
-            ResultSet rs = prepStmt.executeQuery();
-            if(rs.next()) {
-                return null;
-            } else {
-                return new EntryGate(rs.getInt("ID"), rs.getString("GARAGE_NAME"));
-            }
-        } catch (SQLException se) {
-            showException(se);
+    public EntryGate getEntryGate(int id) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM ENTRYGATE e WHERE e.ID = ?;");
+        prepStmt.setInt(1, id);
+        ResultSet rs = prepStmt.executeQuery();
+        if (rs.next()) {
             return null;
+        } else {
+            return new EntryGate(rs.getInt("ID"), rs.getString("GARAGE_NAME"));
         }
     }
 
@@ -266,19 +212,14 @@ public class ParkingDatabase {
      * @param id The id to search the Database for.
      * @throws SQLException If there was a problem searching the ParkingDatabase.
      */
-    public ExitGate getExitGate(int id) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM EXITGATE e WHERE e.ID = ?;");
-            prepStmt.setInt(1, id);
-            ResultSet rs = prepStmt.executeQuery();
-            if(rs.next()) {
-                return null;
-            } else {
-                return new ExitGate(rs.getInt("ID"), rs.getString("GARAGE_NAME"));
-            }
-        } catch (SQLException se) {
-            showException(se);
+    public ExitGate getExitGate(int id) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM EXITGATE e WHERE e.ID = ?;");
+        prepStmt.setInt(1, id);
+        ResultSet rs = prepStmt.executeQuery();
+        if (rs.next()) {
             return null;
+        } else {
+            return new ExitGate(rs.getInt("ID"), rs.getString("GARAGE_NAME"));
         }
     }
 
@@ -288,21 +229,16 @@ public class ParkingDatabase {
      * @param id The id to search the Database for.
      * @throws SQLException If there was a problem searching the ParkingDatabase.
      */
-    public Ticket getTicket(int id) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET t WHERE t.ID = ?;");
-            prepStmt.setInt(1, id);
-            ResultSet rs = prepStmt.executeQuery();
-            if(rs.next()) {
-                return null;
-            } else {
-                return new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
-                        rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
-                        rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID"));
-            }
-        } catch (SQLException se) {
-            showException(se);
+    public Ticket getTicket(int id) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET t WHERE t.ID = ?;");
+        prepStmt.setInt(1, id);
+        ResultSet rs = prepStmt.executeQuery();
+        if (rs.next()) {
             return null;
+        } else {
+            return new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
+                    rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
+                    rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID"));
         }
     }
 
@@ -312,21 +248,16 @@ public class ParkingDatabase {
      * @param id The id to search the Database for.
      * @throws SQLException If there was a problem searching the ParkingDatabase.
      */
-    public Payment getPayment(int id) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM PAYMENT p WHERE p.ID = ?;");
-            prepStmt.setInt(1, id);
-            ResultSet rs = prepStmt.executeQuery();
-            if(rs.next()) {
-                return null;
-            } else {
-                return new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
-                        rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
-                        rs.getInt("EXITGATE_ID"));
-            }
-        } catch (SQLException se) {
-            showException(se);
+    public Payment getPayment(int id) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM PAYMENT p WHERE p.ID = ?;");
+        prepStmt.setInt(1, id);
+        ResultSet rs = prepStmt.executeQuery();
+        if (rs.next()) {
             return null;
+        } else {
+            return new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
+                    rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
+                    rs.getInt("EXITGATE_ID"));
         }
     }
 
@@ -336,18 +267,14 @@ public class ParkingDatabase {
      * @param garage The Garage to add to the Database.
      * @throws SQLException If there was a problem adding a student to the ParkingDatabase.
      */
-    public void add(Garage garage) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO GARAGE VALUES (?, ?, ?, ?, ?);");
-            prepStmt.setString(1, garage.getName());
-            prepStmt.setInt(2, garage.getOccupancy());
-            prepStmt.setInt(3, garage.getMaxOccupancy());
-            prepStmt.setInt(4, garage.getEntryGates());
-            prepStmt.setInt(5, garage.getExitGates());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void add(Garage garage) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO GARAGE VALUES (?, ?, ?, ?, ?);");
+        prepStmt.setString(1, garage.getName());
+        prepStmt.setInt(2, garage.getOccupancy());
+        prepStmt.setInt(3, garage.getMaxOccupancy());
+        prepStmt.setInt(4, garage.getEntryGates());
+        prepStmt.setInt(5, garage.getExitGates());
+        prepStmt.execute();
     }
 
     /**
@@ -356,14 +283,10 @@ public class ParkingDatabase {
      * @param entryGate The EntryGate to add to the Database.
      * @throws SQLException If there was an error adding the EntryGate to the Database.
      */
-    public void add(EntryGate entryGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO ENTRYGATE VALUES (?);");
-            prepStmt.setString(1, entryGate.getGarageName());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void add(EntryGate entryGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO ENTRYGATE VALUES (?);");
+        prepStmt.setString(1, entryGate.getGarageName());
+        prepStmt.execute();
     }
 
     /**
@@ -372,14 +295,10 @@ public class ParkingDatabase {
      * @param exitGate The ExitGate to add to the Database.
      * @throws SQLException If there was an error adding the ExitGate to the Database.
      */
-    public void add(ExitGate exitGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO EXITGATE VALUES (?);");
-            prepStmt.setString(1, exitGate.getGarageName());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void add(ExitGate exitGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO EXITGATE VALUES (?);");
+        prepStmt.setString(1, exitGate.getGarageName());
+        prepStmt.execute();
     }
 
     /**
@@ -388,19 +307,15 @@ public class ParkingDatabase {
      * @param payment The Payment to add to the Database.
      * @throws SQLException If there was an error adding the Payment to the Database.
      */
-    public void add(Payment payment) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO PAYMENT VALUES (?, ?, ?, ?, ?, ?);");
-            prepStmt.setLong(1, payment.getCcNum());
-            prepStmt.setInt(2, payment.getCsv());
-            prepStmt.setDouble(3, payment.getAmountPaid());
-            prepStmt.setInt(4, payment.getExpMonth());
-            prepStmt.setInt(5, payment.getExpYear());
-            prepStmt.setInt(6, payment.getExitGateId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void add(Payment payment) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO PAYMENT VALUES (?, ?, ?, ?, ?, ?);");
+        prepStmt.setLong(1, payment.getCcNum());
+        prepStmt.setInt(2, payment.getCsv());
+        prepStmt.setDouble(3, payment.getAmountPaid());
+        prepStmt.setInt(4, payment.getExpMonth());
+        prepStmt.setInt(5, payment.getExpYear());
+        prepStmt.setInt(6, payment.getExitGateId());
+        prepStmt.execute();
     }
 
     /**
@@ -409,20 +324,16 @@ public class ParkingDatabase {
      * @param ticket The Ticket to add to the Database.
      * @throws SQLException If there was an error adding the Ticket to the Database.
      */
-    public void add(Ticket ticket) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO TICKET VALUES (?, ?, ?, ?, ?, ?, ?);");
-            prepStmt.setDate(1, ticket.getAssignedDate());
-            prepStmt.setTime(2, ticket.getAssignedTime());
-            prepStmt.setDate(3, ticket.getDueDate());
-            prepStmt.setTime(4, ticket.getDueTime());
-            prepStmt.setDouble(5, ticket.getAmountDue());
-            prepStmt.setInt(6, ticket.getEntryGateId());
-            prepStmt.setInt(7, ticket.getExitGateId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void add(Ticket ticket) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO TICKET VALUES (?, ?, ?, ?, ?, ?, ?);");
+        prepStmt.setDate(1, ticket.getAssignedDate());
+        prepStmt.setTime(2, ticket.getAssignedTime());
+        prepStmt.setDate(3, ticket.getDueDate());
+        prepStmt.setTime(4, ticket.getDueTime());
+        prepStmt.setDouble(5, ticket.getAmountDue());
+        prepStmt.setInt(6, ticket.getEntryGateId());
+        prepStmt.setInt(7, ticket.getExitGateId());
+        prepStmt.execute();
     }
 
     /**
@@ -431,18 +342,14 @@ public class ParkingDatabase {
      * @param garage The Garage to modify in the Database.
      * @throws SQLException If there was an issue merging the Garage to the Database.
      */
-    public void merge(Garage garage) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("UPDATE GARAGE SET OCCUPANCY = ?, MAX_OCCUPANCY = ?, ENTRYGATES = ?, EXITGATES = ? WHERE NAME = ?;");
-            prepStmt.setInt(1, garage.getOccupancy());
-            prepStmt.setInt(2, garage.getMaxOccupancy());
-            prepStmt.setInt(3, garage.getEntryGates());
-            prepStmt.setInt(4, garage.getExitGates());
-            prepStmt.setString(5, garage.getName());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void merge(Garage garage) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("UPDATE GARAGE SET OCCUPANCY = ?, MAX_OCCUPANCY = ?, ENTRYGATES = ?, EXITGATES = ? WHERE NAME = ?;");
+        prepStmt.setInt(1, garage.getOccupancy());
+        prepStmt.setInt(2, garage.getMaxOccupancy());
+        prepStmt.setInt(3, garage.getEntryGates());
+        prepStmt.setInt(4, garage.getExitGates());
+        prepStmt.setString(5, garage.getName());
+        prepStmt.execute();
     }
 
     /**
@@ -451,15 +358,11 @@ public class ParkingDatabase {
      * @param entryGate The EntryGate to modify in the Database.
      * @throws SQLException If there was an issue merging the EntryGate to the Database.
      */
-    public void merge(EntryGate entryGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("UPDATE ENTRYGATE SET GARAGE_NAME = ? WHERE ID = ?;");
-            prepStmt.setString(1, entryGate.getGarageName());
-            prepStmt.setInt(2, entryGate.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void merge(EntryGate entryGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("UPDATE ENTRYGATE SET GARAGE_NAME = ? WHERE ID = ?;");
+        prepStmt.setString(1, entryGate.getGarageName());
+        prepStmt.setInt(2, entryGate.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -468,15 +371,11 @@ public class ParkingDatabase {
      * @param exitGate The ExitGate to modify in the Database.
      * @throws SQLException If there was an issue merging the ExitGate to the Database.
      */
-    public void merge(ExitGate exitGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("UPDATE EXITGATE SET GARAGE_NAME = ? WHERE ID = ?;");
-            prepStmt.setString(1, exitGate.getGarageName());
-            prepStmt.setInt(2, exitGate.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void merge(ExitGate exitGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("UPDATE EXITGATE SET GARAGE_NAME = ? WHERE ID = ?;");
+        prepStmt.setString(1, exitGate.getGarageName());
+        prepStmt.setInt(2, exitGate.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -485,21 +384,17 @@ public class ParkingDatabase {
      * @param payment The Payment to modify in the Database.
      * @throws SQLException If there was an issue merging the Payment to the Database.
      */
-    public void merge(Payment payment) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("UPDATE PAYMENT SET CCNUM = ?, CSV = ?, " +
-                    "AMOUNTPAID = ?, EXP_MONTH = ?, EXP_YEAR = ?, EXITGATE_ID = ?  WHERE ID = ?;");
-            prepStmt.setLong(1, payment.getCcNum());
-            prepStmt.setInt(2, payment.getCsv());
-            prepStmt.setDouble(3, payment.getAmountPaid());
-            prepStmt.setInt(4, payment.getExpMonth());
-            prepStmt.setInt(5, payment.getExpYear());
-            prepStmt.setInt(6, payment.getExitGateId());
-            prepStmt.setInt(7, payment.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void merge(Payment payment) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("UPDATE PAYMENT SET CCNUM = ?, CSV = ?, " +
+                "AMOUNTPAID = ?, EXP_MONTH = ?, EXP_YEAR = ?, EXITGATE_ID = ?  WHERE ID = ?;");
+        prepStmt.setLong(1, payment.getCcNum());
+        prepStmt.setInt(2, payment.getCsv());
+        prepStmt.setDouble(3, payment.getAmountPaid());
+        prepStmt.setInt(4, payment.getExpMonth());
+        prepStmt.setInt(5, payment.getExpYear());
+        prepStmt.setInt(6, payment.getExitGateId());
+        prepStmt.setInt(7, payment.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -508,22 +403,18 @@ public class ParkingDatabase {
      * @param ticket The Ticket to modify in the Database.
      * @throws SQLException If there was an issue merging the Ticket to the Database.
      */
-    public void merge(Ticket ticket) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("UPDATE TICKET SET ENTRYGATE_ID = ?, EXITGATE_ID = ?, " +
-                    "ASSIGNED_DATE = ?, ASSIGNED_TIME = ?, DUE_DATE = ?, DUE_TIME = ?, AMOUNT_DUE = ?  WHERE ID = ?;");
-            prepStmt.setInt(1, ticket.getEntryGateId());
-            prepStmt.setInt(2, ticket.getExitGateId());
-            prepStmt.setDate(3, ticket.getAssignedDate());
-            prepStmt.setTime(4, ticket.getAssignedTime());
-            prepStmt.setDate(5, ticket.getDueDate());
-            prepStmt.setTime(6, ticket.getDueTime());
-            prepStmt.setDouble(7, ticket.getAmountDue());
-            prepStmt.setInt(7, ticket.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void merge(Ticket ticket) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("UPDATE TICKET SET ENTRYGATE_ID = ?, EXITGATE_ID = ?, " +
+                "ASSIGNED_DATE = ?, ASSIGNED_TIME = ?, DUE_DATE = ?, DUE_TIME = ?, AMOUNT_DUE = ?  WHERE ID = ?;");
+        prepStmt.setInt(1, ticket.getEntryGateId());
+        prepStmt.setInt(2, ticket.getExitGateId());
+        prepStmt.setDate(3, ticket.getAssignedDate());
+        prepStmt.setTime(4, ticket.getAssignedTime());
+        prepStmt.setDate(5, ticket.getDueDate());
+        prepStmt.setTime(6, ticket.getDueTime());
+        prepStmt.setDouble(7, ticket.getAmountDue());
+        prepStmt.setInt(7, ticket.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -532,14 +423,10 @@ public class ParkingDatabase {
      * @param garage The Garage to remove from the Database.
      * @throws SQLException If there was an issue removing the Garage from the Database.
      */
-    public void remove(Garage garage) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM GARAGE g WHERE g.NAME = ?;");
-            prepStmt.setString(1, garage.getName());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void remove(Garage garage) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM GARAGE g WHERE g.NAME = ?;");
+        prepStmt.setString(1, garage.getName());
+        prepStmt.execute();
     }
 
     /**
@@ -548,14 +435,10 @@ public class ParkingDatabase {
      * @param entryGate The EntryGate to remove from the Database.
      * @throws SQLException If there was an issue removing the EntryGate from the Database.
      */
-    public void remove(EntryGate entryGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM ENTRYGATE e WHERE e.ID = ?;");
-            prepStmt.setInt(1, entryGate.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void remove(EntryGate entryGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM ENTRYGATE e WHERE e.ID = ?;");
+        prepStmt.setInt(1, entryGate.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -564,14 +447,10 @@ public class ParkingDatabase {
      * @param exitGate The ExitGate to remove from the Database.
      * @throws SQLException If there was an issue removing the ExitGate from the Database.
      */
-    public void remove(ExitGate exitGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM EXITGATE e WHERE e.ID = ?;");
-            prepStmt.setInt(1, exitGate.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void remove(ExitGate exitGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM EXITGATE e WHERE e.ID = ?;");
+        prepStmt.setInt(1, exitGate.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -580,14 +459,10 @@ public class ParkingDatabase {
      * @param payment The Payment to remove from the Database.
      * @throws SQLException If there was an issue removing the Payment from the Database.
      */
-    public void remove(Payment payment) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM PAYMENT p WHERE p.ID = ?;");
-            prepStmt.setInt(1, payment.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void remove(Payment payment) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM PAYMENT p WHERE p.ID = ?;");
+        prepStmt.setInt(1, payment.getId());
+        prepStmt.execute();
     }
 
     /**
@@ -596,159 +471,95 @@ public class ParkingDatabase {
      * @param ticket The Ticket to remove from the Database.
      * @throws SQLException If there was an issue removing the Ticket from the Database.
      */
-    public void remove(Ticket ticket) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM TICKET t WHERE t.ID = ?;");
-            prepStmt.setInt(1, ticket.getId());
-            prepStmt.execute();
-        } catch (SQLException se) {
-            showException(se);
-        }
+    public void remove(Ticket ticket) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("DELETE FROM TICKET t WHERE t.ID = ?;");
+        prepStmt.setInt(1, ticket.getId());
+        prepStmt.execute();
     }
 
     /**
      * Gets all garages from the Database.
      */
-    public List<Garage> getGarages() {
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM GARAGE g;");
-            List<Garage> garages = FXCollections.observableArrayList();
-            while (rs.next()) {
-                garages.add(new Garage(rs.getString("NAME"), rs.getInt("OCCUPANCY"), rs.getInt("MAX_OCCUPANCY"),
-                        rs.getInt("ENTRYGATES"), rs.getInt("EXITGATES")));
-            }
-            return garages;
-        } catch (SQLException se) {
-            showException(se);
-            return null;
+    public List<Garage> getGarages() throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM GARAGE g;");
+        List<Garage> garages = FXCollections.observableArrayList();
+        while (rs.next()) {
+            garages.add(new Garage(rs.getString("NAME"), rs.getInt("OCCUPANCY"), rs.getInt("MAX_OCCUPANCY"),
+                    rs.getInt("ENTRYGATES"), rs.getInt("EXITGATES")));
         }
+        return garages;
     }
 
     /**
      * Gets all EntryGates from the Database.
      */
-    public List<EntryGate> getEntryGates() {
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRYGATE e;");
-            List<EntryGate> entryGates = FXCollections.observableArrayList();
-            while (rs.next()) {
-                entryGates.add(new EntryGate(rs.getInt("ID"), rs.getString("GARAGE_NAME")));
-            }
-            return entryGates;
-        } catch (SQLException se) {
-            showException(se);
-            return null;
+    public List<EntryGate> getEntryGates() throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRYGATE e;");
+        List<EntryGate> entryGates = FXCollections.observableArrayList();
+        while (rs.next()) {
+            entryGates.add(new EntryGate(rs.getInt("ID"), rs.getString("GARAGE_NAME")));
         }
+        return entryGates;
     }
 
     /**
      * Gets all ExitGates from the Database.
      */
-    public List<ExitGate> getExitGates() {
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM EXITGATE e;");
-            List<ExitGate> exitGates = FXCollections.observableArrayList();
-            while (rs.next()) {
-                exitGates.add(new ExitGate(rs.getInt("ID"), rs.getString("GARAGE_NAME")));
-            }
-            return exitGates;
-        } catch (SQLException se) {
-            showException(se);
-            return null;
+    public List<ExitGate> getExitGates() throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM EXITGATE e;");
+        List<ExitGate> exitGates = FXCollections.observableArrayList();
+        while (rs.next()) {
+            exitGates.add(new ExitGate(rs.getInt("ID"), rs.getString("GARAGE_NAME")));
         }
+        return exitGates;
     }
 
     /**
      * Gets all Tickets from the Database.
      */
-    public List<Ticket> getTickets() {
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM TICKET e;");
-            List<Ticket> tickets = FXCollections.observableArrayList();
-            while (rs.next()) {
-                tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
-                        rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
-                        rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
-            }
-            return tickets;
-        } catch (SQLException se) {
-            showException(se);
-            return null;
+    public List<Ticket> getTickets() throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM TICKET e;");
+        List<Ticket> tickets = FXCollections.observableArrayList();
+        while (rs.next()) {
+            tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
+                    rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
+                    rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
         }
+        return tickets;
     }
 
     /**
      * Gets all Payments from the Database.
      */
-    public List<Payment> getPayments() {
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM PAYMENT p;");
-            List<Payment> payments = FXCollections.observableArrayList();
-            while (rs.next()) {
-                payments.add(new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
-                        rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
-                        rs.getInt("EXITGATE_ID")));
-            }
-            return payments;
-        } catch (SQLException se) {
-            showException(se);
-            return null;
+    public List<Payment> getPayments() throws SQLException {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM PAYMENT p;");
+        List<Payment> payments = FXCollections.observableArrayList();
+        while (rs.next()) {
+            payments.add(new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
+                    rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
+                    rs.getInt("EXITGATE_ID")));
         }
+        return payments;
     }
 
     /**
      * Gets all Tickets from the Database.
      */
-    public List<Ticket> getTickets(EntryGate entryGate) {
-        try {
-            PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET e WHERE e.ENTRYGATE_ID = ?;");
-            prepStmt.setInt(1, entryGate.getId());
-            ResultSet rs = prepStmt.executeQuery();
-            List<Ticket> tickets = FXCollections.observableArrayList();
-            while (rs.next()) {
-                tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
-                        rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
-                        rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
-            }
-            return tickets;
-        } catch (SQLException se) {
-            showException(se);
-            return null;
+    public List<Ticket> getTickets(EntryGate entryGate) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET e WHERE e.ENTRYGATE_ID = ?;");
+        prepStmt.setInt(1, entryGate.getId());
+        ResultSet rs = prepStmt.executeQuery();
+        List<Ticket> tickets = FXCollections.observableArrayList();
+        while (rs.next()) {
+            tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
+                    rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
+                    rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
         }
-    }
-
-    private void showException(Exception ex) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Exception Dialog");
-        alert.setHeaderText("An exception has occurred.");
-
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        ex.printStackTrace(pw);
-        String exceptionText = sw.toString();
-
-        Label label = new Label("Exception stacktrace:");
-
-        TextArea textArea = new TextArea(exceptionText);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-
-        textArea.setMaxWidth(Double.MAX_VALUE);
-        textArea.setMaxHeight(Double.MAX_VALUE);
-        GridPane.setVgrow(textArea, Priority.ALWAYS);
-        GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-        GridPane expContent = new GridPane();
-        expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(label, 0, 0);
-        expContent.add(textArea, 0, 1);
-
-        alert.getDialogPane().setExpandableContent(expContent);
-        alert.showAndWait();
+        return tickets;
     }
 }

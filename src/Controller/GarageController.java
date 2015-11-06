@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -194,21 +195,21 @@ public class GarageController extends Controller<Garage> {
     }
 
     @FXML
-    protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
+    protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
         EntryGate gate = new EntryGate(getModel().getName());
         ParkingDatabase.getInstance().add(gate);
         getEntryGates().add(gate);
     }
 
     @FXML
-    protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
+    protected void handleAddExitGate(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
         ExitGate gate = new ExitGate(getModel().getName());
         ParkingDatabase.getInstance().add(gate);
         getExitGates().add(gate);
     }
 
     @FXML
-    protected void handleRemoveEntryGate(ActionEvent event) {
+    protected void handleRemoveEntryGate(ActionEvent event) throws SQLException {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
         List<Ticket> tickets = ParkingDatabase.getInstance().getTickets(selected);
@@ -219,7 +220,7 @@ public class GarageController extends Controller<Garage> {
     }
 
     @FXML
-    protected void handleRemoveExitGate(ActionEvent event) {
+    protected void handleRemoveExitGate(ActionEvent event) throws SQLException {
         ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
         getExitGates().remove(selected);
@@ -227,7 +228,7 @@ public class GarageController extends Controller<Garage> {
     }
 
     @FXML
-    protected void handleRemoveTicket(ActionEvent event) {
+    protected void handleRemoveTicket(ActionEvent event) throws SQLException {
         Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
         getTickets().remove(selected);
@@ -239,9 +240,9 @@ public class GarageController extends Controller<Garage> {
     @FXML
     protected void handleShowEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
-        if(null != selected) {
+        if (null != selected) {
             EntryGateController controller = selected.getController();
-            if(null == controller) {
+            if (null == controller) {
                 controller = new EntryGateController(selected, getScene().getWindow());
                 selected.setController(controller);
             }
@@ -252,9 +253,9 @@ public class GarageController extends Controller<Garage> {
     @FXML
     protected void handleShowExitGate(ActionEvent event) throws IOException, NoSuchMethodException {
         ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
-        if(null != selected) {
+        if (null != selected) {
             ExitGateController controller = selected.getController();
-            if(null == controller) {
+            if (null == controller) {
                 controller = new ExitGateController(selected, this);
                 selected.setController(controller);
             }
@@ -265,9 +266,9 @@ public class GarageController extends Controller<Garage> {
     @FXML
     protected void handleShowTicket(ActionEvent event) throws IOException, NoSuchMethodException {
         Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
-        if(null != selected) {
+        if (null != selected) {
             TicketController controller = selected.getController();
-            if(null == controller) {
+            if (null == controller) {
                 controller = new TicketController(selected, getScene().getWindow());
                 selected.setController(controller);
             }
