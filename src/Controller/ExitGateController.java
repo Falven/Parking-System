@@ -26,6 +26,8 @@ import java.util.Calendar;
 
 public class ExitGateController extends Controller<ExitGate> {
 
+    private GarageController garageController;
+
     @FXML
     private TextField ticketIdField;
 
@@ -45,11 +47,12 @@ public class ExitGateController extends Controller<ExitGate> {
 
     private ObservableList<String> yearList;
 
-    public ExitGateController(ExitGate gate, GarageController controller) throws IOException, NoSuchMethodException {
+    public ExitGateController(ExitGate gate, GarageController garageController) throws IOException, NoSuchMethodException {
         super(gate);
+        this.garageController = garageController;
         initMonthsList();
         initYearsList();
-        Window owner = controller.getScene().getWindow();
+        Window owner = garageController.getScene().getWindow();
         initUI("Exit Gate #" + getModel().getId(), "/view/ExitView.fxml", 350.0, 400.0, 350.0, 400.0, owner.getX() + owner.getWidth(), owner.getY(), false, Modality.NONE, null, owner);
         expMonthBox.setItems(monthList);
         expMonthBox.getSelectionModel().selectFirst();
@@ -93,9 +96,9 @@ public class ExitGateController extends Controller<ExitGate> {
     protected void handleSubmit(ActionEvent event) throws SQLException {
         try {
             Ticket ticket = ParkingDatabase.getInstance().getTicket(Integer.parseInt(ticketIdField.getText()));
-            if(null == ParkingDatabase.getInstance().getExitGate(ticket.getExitGateId())) {
-                EntryGate ticketGate = ParkingDatabase.getInstance().getEntryGate(ticket.getEntryGateId());
-                if(ticketGate.getGarageName().equals(getModel().getGarageName())) {
+            if(0 == ticket.getExitGateId()) {
+                ExitGate exitGate = getModel();
+                if(ParkingDatabase.getInstance().getEntryGate(ticket.getEntryGateId()).getGarageName().equals(exitGate.getGarageName())) {
                     try {
                         long ccNum = Long.parseLong(ccNumField.getText());
                         try {
@@ -106,13 +109,14 @@ public class ExitGateController extends Controller<ExitGate> {
                                 int month = cal.get(Calendar.MONTH);
                                 try {
                                     int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
-                                    Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, getModel().getId());
-//                                    bean.getPayments().add(payment);
-//                                    Garage owner = bean.getGarage();
-//                                    owner.setOccupancy(owner.getOccupancy() - 1);
-//                                    ticket.setExitGate(bean);
-//                                    Main.getDatabase().persist(payment);
-//                                    Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
+                                    Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, exitGate.getId(), ticket.getId());
+                                    ParkingDatabase.getInstance().add(payment);
+                                    Garage garage = garageController.getModel();
+                                    garage.setOccupancy(garage.getOccupancy() - 1);
+                                    ParkingDatabase.getInstance().merge(garage);
+                                    ticket.setExitGateId(exitGate.getId());
+                                    ParkingDatabase.getInstance().merge(ticket);
+                                    Main.showInfo("Success.", "Please drive ahead.", "Thank you for using our Parking Services.");
                                 } catch (NumberFormatException nfe) {
                                     Main.showError("Credit card error.", "Error processing your card.", "The provided expiration year is invalid.");
                                 }

@@ -261,8 +261,10 @@ public class ParkingDatabase {
                 "  EXP_MONTH INT,\n" +
                 "  EXP_YEAR INT,\n" +
                 "  EXITGATE_ID INT NOT NULL,\n" +
+                "  TICKET_ID INT NOT NULL,\n" +
                 "  PRIMARY KEY (ID),\n" +
-                "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID)\n" +
+                "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID),\n" +
+                "  FOREIGN KEY (TICKET_ID) REFERENCES TICKET(ID)\n" +
                 ")");
     }
 
@@ -330,7 +332,7 @@ public class ParkingDatabase {
         PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM EXITGATE e WHERE e.ID = ?");
         prepStmt.setInt(1, id);
         ResultSet rs = prepStmt.executeQuery();
-        if (!rs.next()) {
+        if (rs.next()) {
             return new ExitGate(rs.getInt("ID"), rs.getString("GARAGE_NAME"));
         }
         return null;
@@ -346,7 +348,7 @@ public class ParkingDatabase {
         PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM TICKET t WHERE t.ID = ?");
         prepStmt.setInt(1, id);
         ResultSet rs = prepStmt.executeQuery();
-        if (!rs.next()) {
+        if (rs.next()) {
             return new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
                     rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
                     rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID"));
@@ -364,10 +366,10 @@ public class ParkingDatabase {
         PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM PAYMENT p WHERE p.ID = ?");
         prepStmt.setInt(1, id);
         ResultSet rs = prepStmt.executeQuery();
-        if (!rs.next()) {
+        if (rs.next()) {
             return new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
                     rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
-                    rs.getInt("EXITGATE_ID"));
+                    rs.getInt("EXITGATE_ID"), rs.getInt("TICKET_ID"));
         }
         return null;
     }
@@ -427,13 +429,14 @@ public class ParkingDatabase {
      * @throws SQLException If there was an error adding the Payment to the Database.
      */
     public void add(Payment payment) throws SQLException {
-        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO PAYMENT(CCNUM, CSV, AMOUNTPAID, EXP_MONTH, EXP_YEAR, EXITGATE_ID) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO PAYMENT(CCNUM, CSV, AMOUNTPAID, EXP_MONTH, EXP_YEAR, EXITGATE_ID, TICKET_ID) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         prepStmt.setLong(1, payment.getCcNum());
         prepStmt.setInt(2, payment.getCsv());
         prepStmt.setDouble(3, payment.getAmountPaid());
         prepStmt.setInt(4, payment.getExpMonth());
         prepStmt.setInt(5, payment.getExpYear());
         prepStmt.setInt(6, payment.getExitGateId());
+        prepStmt.setInt(7, payment.getTicketId());
         prepStmt.executeUpdate();
         ResultSet rs = prepStmt.getGeneratedKeys();
         if (rs.next()) {
@@ -683,7 +686,7 @@ public class ParkingDatabase {
         while (rs.next()) {
             payments.add(new Payment(rs.getInt("ID"), rs.getLong("CCNUM"), rs.getInt("CSV"),
                     rs.getDouble("AMOUNT_PAID"), rs.getInt("EXP_MONTH"), rs.getInt("EXP_YEAR"),
-                    rs.getInt("EXITGATE_ID")));
+                    rs.getInt("EXITGATE_ID"), rs.getInt("TICKET_ID")));
         }
         return payments;
     }

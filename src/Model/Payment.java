@@ -12,16 +12,17 @@ public class Payment extends Model<PaymentController> {
     private IntegerProperty expMonth;
     private IntegerProperty expYear;
     private IntegerProperty exitGateId;
+    private IntegerProperty ticketId;
 
     public Payment() {
-        this(0, 0, 0, 0.0, 0, 0, 0);
+        this(0, 0, 0, 0.0, 0, 0, 0, 0);
     }
 
-    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId) {
-        this(0, ccNum, csv, amountPaid, expMonth, expYear, exitGateId);
+    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId, int ticketId) {
+        this(0, ccNum, csv, amountPaid, expMonth, expYear, exitGateId, ticketId);
     }
 
-    public Payment(int id, long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId) {
+    public Payment(int id, long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId, int ticketId) {
         this.id = new SimpleIntegerProperty(id);
         this.ccNum = new SimpleLongProperty(ccNum);
         this.csv = new SimpleIntegerProperty(csv);
@@ -29,6 +30,7 @@ public class Payment extends Model<PaymentController> {
         this.expMonth = new SimpleIntegerProperty(expMonth);
         this.expYear = new SimpleIntegerProperty(expYear);
         this.exitGateId = new SimpleIntegerProperty(exitGateId);
+        this.ticketId = new SimpleIntegerProperty(ticketId);
     }
 
     public int getId() {
@@ -113,6 +115,18 @@ public class Payment extends Model<PaymentController> {
 
     public IntegerProperty exitGateIdProperty() {
         return this.exitGateId;
+    }
+
+    public int getTicketId() {
+        return this.ticketId.get();
+    }
+
+    public void setTicketId(int ticketId) {
+        this.ticketId.set(ticketId);
+    }
+
+    public IntegerProperty ticketIdProperty() {
+        return this.ticketId;
     }
 
     @Override
