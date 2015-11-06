@@ -37,18 +37,6 @@ public class EntryController {
         this.bean = gate;
         this.controller = controller;
         initUI(gate, owner);
-
-        Garage garage = bean.getGarage();
-        garage.occupancyProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    if(newValue.intValue() >= garage.getMaxOccupancy()) {
-                        availabilityImage.setImage(new Image(Main.class.getResourceAsStream("/view/Unavailable.png")));
-                        getTicketButton.setDisable(true);
-                    } else {
-                        availabilityImage.setImage(new Image(Main.class.getResourceAsStream("/view/Available.png")));
-                        getTicketButton.setDisable(false);
-                    }
-                });
     }
 
     private void initUI(EntryGate gate, Window owner) throws IOException {
@@ -66,6 +54,19 @@ public class EntryController {
         this.stage.initModality(Modality.NONE);
         this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
+        Garage garage = bean.getGarage();
+        garage.occupancyProperty().addListener((observable, oldValue, newValue) -> verifyOccupancy(newValue.intValue(), garage.getMaxOccupancy()));
+        verifyOccupancy(garage.getOccupancy(), garage.getMaxOccupancy());
+    }
+
+    private void verifyOccupancy(int occupancy, int maxOccupancy) {
+        if(occupancy >= maxOccupancy) {
+            availabilityImage.setImage(new Image(Main.class.getResourceAsStream("/view/Unavailable.png")));
+            getTicketButton.setDisable(true);
+        } else {
+            availabilityImage.setImage(new Image(Main.class.getResourceAsStream("/view/Available.png")));
+            getTicketButton.setDisable(false);
+        }
     }
 
     public EntryGate getBean() {
@@ -84,17 +85,11 @@ public class EntryController {
     protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException {
         EntryGate gate = getBean();
         Garage garage = gate.getGarage();
-
         Ticket ticket = new Ticket(gate, garage);
         Main.getDatabase().persist(ticket);
-
         gate.getTickets().add(ticket);
-        Main.getDatabase().merge(gate);
-
         garage.getTickets().add(ticket);
         garage.setOccupancy(garage.getOccupancy() + 1);
-        Main.getDatabase().merge(garage);
-
         TicketController controller = new TicketController(ticket, window);
         controller.showView();
         GarageController.getTicketControllerLookup().put(ticket, controller);

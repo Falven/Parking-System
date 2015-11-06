@@ -238,10 +238,6 @@ public class GarageController {
         stage.show();
     }
 
-    public void closeView() {
-        stage.close();
-    }
-
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException {
         Garage garage = getBean();
@@ -276,11 +272,13 @@ public class GarageController {
 
     @FXML
     protected void handleRemoveTicket(ActionEvent event) {
-        Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
-        Main.getDatabase().remove(selected);
+        Ticket selected = (Ticket)ticketsTable.getSelectionModel().getSelectedItem();
         Garage garage = selected.getGarage();
+        EntryGate entry = selected.getEntryGate();
+        entry.getTickets().remove(selected);
+        garage.getTickets().remove(selected);
         garage.setOccupancy(garage.getOccupancy() - 1);
-        Main.getDatabase().merge(garage);
+        Main.getDatabase().remove(selected);
         GarageController.getTicketControllerLookup().remove(selected).closeView();
     }
 

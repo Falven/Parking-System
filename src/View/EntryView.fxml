@@ -23,11 +23,7 @@
       <VBox alignment="CENTER">
          <children>
             <Label text="Parking Space" textFill="WHITE" />
-            <ImageView fx:id="availabilityImage" fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@Available.png" />
-               </image>
-            </ImageView>
+            <ImageView fx:id="availabilityImage" fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </VBox>
    </children>
