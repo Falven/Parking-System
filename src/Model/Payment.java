@@ -13,10 +13,6 @@ public class Payment {
     private IntegerProperty exitGateId;
     private IntegerProperty ticketId;
 
-    public Payment() {
-        this(0, 0, 0, 0.0, 0, 0, 0, 0);
-    }
-
     public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId, int ticketId) {
         this(0, ccNum, csv, amountPaid, expMonth, expYear, exitGateId, ticketId);
     }

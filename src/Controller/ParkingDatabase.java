@@ -65,11 +65,11 @@ public class ParkingDatabase {
      * Drops default tables on the Database if they exist.
      */
     public void tryDropTables() throws SQLException {
-        tryDropGarageTable();
-        tryDropEntryGateTable();
-        tryDropExitGateTable();
-        tryDropTicketTable();
         tryDropPaymentTable();
+        tryDropTicketTable();
+        tryDropExitGateTable();
+        tryDropEntryGateTable();
+        tryDropGarageTable();
     }
 
     /**
@@ -78,11 +78,11 @@ public class ParkingDatabase {
      * @throws SQLException The ParkingDatabase was unable to create the default tables.
      */
     public void dropTables() throws SQLException {
-        dropGarageTable();
-        dropEntryGateTable();
-        dropExitGateTable();
-        dropTicketTable();
         dropPaymentTable();
+        dropTicketTable();
+        dropExitGateTable();
+        dropEntryGateTable();
+        dropGarageTable();
     }
 
     public void tryCreateGarageTable() throws SQLException {
