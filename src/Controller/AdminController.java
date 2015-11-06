@@ -99,7 +99,7 @@ public class AdminController extends ViewController {
 
     @FXML
     protected void handleAddGarage(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
-        String garageName = garageField.getText();
+        String garageName = this.garageField.getText();
         if(null != ParkingDatabase.getInstance().getGarage(garageName)) {
             Main.showError("Add Garage error.", "Error creating garage.", "The provided garage already exists.");
         } else if(null == garageName || garageName.isEmpty()) {
@@ -108,6 +108,7 @@ public class AdminController extends ViewController {
             Garage garage = new Garage(garageName);
             ParkingDatabase.getInstance().add(garage);
             getGarages().add(garage);
+            this.garageField.setText("");
             this.garageTable.getSelectionModel().selectLast();
         }
     }
@@ -120,7 +121,7 @@ public class AdminController extends ViewController {
     }
 
     @FXML
-    protected void handleManageGarage(ActionEvent event) throws IOException, NoSuchMethodException {
+    protected void handleManageGarage(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
         Garage selected = this.garageTable.getSelectionModel().getSelectedItem();
         if(null != selected) {
             GarageController controller = selected.getController();

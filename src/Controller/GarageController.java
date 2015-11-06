@@ -97,7 +97,7 @@ public class GarageController extends Controller<Garage> {
 
     private ListProperty<String> yearStatList;
 
-    public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException {
+    public GarageController(Garage garage, Window owner) throws IOException, NoSuchMethodException, SQLException {
         super(garage);
         double stageWidth = 650.0;
         double stageHeight = 500.0;
@@ -113,24 +113,24 @@ public class GarageController extends Controller<Garage> {
         initYearlyStatsTab();
     }
 
-    private void initEntryGatesTab() throws IOException, NoSuchMethodException {
-        entryGates = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private void initEntryGatesTab() throws IOException, NoSuchMethodException, SQLException {
+        entryGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getEntryGates());
         this.entryGatesCountLabel.textProperty().bind(entryGatesProperty().sizeProperty().asString());
         this.entryGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.entryGatesTable.setItems(getEntryGates());
         this.entryGatesTable.getSelectionModel().selectFirst();
     }
 
-    private void initExitGatesTab() throws IOException, NoSuchMethodException {
-        exitGates = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private void initExitGatesTab() throws IOException, NoSuchMethodException, SQLException {
+        exitGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getExitGates());
         this.exitGatesCountLabel.textProperty().bind(exitGatesProperty().sizeProperty().asString());
         this.exitGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.exitGatesTable.setItems(getExitGates());
         this.exitGatesTable.getSelectionModel().selectFirst();
     }
 
-    private void initTicketsTab() throws IOException, NoSuchMethodException {
-        tickets = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private void initTicketsTab() throws IOException, NoSuchMethodException, SQLException {
+        tickets = new SimpleListProperty<>(ParkingDatabase.getInstance().getTickets());
         this.ticketCountLabel.textProperty().bind(ticketsProperty().sizeProperty().asString());
         this.ticketsTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.ticketsTableAssignedDateColumn.setCellValueFactory(new PropertyValueFactory<>("assignedDate"));
@@ -196,9 +196,12 @@ public class GarageController extends Controller<Garage> {
 
     @FXML
     protected void handleAddEntryGate(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
-        EntryGate gate = new EntryGate(getModel().getName());
+        Garage garage = getModel();
+        EntryGate gate = new EntryGate(garage.getName());
         ParkingDatabase.getInstance().add(gate);
         getEntryGates().add(gate);
+        garage.setEntryGates(garage.getEntryGates() + 1);
+        ParkingDatabase.getInstance().merge(garage);
     }
 
     @FXML
@@ -213,10 +216,14 @@ public class GarageController extends Controller<Garage> {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
         List<Ticket> tickets = ParkingDatabase.getInstance().getTickets(selected);
+        ParkingDatabase.getInstance().remove(tickets);
         getModel().setOccupancy(getModel().getOccupancy() - tickets.size());
+        getModel().setEntryGates(getModel().getEntryGates() - 1);
         ParkingDatabase.getInstance().merge(getModel());
         getEntryGates().remove(selected);
-        selected.getController().closeStage();
+        EntryGateController controller = selected.getController();
+        if(null != controller)
+            controller.closeStage();
     }
 
     @FXML
@@ -224,7 +231,11 @@ public class GarageController extends Controller<Garage> {
         ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
         ParkingDatabase.getInstance().remove(selected);
         getExitGates().remove(selected);
-        selected.getController().closeStage();
+        getModel().setExitGates(getModel().getExitGates() - 1);
+        ParkingDatabase.getInstance().merge(getModel());
+        ExitGateController controller = selected.getController();
+        if(null != controller)
+            controller.closeStage();
     }
 
     @FXML
