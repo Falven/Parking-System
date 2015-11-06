@@ -2,7 +2,7 @@ package Model;
 
 import javafx.beans.property.*;
 
-public class Payment extends Model<PaymentController> {
+public class Payment {
 
     private IntegerProperty id;
     private LongProperty ccNum;

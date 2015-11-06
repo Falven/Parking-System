@@ -257,7 +257,7 @@ public class ParkingDatabase {
                 "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
                 "  CCNUM BIGINT,\n" +
                 "  CSV INTEGER,\n" +
-                "  AMOUNTPAID DOUBLE,\n" +
+                "  AMOUNT_PAID DOUBLE,\n" +
                 "  EXP_MONTH INT,\n" +
                 "  EXP_YEAR INT,\n" +
                 "  EXITGATE_ID INT NOT NULL,\n" +
@@ -429,7 +429,7 @@ public class ParkingDatabase {
      * @throws SQLException If there was an error adding the Payment to the Database.
      */
     public void add(Payment payment) throws SQLException {
-        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO PAYMENT(CCNUM, CSV, AMOUNTPAID, EXP_MONTH, EXP_YEAR, EXITGATE_ID, TICKET_ID) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO PAYMENT(CCNUM, CSV, AMOUNT_PAID, EXP_MONTH, EXP_YEAR, EXITGATE_ID, TICKET_ID) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         prepStmt.setLong(1, payment.getCcNum());
         prepStmt.setInt(2, payment.getCsv());
         prepStmt.setDouble(3, payment.getAmountPaid());
@@ -516,7 +516,7 @@ public class ParkingDatabase {
      */
     public void merge(Payment payment) throws SQLException {
         PreparedStatement prepStmt = conn.prepareStatement("UPDATE PAYMENT SET CCNUM = ?, CSV = ?, " +
-                "AMOUNTPAID = ?, EXP_MONTH = ?, EXP_YEAR = ?, EXITGATE_ID = ?  WHERE ID = ?");
+                "AMOUNT_PAID = ?, EXP_MONTH = ?, EXP_YEAR = ?, EXITGATE_ID = ?  WHERE ID = ?");
         prepStmt.setLong(1, payment.getCcNum());
         prepStmt.setInt(2, payment.getCsv());
         prepStmt.setDouble(3, payment.getAmountPaid());

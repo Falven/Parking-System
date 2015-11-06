@@ -44,13 +44,13 @@ public class GarageController extends Controller<Garage> {
     private TableView<EntryGate> entryGatesTable;
 
     @FXML
-    private TableColumn<EntryGate, Number> entryGatesTableIdColumn;
+    private TableColumn<EntryGate, Number> entryGatesIdCol;
 
     @FXML
     private TableView<ExitGate> exitGatesTable;
 
     @FXML
-    private TableColumn<ExitGate, Number> exitGatesTableIdColumn;
+    private TableColumn<ExitGate, Number> exitGatesIdCol;
 
     @FXML
     private TableView<Ticket> ticketsTable;
@@ -147,7 +147,7 @@ public class GarageController extends Controller<Garage> {
     private void initEntryGatesTab() throws IOException, NoSuchMethodException, SQLException {
         entryGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getEntryGates());
         this.entryGatesCountLabel.textProperty().bind(entryGatesProperty().sizeProperty().asString());
-        this.entryGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.entryGatesIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.entryGatesTable.setItems(getEntryGates());
         this.entryGatesTable.getSelectionModel().selectFirst();
     }
@@ -155,7 +155,7 @@ public class GarageController extends Controller<Garage> {
     private void initExitGatesTab() throws IOException, NoSuchMethodException, SQLException {
         exitGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getExitGates());
         this.exitGatesCountLabel.textProperty().bind(exitGatesProperty().sizeProperty().asString());
-        this.exitGatesTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.exitGatesIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.exitGatesTable.setItems(getExitGates());
         this.exitGatesTable.getSelectionModel().selectFirst();
     }

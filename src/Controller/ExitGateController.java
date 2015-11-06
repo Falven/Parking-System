@@ -113,6 +113,7 @@ public class ExitGateController extends Controller<ExitGate> {
                                     int year = Integer.parseInt((String)expYearBox.getSelectionModel().getSelectedItem());
                                     Payment payment = new Payment(ccNum, csv, ticket.getAmountDue(), month, year, exitGate.getId(), ticket.getId());
                                     ParkingDatabase.getInstance().add(payment);
+                                    garageController.getPayments().add(payment);
                                     Garage garage = garageController.getModel();
                                     garage.setOccupancy(garage.getOccupancy() - 1);
                                     ParkingDatabase.getInstance().merge(garage);
