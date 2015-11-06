@@ -41,16 +41,41 @@ public class ParkingDatabase {
     }
 
     /**
-     * Creates default tables on the Database.
+     * Creates default tables on the Database if they don't exist.
      *
      * @throws SQLException The ParkingDatabase was unable to create the default tables.
      */
     public void tryCreateTables() throws SQLException {
+        tryCreateGarageTable();
+        tryCreateEntryGateTable();
+        tryCreateExitGateTable();
+        tryCreateTicketTable();
+        tryCreatePaymentTable();
+    }
+
+    /**
+     * Creates default tables on the Database.
+     *
+     * @throws SQLException The ParkingDatabase was unable to create the default tables.
+     */
+    public void createTables() throws SQLException {
         createGarageTable();
         createEntryGateTable();
         createExitGateTable();
         createTicketTable();
         createPaymentTable();
+    }
+
+    /**
+     * Drops default tables on the Database if they exist.
+     *
+     */
+    public void tryDropTables() throws SQLException {
+        tryDropGarageTable();
+        tryDropEntryGateTable();
+        tryDropExitGateTable();
+        tryDropTicketTable();
+        tryDropPaymentTable();
     }
 
     /**
@@ -64,6 +89,24 @@ public class ParkingDatabase {
         dropExitGateTable();
         dropTicketTable();
         dropPaymentTable();
+    }
+
+    public void tryCreateGarageTable() throws SQLException {
+        try {
+            createGarageTable();
+        } catch (SQLException se) {
+            if(se.getErrorCode() != 30000) {
+                throw se;
+            }
+        }
+    }
+
+    public void tryDropGarageTable() {
+        try {
+            dropGarageTable();
+        } catch (SQLException se) {
+            System.out.println();
+        }
     }
 
     public void createGarageTable() throws SQLException {
@@ -83,6 +126,24 @@ public class ParkingDatabase {
         stmt.execute("DROP TABLE GARAGE");
     }
 
+    public void tryCreateEntryGateTable() throws SQLException {
+        try {
+            createEntryGateTable();
+        } catch (SQLException se) {
+            if(se.getErrorCode() != 30000) {
+                throw se;
+            }
+        }
+    }
+
+    public void tryDropEntryGateTable() throws SQLException {
+        try {
+            dropEntryGateTable();
+        } catch (SQLException se) {
+            System.out.println();
+        }
+    }
+
     public void createEntryGateTable() throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute("CREATE TABLE ENTRYGATE (\n" +
@@ -98,6 +159,24 @@ public class ParkingDatabase {
         stmt.execute("DROP TABLE ENTRYGATE");
     }
 
+    public void tryCreateExitGateTable() throws SQLException {
+        try {
+            createExitGateTable();
+        } catch (SQLException se) {
+            if(se.getErrorCode() != 30000) {
+                throw se;
+            }
+        }
+    }
+
+    public void tryDropExitGateTable() throws SQLException {
+        try {
+            dropExitGateTable();
+        } catch (SQLException se) {
+            System.out.println();
+        }
+    }
+
     public void createExitGateTable() throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute("CREATE TABLE EXITGATE (\n" +
@@ -111,6 +190,24 @@ public class ParkingDatabase {
     public void dropExitGateTable() throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute("DROP TABLE EXITGATE");
+    }
+
+    public void tryCreateTicketTable() throws SQLException {
+        try {
+            createTicketTable();
+        } catch (SQLException se) {
+            if(se.getErrorCode() != 30000) {
+                throw se;
+            }
+        }
+    }
+
+    public void tryDropTicketTable() throws SQLException {
+        try {
+            dropTicketTable();
+        } catch (SQLException se) {
+            System.out.println();
+        }
     }
 
     public void createTicketTable() throws SQLException {
@@ -133,6 +230,24 @@ public class ParkingDatabase {
     public void dropTicketTable() throws SQLException {
         Statement stmt = conn.createStatement();
         stmt.execute("DROP TABLE TICKET");
+    }
+
+    public void tryCreatePaymentTable() throws SQLException {
+        try {
+            createPaymentTable();
+        } catch (SQLException se) {
+            if(se.getErrorCode() != 30000) {
+                throw se;
+            }
+        }
+    }
+
+    public void tryDropPaymentTable() throws SQLException {
+        try {
+            dropPaymentTable();
+        } catch (SQLException se) {
+            System.out.println();
+        }
     }
 
     public void createPaymentTable() throws SQLException {
