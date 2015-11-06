@@ -1,42 +1,28 @@
 package Model;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
-import javax.persistence.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.List;
-
-@Entity
-@Access(AccessType.PROPERTY)
 public class Garage {
+
+    public static final int DEFAULT_MAX_OCCUPANCY = 20;
 
     private SimpleStringProperty name;
     private SimpleIntegerProperty occupancy;
     private SimpleIntegerProperty maxOccupancy;
-    private SimpleListProperty<Ticket> tickets;
-    private SimpleListProperty<EntryGate> entryGates;
-    private SimpleListProperty<ExitGate> exitGates;
 
-    @Transient
-    private static final int MAX_OCCUPANCY = 20;
-
-    public Garage() {
-        this(null);
+    public Garage(String name, int occupancy) {
+        this(name, occupancy, DEFAULT_MAX_OCCUPANCY);
     }
 
-    public Garage(String name) {
+    public Garage(String name, int occupancy, int max_occupancy) {
         this.name = new SimpleStringProperty(name);
-        this.occupancy = new SimpleIntegerProperty();
-        this.maxOccupancy = new SimpleIntegerProperty(MAX_OCCUPANCY);
-        this.tickets = new SimpleListProperty<>();
-        this.entryGates = new SimpleListProperty<>();
-        this.exitGates = new SimpleListProperty<>();
+        this.occupancy = new SimpleIntegerProperty(occupancy);
+        this.maxOccupancy = new SimpleIntegerProperty(max_occupancy);
     }
 
-    @Id
-    @Column(nullable = false)
     public String getName() {
         return this.name.get();
     }
@@ -49,7 +35,6 @@ public class Garage {
         return this.name;
     }
 
-    @Column(nullable = false)
     public int getOccupancy() {
         return this.occupancy.get();
     }
@@ -62,7 +47,6 @@ public class Garage {
         return this.occupancy;
     }
 
-    @Column(nullable = false)
     public int getMaxOccupancy() {
         return this.maxOccupancy.get();
     }
@@ -73,45 +57,6 @@ public class Garage {
 
     public IntegerProperty maxOccupancyProperty() {
         return this.maxOccupancy;
-    }
-
-    @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
-    public List<Ticket> getTickets() {
-        return this.tickets.get();
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets.set(FXCollections.observableArrayList(tickets));
-    }
-
-    public ListProperty<Ticket> ticketsProperty() {
-        return this.tickets;
-    }
-
-    @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
-    public List<EntryGate> getEntryGates() {
-        return this.entryGates.get();
-    }
-
-    public void setEntryGates(List<EntryGate> entryGates) {
-        this.entryGates.set(FXCollections.observableArrayList(entryGates));
-    }
-
-    public ListProperty<EntryGate> entryGatesProperty() {
-        return this.entryGates;
-    }
-
-    @OneToMany(mappedBy="garage", cascade = CascadeType.ALL)
-    public List<ExitGate> getExitGates() {
-        return this.exitGates.get();
-    }
-
-    public void setExitGates(List<ExitGate> exitGates) {
-        this.exitGates.set(FXCollections.observableArrayList(exitGates));
-    }
-
-    public ListProperty<ExitGate> exitGatesProperty() {
-        return this.exitGates;
     }
 
     @Override

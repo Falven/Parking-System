@@ -2,11 +2,6 @@ package Model;
 
 import javafx.beans.property.*;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-
-@Entity
-@Access(AccessType.PROPERTY)
 public class Payment {
 
     private IntegerProperty id;
@@ -15,24 +10,22 @@ public class Payment {
     private DoubleProperty amountPaid;
     private IntegerProperty expMonth;
     private IntegerProperty expYear;
-    private ObjectProperty<ExitGate> exitGate;
+    private IntegerProperty exitGateId;
 
     public Payment() {
-        this(0, 0, 0.0, 0, 0, null);
+        this(0, 0, 0, 0.0, 0, 0, 0);
     }
 
-    public Payment(long ccNum, int csv, double amountPaid, int expMonth, int expYear, ExitGate gate) {
-        this.id = new SimpleIntegerProperty();
+    public Payment(int id, long ccNum, int csv, double amountPaid, int expMonth, int expYear, int exitGateId) {
+        this.id = new SimpleIntegerProperty(id);
         this.ccNum = new SimpleLongProperty(ccNum);
         this.csv = new SimpleIntegerProperty(csv);
         this.amountPaid = new SimpleDoubleProperty(amountPaid);
         this.expMonth = new SimpleIntegerProperty(expMonth);
         this.expYear = new SimpleIntegerProperty(expYear);
-        this.exitGate = new SimpleObjectProperty<>(gate);
+        this.exitGateId = new SimpleIntegerProperty(exitGateId);
     }
 
-    @Id
-    @GeneratedValue()
     public int getId() {
         return this.id.get();
     }
@@ -45,7 +38,6 @@ public class Payment {
         return this.id;
     }
 
-    @Column(nullable = false)
     public long getCcNum() {
         return this.ccNum.get();
     }
@@ -58,7 +50,6 @@ public class Payment {
         return this.ccNum;
     }
 
-    @Column(nullable = false)
     public int getCsv() {
         return this.csv.get();
     }
@@ -71,7 +62,6 @@ public class Payment {
         return this.csv;
     }
 
-    @Column(nullable = false)
     public double getAmountPaid() {
         return this.amountPaid.get();
     }
@@ -84,7 +74,6 @@ public class Payment {
         return this.amountPaid;
     }
 
-    @Column(nullable = false)
     public int getExpMonth() {
         return this.expMonth.get();
     }
@@ -97,7 +86,6 @@ public class Payment {
         return this.expMonth;
     }
 
-    @Column(nullable = false)
     public int getExpYear() {
         return this.expYear.get();
     }
@@ -110,17 +98,16 @@ public class Payment {
         return this.expYear;
     }
 
-    @ManyToOne()
-    public ExitGate getExitGate() {
-        return this.exitGate.get();
+    public int getExitGateId() {
+        return this.exitGateId.get();
     }
 
-    public void setExitGate(ExitGate exitGate) {
-        this.exitGate.set(exitGate);
+    public void setExitGateId(int exitGateId) {
+        this.exitGateId.set(exitGateId);
     }
 
-    public ObjectProperty<ExitGate> exitGateProperty() {
-        return this.exitGate;
+    public IntegerProperty exitGateIdProperty() {
+        return this.exitGateId;
     }
 
     @Override

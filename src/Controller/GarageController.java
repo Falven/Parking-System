@@ -4,7 +4,6 @@ import Model.EntryGate;
 import Model.ExitGate;
 import Model.Garage;
 import Model.Ticket;
-import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleMapProperty;
@@ -23,11 +22,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 
 public class GarageController {
 
@@ -37,9 +33,9 @@ public class GarageController {
     private Scene scene;
     private Window window;
 
-    private static final MapProperty<EntryGate, EntryController> entryControllerLookup = new SimpleMapProperty<>();
+    private static final MapProperty<EntryGate, EntryGateController> entryControllerLookup = new SimpleMapProperty<>();
 
-    private static final MapProperty<ExitGate, ExitController> exitControllerLookup = new SimpleMapProperty<>();
+    private static final MapProperty<ExitGate, ExitGateController> exitControllerLookup = new SimpleMapProperty<>();
 
     private static final MapProperty<Ticket, TicketController> ticketControllerLookup = new SimpleMapProperty<>();
 
@@ -139,7 +135,7 @@ public class GarageController {
 
         ObservableList<EntryGate> entryGates = (ObservableList<EntryGate>)bean.getEntryGates();
         for(EntryGate gate : entryGates) {
-            getEntryControllerLookup().put(gate, new EntryController(gate, this, window));
+            getEntryControllerLookup().put(gate, new EntryGateController(gate, this, window));
         }
         this.entryGatesTable.setItems(entryGates);
         this.entryGatesTable.getSelectionModel().selectFirst();
@@ -153,7 +149,7 @@ public class GarageController {
 
         ObservableList<ExitGate> exitGates = (ObservableList<ExitGate>)bean.getExitGates();
         for(ExitGate gate : exitGates) {
-            getExitControllerLookup().put(gate, new ExitController(gate, this.window));
+            getExitControllerLookup().put(gate, new ExitGateController(gate, this.window));
         }
         this.exitGatesTable.setItems(exitGates);
         this.exitGatesTable.getSelectionModel().selectFirst();
@@ -198,27 +194,27 @@ public class GarageController {
         return this.bean;
     }
 
-    public static ObservableMap<EntryGate, EntryController> getEntryControllerLookup() {
+    public static ObservableMap<EntryGate, EntryGateController> getEntryControllerLookup() {
         return GarageController.entryControllerLookup.get();
     }
 
-    public static void setEntryControllerLookup(ObservableMap<EntryGate, EntryController> entryControllerLookup) {
+    public static void setEntryControllerLookup(ObservableMap<EntryGate, EntryGateController> entryControllerLookup) {
         GarageController.entryControllerLookup.set(entryControllerLookup);
     }
 
-    public static MapProperty<EntryGate, EntryController> entryControllerLookupProperty() {
+    public static MapProperty<EntryGate, EntryGateController> entryControllerLookupProperty() {
         return GarageController.entryControllerLookup;
     }
 
-    public static ObservableMap<ExitGate, ExitController> getExitControllerLookup() {
+    public static ObservableMap<ExitGate, ExitGateController> getExitControllerLookup() {
         return GarageController.exitControllerLookup.get();
     }
 
-    public static void setExitControllerLookup(ObservableMap<ExitGate, ExitController> exitControllerLookup) {
+    public static void setExitControllerLookup(ObservableMap<ExitGate, ExitGateController> exitControllerLookup) {
         GarageController.exitControllerLookup.set(exitControllerLookup);
     }
 
-    public static MapProperty<ExitGate, ExitController> exitControllerLookupProperty() {
+    public static MapProperty<ExitGate, ExitGateController> exitControllerLookupProperty() {
         return GarageController.exitControllerLookup;
     }
 
@@ -244,7 +240,7 @@ public class GarageController {
         EntryGate gate = new EntryGate(garage);
         Main.getDatabase().persist(gate);
         garage.getEntryGates().add(gate);
-        getEntryControllerLookup().put(gate, new EntryController(gate, this, window));
+        getEntryControllerLookup().put(gate, new EntryGateController(gate, this, window));
     }
 
     @FXML
@@ -253,7 +249,7 @@ public class GarageController {
         ExitGate gate = new ExitGate(garage);
         Main.getDatabase().persist(gate);
         garage.getExitGates().add(gate);
-        getExitControllerLookup().put(gate, new ExitController(gate, this.window));
+        getExitControllerLookup().put(gate, new ExitGateController(gate, this.window));
     }
 
     @FXML

@@ -26,7 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class ExitController {
+public class ExitGateController {
 
     private final ExitGate bean;
 
@@ -53,7 +53,7 @@ public class ExitController {
 
     private ObservableList<String> yearList;
 
-    public ExitController(ExitGate gate, Window owner) throws IOException, NoSuchMethodException {
+    public ExitGateController(ExitGate gate, Window owner) throws IOException, NoSuchMethodException {
         this.bean = gate;
         monthList = FXCollections.observableArrayList(new DateFormatSymbols().getMonths());
         int lastIndex = monthList.size() - 1;

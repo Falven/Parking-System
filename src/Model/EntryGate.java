@@ -1,31 +1,20 @@
 package Model;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
-import javax.persistence.*;
-import java.util.List;
-
-@Entity
-@Access(AccessType.PROPERTY)
 public class EntryGate {
 
     private IntegerProperty id;
-    private ListProperty<Ticket> tickets;
-    private ObjectProperty<Garage> garage;
+    private StringProperty garageName;
 
-    public EntryGate() {
-        this(null);
+    public EntryGate(int id, String garageName) {
+        this.id = new SimpleIntegerProperty(id);
+        this.garageName = new SimpleStringProperty(garageName);
     }
 
-    public EntryGate(Garage garage) {
-        this.id = new SimpleIntegerProperty();
-        this.tickets = new SimpleListProperty<>();
-        this.garage = new SimpleObjectProperty<>(garage);
-    }
-
-    @Id
-    @GeneratedValue()
     public int getId() {
         return this.id.get();
     }
@@ -38,30 +27,16 @@ public class EntryGate {
         return this.id;
     }
 
-    @OneToMany(mappedBy="entryGate", cascade = CascadeType.ALL)
-    public List<Ticket> getTickets() {
-        return this.tickets.get();
+    public String getGarageName() {
+        return this.garageName.get();
     }
 
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets.set(FXCollections.observableArrayList(tickets));
+    public void setGarageName(String garageName) {
+        this.garageName.set(garageName);
     }
 
-    public ListProperty<Ticket> ticketsProperty() {
-        return this.tickets;
-    }
-
-    @ManyToOne()
-    public Garage getGarage() {
-        return this.garage.get();
-    }
-
-    public void setGarage(Garage garage) {
-        this.garage.set(garage);
-    }
-
-    public ObjectProperty<Garage> garageProperty() {
-        return this.garage;
+    public StringProperty garageNameProperty() {
+        return this.garageName;
     }
 
     @Override

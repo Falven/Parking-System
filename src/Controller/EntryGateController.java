@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import java.io.IOException;
 
-public class EntryController {
+public class EntryGateController {
 
     private final EntryGate bean;
 
@@ -33,7 +33,7 @@ public class EntryController {
     @FXML
     private Button getTicketButton;
 
-    public EntryController(EntryGate gate, GarageController controller, Window owner) throws IOException, NoSuchMethodException {
+    public EntryGateController(EntryGate gate, GarageController controller, Window owner) throws IOException, NoSuchMethodException {
         this.bean = gate;
         this.controller = controller;
         initUI(gate, owner);
@@ -88,7 +88,7 @@ public class EntryController {
         Ticket ticket = new Ticket(gate, garage);
         gate.getTickets().add(ticket);
         garage.getTickets().add(ticket);
-        Main.getDatabase().persist(ticket);
+        ParkingDatabase.getInstance().add(ticket);
         garage.setOccupancy(garage.getOccupancy() + 1);
         TicketController controller = new TicketController(ticket, window);
         controller.showView();
