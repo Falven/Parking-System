@@ -65,6 +65,7 @@ public class AdminController extends ViewController {
         double stageY = (screenBounds.getHeight() - stageHeight) / 2;
         initUI("Admin Controls", "/view/AdminView.fxml", stageWidth, stageHeight, Double.MAX_VALUE, Double.MAX_VALUE, stageX, stageY, true, null, stage, null);
         initGarageTable();
+        showStage();
     }
 
     private void initGarageTable() throws IOException, NoSuchMethodException, SQLException {
