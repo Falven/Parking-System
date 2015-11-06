@@ -1,6 +1,5 @@
 package Model;
 
-import Controller.PaymentController;
 import javafx.beans.property.*;
 
 public class Payment extends Model<PaymentController> {

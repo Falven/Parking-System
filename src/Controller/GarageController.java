@@ -1,9 +1,6 @@
 package Controller;
 
-import Model.EntryGate;
-import Model.ExitGate;
-import Model.Garage;
-import Model.Ticket;
+import Model.*;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -41,6 +38,9 @@ public class GarageController extends Controller<Garage> {
     private Label ticketCountLabel;
 
     @FXML
+    private Label paymentCountLabel;
+
+    @FXML
     private TableView<EntryGate> entryGatesTable;
 
     @FXML
@@ -56,28 +56,55 @@ public class GarageController extends Controller<Garage> {
     private TableView<Ticket> ticketsTable;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableIdColumn;
+    private TableColumn<Ticket, String> ticketsIdCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableEntryGateColumn;
+    private TableColumn<Ticket, String> ticketsEntryGateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableExitGateColumn;
+    private TableColumn<Ticket, String> ticketsExitGateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableAssignedDateColumn;
+    private TableColumn<Ticket, String> ticketsAssignedDateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableAssignedTimeColumn;
+    private TableColumn<Ticket, String> ticketsAssignedTimeCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableDueDateColumn;
+    private TableColumn<Ticket, String> ticketsDueDateCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableDueTimeColumn;
+    private TableColumn<Ticket, String> ticketsDueTimeCol;
 
     @FXML
-    private TableColumn<Ticket, String> ticketsTableAmountDueColumn;
+    private TableColumn<Ticket, String> ticketsAmountDueCol;
+
+    @FXML
+    private TableView<Payment> paymentsTable;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsPaymentIdCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsTicketIdCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsCCNumCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsCSVCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsAmountCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsExpMonthCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsExpYearCol;
+
+    @FXML
+    private TableColumn<Payment, String> paymentsExitGateIdCol;
 
     @FXML
     private DatePicker dayStatDatePicker;
@@ -94,6 +121,8 @@ public class GarageController extends Controller<Garage> {
 
     private ListProperty<Ticket> tickets;
 
+    private ListProperty<Payment> payments;
+
     private ListProperty<String> monthStatList;
 
     private ListProperty<String> yearStatList;
@@ -109,6 +138,7 @@ public class GarageController extends Controller<Garage> {
         initEntryGatesTab();
         initExitGatesTab();
         initTicketsTab();
+        initPaymentsTab();
         initDailyStatsTab();
         initMonthlyStatsTab();
         initYearlyStatsTab();
@@ -133,16 +163,31 @@ public class GarageController extends Controller<Garage> {
     private void initTicketsTab() throws IOException, NoSuchMethodException, SQLException {
         tickets = new SimpleListProperty<>(ParkingDatabase.getInstance().getTickets());
         this.ticketCountLabel.textProperty().bind(ticketsProperty().sizeProperty().asString());
-        this.ticketsTableIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        this.ticketsTableAssignedDateColumn.setCellValueFactory(new PropertyValueFactory<>("assignedDate"));
-        this.ticketsTableAssignedTimeColumn.setCellValueFactory(new PropertyValueFactory<>("assignedTime"));
-        this.ticketsTableDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
-        this.ticketsTableDueTimeColumn.setCellValueFactory(new PropertyValueFactory<>("dueTime"));
-        this.ticketsTableAmountDueColumn.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
-        this.ticketsTableEntryGateColumn.setCellValueFactory(new PropertyValueFactory<>("entryGateId"));
-        this.ticketsTableExitGateColumn.setCellValueFactory(new PropertyValueFactory<>("exitGateId"));
+        this.ticketsIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.ticketsAssignedDateCol.setCellValueFactory(new PropertyValueFactory<>("assignedDate"));
+        this.ticketsAssignedTimeCol.setCellValueFactory(new PropertyValueFactory<>("assignedTime"));
+        this.ticketsDueDateCol.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+        this.ticketsDueTimeCol.setCellValueFactory(new PropertyValueFactory<>("dueTime"));
+        this.ticketsAmountDueCol.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        this.ticketsEntryGateCol.setCellValueFactory(new PropertyValueFactory<>("entryGateId"));
+        this.ticketsExitGateCol.setCellValueFactory(new PropertyValueFactory<>("exitGateId"));
         this.ticketsTable.setItems(getTickets());
         this.ticketsTable.getSelectionModel().selectFirst();
+    }
+
+    private void initPaymentsTab() throws IOException, NoSuchMethodException, SQLException {
+        payments = new SimpleListProperty<>(ParkingDatabase.getInstance().getPayments());
+        this.paymentCountLabel.textProperty().bind(paymentsProperty().sizeProperty().asString());
+        this.paymentsPaymentIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        this.paymentsTicketIdCol.setCellValueFactory(new PropertyValueFactory<>("ticketId"));
+        this.paymentsCCNumCol.setCellValueFactory(new PropertyValueFactory<>("ccNum"));
+        this.paymentsCSVCol.setCellValueFactory(new PropertyValueFactory<>("csv"));
+        this.paymentsAmountCol.setCellValueFactory(new PropertyValueFactory<>("amountPaid"));
+        this.paymentsExpMonthCol.setCellValueFactory(new PropertyValueFactory<>("expMonth"));
+        this.paymentsExpYearCol.setCellValueFactory(new PropertyValueFactory<>("expYear"));
+        this.paymentsExitGateIdCol.setCellValueFactory(new PropertyValueFactory<>("exitGateId"));
+        this.paymentsTable.setItems(getPayments());
+        this.paymentsTable.getSelectionModel().selectFirst();
     }
 
     private void initDailyStatsTab() {
@@ -193,6 +238,18 @@ public class GarageController extends Controller<Garage> {
 
     public ListProperty<Ticket> ticketsProperty() {
         return this.tickets;
+    }
+
+    public ObservableList<Payment> getPayments() {
+        return this.payments.get();
+    }
+
+    public void setPayments(ObservableList<Payment> tickets) {
+        this.payments.set(tickets);
+    }
+
+    public ListProperty<Payment> paymentsProperty() {
+        return this.payments;
     }
 
     @FXML
@@ -264,6 +321,15 @@ public class GarageController extends Controller<Garage> {
             selected.getController().closeStage();
             getModel().setOccupancy(getModel().getOccupancy() - 1);
             ParkingDatabase.getInstance().merge(getModel());
+        }
+    }
+
+    @FXML
+    protected void handleRemovePayment(ActionEvent event) throws SQLException {
+        Payment selected = paymentsTable.getSelectionModel().getSelectedItem();
+        if(null != selected) {
+            ParkingDatabase.getInstance().remove(selected);
+            getPayments().remove(selected);
         }
     }
 
