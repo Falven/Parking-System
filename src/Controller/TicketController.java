@@ -59,9 +59,10 @@ public class TicketController {
         this.stage.setTitle("Parking Ticket #" + getBean().getId());
         this.stage.setScene(this.scene);
         this.stage.setX(owner.getX());
-        this.stage.setY(owner.getY());
+        this.stage.setY(owner.getY() + 30.0);
         this.stage.resizableProperty().setValue(Boolean.FALSE);
         this.stage.initModality(Modality.NONE);
+        this.stage.initOwner(owner);
         this.window = this.scene.getWindow();
     }
 

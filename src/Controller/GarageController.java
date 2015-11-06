@@ -259,6 +259,10 @@ public class GarageController {
     @FXML
     protected void handleRemoveEntryGate(ActionEvent event) {
         EntryGate selected = entryGatesTable.getSelectionModel().getSelectedItem();
+        Garage garage = selected.getGarage();
+        garage.setOccupancy(garage.getOccupancy() - selected.getTickets().size());
+        garage.getTickets().removeAll(selected.getTickets());
+        garage.getEntryGates().remove(selected);
         Main.getDatabase().remove(selected);
         GarageController.getEntryControllerLookup().remove(selected).closeView();
     }
@@ -266,13 +270,15 @@ public class GarageController {
     @FXML
     protected void handleRemoveExitGate(ActionEvent event) {
         ExitGate selected = exitGatesTable.getSelectionModel().getSelectedItem();
+        Garage garage = selected.getGarage();
+        garage.getExitGates().remove(selected);
         Main.getDatabase().remove(selected);
         GarageController.getExitControllerLookup().remove(selected).closeView();
     }
 
     @FXML
     protected void handleRemoveTicket(ActionEvent event) {
-        Ticket selected = (Ticket)ticketsTable.getSelectionModel().getSelectedItem();
+        Ticket selected = ticketsTable.getSelectionModel().getSelectedItem();
         Garage garage = selected.getGarage();
         EntryGate entry = selected.getEntryGate();
         entry.getTickets().remove(selected);

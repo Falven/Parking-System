@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.Garage;
+import Model.Ticket;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -52,6 +53,10 @@ public class ParkingDatabase {
 
     public List<Garage> getGarages() {
         return em.createQuery("SELECT g FROM Garage g", Garage.class).getResultList();
+    }
+
+    public List<Ticket> getTickets(String garageName) {
+        return em.createQuery("SELECT t FROM Ticket t WHERE t.garage.name LIKE :garageName", Ticket.class).setParameter("garageName", garageName).getResultList();
     }
 
     public void close() {

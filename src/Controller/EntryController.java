@@ -86,9 +86,9 @@ public class EntryController {
         EntryGate gate = getBean();
         Garage garage = gate.getGarage();
         Ticket ticket = new Ticket(gate, garage);
-        Main.getDatabase().persist(ticket);
         gate.getTickets().add(ticket);
         garage.getTickets().add(ticket);
+        Main.getDatabase().persist(ticket);
         garage.setOccupancy(garage.getOccupancy() + 1);
         TicketController controller = new TicketController(ticket, window);
         controller.showView();
