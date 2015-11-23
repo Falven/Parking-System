@@ -17,14 +17,11 @@ public class Ticket extends Model<TicketController> {
     private ObjectProperty<Date> dueDate;
     private ObjectProperty<Time> dueTime;
     private DoubleProperty amountDue;
+    private SimpleStringProperty garageName;
     private IntegerProperty entryGateId;
     private IntegerProperty exitGateId;
 
-    public Ticket() {
-        this(0);
-    }
-
-    public Ticket(int entryGateId) {
+    public Ticket(int entryGateId, Garage garage) {
         this.id = new SimpleIntegerProperty();
         Calendar cal = Calendar.getInstance();
         this.assignedDate = new SimpleObjectProperty<>(new Date(cal.getTimeInMillis()));
@@ -33,17 +30,19 @@ public class Ticket extends Model<TicketController> {
         this.dueDate = new SimpleObjectProperty<>(new Date(cal.getTimeInMillis()));
         this.dueTime = new SimpleObjectProperty<>(new Time(getDueDate().getTime()));
         this.amountDue = new SimpleDoubleProperty(DEFAULT_AMOUNT_DUE);
+        this.garageName = new SimpleStringProperty(garage.getName());
         this.entryGateId = new SimpleIntegerProperty(entryGateId);
         this.exitGateId = new SimpleIntegerProperty();
     }
 
-    public Ticket(int id, Date assignedDate, Time assignedTime, Date dueDate, Time dueTime, double amountDue, int entryGateId, int exitGateId) {
+    public Ticket(int id, Date assignedDate, Time assignedTime, Date dueDate, Time dueTime, double amountDue, String garageName, int entryGateId, int exitGateId) {
         this.id = new SimpleIntegerProperty(id);
         this.assignedDate = new SimpleObjectProperty<>(assignedDate);
         this.assignedTime = new SimpleObjectProperty<>(assignedTime);
         this.dueDate = new SimpleObjectProperty<>(dueDate);
         this.dueTime = new SimpleObjectProperty<>(dueTime);
         this.amountDue = new SimpleDoubleProperty(amountDue);
+        this.garageName = new SimpleStringProperty(garageName);
         this.entryGateId = new SimpleIntegerProperty(entryGateId);
         this.exitGateId = new SimpleIntegerProperty(exitGateId);
     }
@@ -118,6 +117,18 @@ public class Ticket extends Model<TicketController> {
 
     public DoubleProperty amountDueProperty() {
         return this.amountDue;
+    }
+
+    public String getGarageName() {
+        return this.garageName.get();
+    }
+
+    public void setGarageName(String name) {
+        this.garageName.set(name);
+    }
+
+    public StringProperty garageNameProperty() {
+        return this.garageName;
     }
 
     public int getEntryGateId() {

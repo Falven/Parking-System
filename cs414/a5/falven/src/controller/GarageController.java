@@ -52,6 +52,9 @@ public class GarageController extends Controller<Garage> {
     private TableColumn<Ticket, Number> ticketsIdCol;
 
     @FXML
+    private TableColumn<Ticket, String> ticketsGarageCol;
+
+    @FXML
     private TableColumn<Ticket, Number> ticketsEntryGateCol;
 
     @FXML
@@ -156,6 +159,7 @@ public class GarageController extends Controller<Garage> {
         this.ticketsDueDateCol.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
         this.ticketsDueTimeCol.setCellValueFactory(new PropertyValueFactory<>("dueTime"));
         this.ticketsAmountDueCol.setCellValueFactory(new PropertyValueFactory<>("amountDue"));
+        this.ticketsGarageCol.setCellValueFactory(new PropertyValueFactory<>("garageName"));
         this.ticketsEntryGateCol.setCellValueFactory(new PropertyValueFactory<>("entryGateId"));
         this.ticketsExitGateCol.setCellValueFactory(new PropertyValueFactory<>("exitGateId"));
         this.ticketsTable.setItems(getTickets());

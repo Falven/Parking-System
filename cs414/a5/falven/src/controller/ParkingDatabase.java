@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class ParkingDatabase {
 
-    private static final String URL = "jdbc:derby:ParkingSystemDB";
+    private static final String URL = "jdbc:derby:ParkingSystemDB;create=true";
     private static ParkingDatabase instance;
     private Connection conn;
 
@@ -22,15 +22,20 @@ public class ParkingDatabase {
      * @throws SQLException The ParkingDatabase was unable to create the default Library tables on the provided Database.
      * @see ParkingDatabase#ParkingDatabase()
      */
-    public ParkingDatabase() throws SQLException {
+    public ParkingDatabase() throws SQLException, ClassNotFoundException {
+        DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
         Properties properties = new Properties();
         this.conn = DriverManager.getConnection(URL, properties);
         this.conn.setAutoCommit(true);
     }
 
     public static ParkingDatabase getInstance() throws SQLException {
-        if (null == instance) {
-            instance = new ParkingDatabase();
+        try {
+            if (null == instance) {
+                instance = new ParkingDatabase();
+            }
+        } catch (ClassNotFoundException cnfe) {
+
         }
         return instance;
     }
@@ -144,7 +149,7 @@ public class ParkingDatabase {
                 "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
                 "  GARAGE_NAME VARCHAR(255) NOT NULL,\n" +
                 "  PRIMARY KEY (ID),\n" +
-                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME)\n" +
+                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME) ON DELETE CASCADE \n" +
                 ")");
     }
 
@@ -177,7 +182,7 @@ public class ParkingDatabase {
                 "  ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),\n" +
                 "  GARAGE_NAME VARCHAR(255) NOT NULL,\n" +
                 "  PRIMARY KEY (ID),\n" +
-                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME)\n" +
+                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME) ON DELETE CASCADE \n" +
                 ")");
     }
 
@@ -213,9 +218,11 @@ public class ParkingDatabase {
                 "  DUE_DATE DATE,\n" +
                 "  DUE_TIME TIME,\n" +
                 "  AMOUNT_DUE DOUBLE,\n" +
-                "  ENTRYGATE_ID INT NOT NULL,\n" +
+                "  GARAGE_NAME VARCHAR(255),\n" +
+                "  ENTRYGATE_ID INT,\n" +
                 "  EXITGATE_ID INT,\n" +
                 "  PRIMARY KEY (ID),\n" +
+                "  FOREIGN KEY (GARAGE_NAME) REFERENCES GARAGE(NAME),\n" +
                 "  FOREIGN KEY (ENTRYGATE_ID) REFERENCES ENTRYGATE(ID),\n" +
                 "  FOREIGN KEY (EXITGATE_ID) REFERENCES EXITGATE(ID)\n" +
                 ")");
@@ -344,7 +351,7 @@ public class ParkingDatabase {
         if (rs.next()) {
             return new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
                     rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
-                    rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID"));
+                    rs.getString("GARAGE_NAME"), rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID"));
         }
         return null;
     }
@@ -462,13 +469,14 @@ public class ParkingDatabase {
      * @throws SQLException If there was an error adding the Ticket to the Database.
      */
     public void add(Ticket ticket) throws SQLException {
-        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO TICKET(ASSIGNED_DATE, ASSIGNED_TIME, DUE_DATE, DUE_TIME, AMOUNT_DUE, ENTRYGATE_ID) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement prepStmt = conn.prepareStatement("INSERT INTO TICKET(ASSIGNED_DATE, ASSIGNED_TIME, DUE_DATE, DUE_TIME, AMOUNT_DUE, GARAGE_NAME, ENTRYGATE_ID) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
         prepStmt.setDate(1, ticket.getAssignedDate());
         prepStmt.setTime(2, ticket.getAssignedTime());
         prepStmt.setDate(3, ticket.getDueDate());
         prepStmt.setTime(4, ticket.getDueTime());
         prepStmt.setDouble(5, ticket.getAmountDue());
-        prepStmt.setInt(6, ticket.getEntryGateId());
+        prepStmt.setString(6, ticket.getGarageName());
+        prepStmt.setInt(7, ticket.getEntryGateId());
         prepStmt.executeUpdate();
         ResultSet rs = prepStmt.getGeneratedKeys();
         if (rs.next()) {
@@ -682,7 +690,7 @@ public class ParkingDatabase {
         while (rs.next()) {
             tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
                     rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
-                    rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
+                    rs.getString("GARAGE_NAME"), rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
         }
         return tickets;
     }
@@ -716,7 +724,7 @@ public class ParkingDatabase {
         while (rs.next()) {
             tickets.add(new Ticket(rs.getInt("ID"), rs.getDate("ASSIGNED_DATE"), rs.getTime("ASSIGNED_TIME"),
                     rs.getDate("DUE_DATE"), rs.getTime("DUE_TIME"), rs.getDouble("AMOUNT_DUE"),
-                    rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
+                    rs.getString("GARAGE_NAME"), rs.getInt("ENTRYGATE_ID"), rs.getInt("EXITGATE_ID")));
         }
         return tickets;
     }

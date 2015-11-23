@@ -155,14 +155,15 @@
                   </HBox>
                   <TableView fx:id="ticketsTable" GridPane.rowIndex="1">
                     <columns>
-                      <TableColumn fx:id="ticketsIdCol" editable="false" prefWidth="64.0" text="id" />
-                        <TableColumn fx:id="ticketsAssignedDateCol" editable="false" prefWidth="94.0" text="Assigned date" />
-                        <TableColumn fx:id="ticketsAssignedTimeCol" editable="false" prefWidth="87.0" text="Assigned time" />
-                        <TableColumn fx:id="ticketsDueDateCol" editable="false" prefWidth="63.0" text="Due date" />
-                        <TableColumn fx:id="ticketsDueTimeCol" editable="false" prefWidth="83.0" text="Due time" />
+                      <TableColumn fx:id="ticketsIdCol" editable="false" prefWidth="49.0" text="id" />
+                        <TableColumn fx:id="ticketsAssignedDateCol" editable="false" prefWidth="95.0" text="Assigned date" />
+                        <TableColumn fx:id="ticketsAssignedTimeCol" editable="false" prefWidth="86.0" text="Assigned time" />
+                        <TableColumn fx:id="ticketsDueDateCol" editable="false" prefWidth="62.0" text="Due date" />
+                        <TableColumn fx:id="ticketsDueTimeCol" editable="false" prefWidth="76.0" text="Due time" />
                         <TableColumn fx:id="ticketsAmountDueCol" editable="false" prefWidth="81.0" text="Amount due" />
-                        <TableColumn fx:id="ticketsEntryGateCol" editable="false" prefWidth="77.0" text="EntryGate id" />
-                        <TableColumn fx:id="ticketsExitGateCol" editable="false" prefWidth="74.0" text="ExitGate id" />
+                        <TableColumn fx:id="ticketsGarageCol" editable="false" text="Garage" />
+                        <TableColumn fx:id="ticketsEntryGateCol" editable="false" prefWidth="81.0" text="EntryGate id" />
+                        <TableColumn fx:id="ticketsExitGateCol" editable="false" prefWidth="79.0" text="ExitGate id" />
                     </columns>
                   </TableView>
                </children>

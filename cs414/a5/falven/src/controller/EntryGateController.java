@@ -50,7 +50,7 @@ public class EntryGateController extends Controller<EntryGate> {
     @FXML
     protected void handleGetTicket(ActionEvent event) throws IOException, NoSuchMethodException, SQLException {
         EntryGate gate = getModel();
-        Ticket ticket = new Ticket(gate.getId());
+        Ticket ticket = new Ticket(gate.getId(), garageController.getModel());
         ParkingDatabase.getInstance().add(ticket);
         Garage garage = this.garageController.getModel();
         garage.setOccupancy(garage.getOccupancy() + 1);
