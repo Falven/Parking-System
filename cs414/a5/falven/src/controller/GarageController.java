@@ -135,7 +135,7 @@ public class GarageController extends Controller<Garage> {
     }
 
     private void initEntryGatesTab() throws IOException, NoSuchMethodException, SQLException {
-        entryGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getEntryGates());
+        entryGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getEntryGates(super.getModel()));
         this.entryGatesCountLabel.textProperty().bind(entryGatesProperty().sizeProperty().asString());
         this.entryGatesIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.entryGatesTable.setItems(getEntryGates());
@@ -143,7 +143,7 @@ public class GarageController extends Controller<Garage> {
     }
 
     private void initExitGatesTab() throws IOException, NoSuchMethodException, SQLException {
-        exitGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getExitGates());
+        exitGates = new SimpleListProperty<>(ParkingDatabase.getInstance().getExitGates(super.getModel()));
         this.exitGatesCountLabel.textProperty().bind(exitGatesProperty().sizeProperty().asString());
         this.exitGatesIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         this.exitGatesTable.setItems(getExitGates());

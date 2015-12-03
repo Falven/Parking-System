@@ -657,9 +657,11 @@ public class ParkingDatabase {
     /**
      * Gets all EntryGates from the Database.
      */
-    public ObservableList<EntryGate> getEntryGates() throws SQLException {
+    public ObservableList<EntryGate> getEntryGates(Garage garage) throws SQLException {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRYGATE e");
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM ENTRYGATE e WHERE e.GARAGE_NAME = ?");
+        prepStmt.setString(1, garage.getName());
+        ResultSet rs = prepStmt.executeQuery();
         ObservableList<EntryGate> entryGates = FXCollections.observableArrayList();
         while (rs.next()) {
             entryGates.add(new EntryGate(rs.getInt("ID"), rs.getString("GARAGE_NAME")));
@@ -670,9 +672,11 @@ public class ParkingDatabase {
     /**
      * Gets all ExitGates from the Database.
      */
-    public ObservableList<ExitGate> getExitGates() throws SQLException {
+    public ObservableList<ExitGate> getExitGates(Garage garage) throws SQLException {
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM EXITGATE e");
+        PreparedStatement prepStmt = conn.prepareStatement("SELECT * FROM EXITGATE e WHERE e.GARAGE_NAME = ?");
+        prepStmt.setString(1, garage.getName());
+        ResultSet rs = prepStmt.executeQuery();
         ObservableList<ExitGate> exitGates = FXCollections.observableArrayList();
         while (rs.next()) {
             exitGates.add(new ExitGate(rs.getInt("ID"), rs.getString("GARAGE_NAME")));
